@@ -111,296 +111,211 @@ def load_text(file_path: str) -> str:
         raise ValueError(f"Unsupported file format: {ext}")
 
 
-# ----------------------- Improved section detection -----------------------
+# ----------------------- Contact extraction -----------------------
 
-def _is_header_line(line: str) -> bool:
-    """Determine if a line looks like a section header."""
-    s = (line or "").strip()
-    if not s:
-        return False
-    
-    # Ends with colon and is short
-    if s.endswith(":") and len(s.split()) <= 8:
-        return True
-    
-    # All caps short line (common in many languages)
-    letters = re.sub(r"[^A-Za-zÀ-ÿ]", "", s)
-    if len(letters) >= 2 and s == s.upper() and len(s.split()) <= 8:
-        return True
-    
-    # Title case short line - but be more restrictive for names
-    words = s.split()
-    if 1 <= len(words) <= 6 and all(w[:1].isupper() for w in words if w):
-        # Skip if it's just a single word that could be a name
-        if len(words) == 1 and len(s) <= 20:
-            return False
-        # Skip if it's just two words that could be a name
-        if len(words) == 2 and len(s) <= 30:
-            return False
-        return True
-    
-    # Check for common section indicators
-    section_indicators = [
-        r"^(?:summary|resume|profile|about|overview|introduction|presentation|présentation|résumé|profil|aperçu|introduction)$",
-        r"^(?:experience|work|employment|emploi|travail|expérience|carrière|career|professional\s+experience)$",
-        r"^(?:education|formation|études|academic|académique|diplômes|diplomas)$",
-        r"^(?:skills|compétences|competences|aptitudes|capacités|capabilities|technical\s+skills)$",
-        r"^(?:languages|langues|idiomas|sprachen|lingue)$",
-        r"^(?:projects|projets|proyectos|projekte|progetti)$",
-        r"^(?:contact|coordonnées|contacto|kontakt|contatto)$",
-        r"^(?:certifications|certificaciones|zertifikate|certificazioni)$",
-    ]
-    
-    return any(re.search(pattern, s, re.IGNORECASE) for pattern in section_indicators)
-
-
-def _detect_bullet_line(line: str) -> bool:
-    """Detect if a line starts with a bullet point."""
-    if not line:
-        return False
-    
-    stripped = line.strip()
-    bullet_patterns = [
-        r"^[\u2022\u25E6\u2023\u2043\u2219•○●]",  # Unicode bullets
-        r"^[\-\*]",  # Dash/asterisk
-        r"^\d+[\.\)]\s+",  # Numbered lists
-        r"^[a-z][\.\)]\s+",  # Letter lists
-    ]
-    
-    return any(re.match(pattern, stripped) for pattern in bullet_patterns)
-
-
-def _extract_bullet_content(line: str) -> str:
-    """Extract content from a bullet line."""
-    if not line:
-        return ""
-    
-    # Remove bullet markers
-    cleaned = re.sub(r"^[\u2022\u25E6\u2023\u2043\u2219•○●\-\*\s]+", "", line.strip())
-    cleaned = re.sub(r"^\d+[\.\)]\s+", "", cleaned)
-    cleaned = re.sub(r"^[a-z][\.\)]\s+", "", cleaned)
-    
-    return cleaned.strip()
-
-
-def split_sections_improved(text: str) -> Dict[str, List[str]]:
-    """Split text into sections with improved detection."""
-    sections: Dict[str, List[str]] = {}
-    current_header = "header"  # Default section for top content
-    sections[current_header] = []
-    
-    lines = text.split('\n')
-    
-    for line in lines:
-        line = line.strip()
-        if not line:
-            continue
-        
-        # Check if this is a header line
-        if _is_header_line(line):
-            # Clean header name
-            header_name = line.strip().rstrip(":")
-            # Normalize header names
-            header_name = re.sub(r'\s+', ' ', header_name).strip()
-            current_header = header_name
-            if current_header not in sections:
-                sections[current_header] = []
-            continue
-        
-        # Skip separator lines
-        if re.fullmatch(r"[\-\_=\*\s]+", line):
-            continue
-        
-        # Add line to current section
-        if current_header not in sections:
-            sections[current_header] = []
-        sections[current_header].append(line)
-    
-    return sections
-
-
-# ----------------------- Improved field extractors -----------------------
-
-def extract_name_improved(text: str) -> str:
-    """Extract name from CV header more reliably."""
-    lines = text.split('\n')
-    
-    # Look for the first meaningful line that could be a name
-    for i, line in enumerate(lines[:5]):  # Check first 5 lines
-        line = line.strip()
-        if not line or len(line) < 2:
-            continue
-        
-        # Skip if it looks like a section header
-        if _is_header_line(line):
-            continue
-        
-        # Skip if it contains contact information
-        if re.search(r'@', line) or re.search(r'\+?\d', line) or re.search(r'linkedin\.com|github\.com', line):
-            continue
-        
-        # Skip if it's too long (likely not a name)
-        if len(line) > 50:
-            continue
-        
-        # Skip if it contains numbers or special characters typical of non-name content
-        if re.search(r'\d{4,}', line):  # Skip if contains 4+ digit numbers
-            continue
-        
-        # Check if this could be part of a two-line name
-        if i < len(lines) - 1:
-            next_line = lines[i + 1].strip()
-            if next_line and not _is_header_line(next_line) and not re.search(r'@|\+?\d|linkedin\.com|github\.com', next_line):
-                # This could be a two-line name
-                combined_name = f"{line} {next_line}"
-                if len(combined_name.split()) <= 4 and not re.search(r'\d', combined_name):
-                    return combined_name
-        
-        # This looks like a potential name
-        return line
-    
-    return "Unknown"
-
-
-def extract_contact_info_improved(lines: List[str]) -> Dict[str, Any]:
-    """Extract contact information with improved patterns."""
-    text = "\n".join(lines)
+def extract_contact_info(text: str) -> Dict[str, Any]:
+    """Extract contact information using comprehensive regex patterns."""
+    contact_info = {
+        "emails": [],
+        "phones": [],
+        "linkedin": "",
+        "address": ""
+    }
     
     # Extract emails
-    emails = re.findall(r"\b[\w.+%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b", text)
-    emails = _dedupe_list(emails)
+    email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    emails = re.findall(email_pattern, text)
+    contact_info["emails"] = _dedupe_list(emails)
     
-    # Extract phone numbers (less aggressive)
+    # Extract phone numbers (multiple formats)
     phone_patterns = [
-        r"\+?[\d\s\-/()]{7,}",  # International format
-        r"\b\d{3}[\s\-]?\d{3}[\s\-]?\d{4}\b",  # US/Canada format
-        r"\b\d{2}[\s\-]?\d{2}[\s\-]?\d{2}[\s\-]?\d{2}[\s\-]?\d{2}\b",  # French format
+        r'\+?[\d\s\-\(\)]{10,}',  # International format
+        r'\b\d{3}[\s\-]?\d{3}[\s\-]?\d{4}\b',  # US/Canada format
+        r'\b\d{2}[\s\-]?\d{2}[\s\-]?\d{2}[\s\-]?\d{2}[\s\-]?\d{2}\b',  # French format
     ]
     
     phones = []
     for pattern in phone_patterns:
         matches = re.findall(pattern, text)
         for match in matches:
-            # Clean phone number but preserve + and spaces
+            # Clean phone number
             cleaned = re.sub(r'[^\d\s\+\(\)\-]', '', match)
             if len(cleaned.replace(' ', '').replace('-', '').replace('(', '').replace(')', '')) >= 7:
                 phones.append(cleaned.strip())
     
-    phones = _dedupe_list(phones)
+    contact_info["phones"] = _dedupe_list(phones)
     
     # Extract LinkedIn
-    linkedin = ""
-    linkedin_match = re.search(r'linkedin\.com/[^\s]+', text, re.IGNORECASE)
+    linkedin_pattern = r'linkedin\.com/[^\s\n]+'
+    linkedin_match = re.search(linkedin_pattern, text, re.IGNORECASE)
     if linkedin_match:
-        linkedin = linkedin_match.group(0)
+        contact_info["linkedin"] = linkedin_match.group(0)
     
     # Extract address (look for postal code patterns)
-    address = ""
-    address_match = re.search(r'[A-Za-zÀ-ÿ\s]+\d{4,5}\s*[A-Za-zÀ-ÿ\s]*', text)
-    if address_match:
-        address = address_match.group(0).strip()
+    address_patterns = [
+        r'[A-Za-zÀ-ÿ\s]+\d{4,5}\s*[A-Za-zÀ-ÿ\s]*',  # French postal code
+        r'[A-Za-zÀ-ÿ\s]+,\s*[A-Za-zÀ-ÿ\s]+',  # City, Country format
+    ]
     
-    return {
-        "emails": emails,
-        "phones": phones,
-        "linkedin": linkedin,
-        "address": address
-    }
+    for pattern in address_patterns:
+        address_match = re.search(pattern, text)
+        if address_match:
+            address = address_match.group(0).strip()
+            if len(address) > 10:  # Filter out very short matches
+                contact_info["address"] = address
+                break
+    
+    return contact_info
 
 
-def extract_summary_improved(lines: List[str]) -> List[str]:
-    """Extract professional summary with better content preservation."""
-    summary_lines = []
+# ----------------------- Skills extraction -----------------------
+
+def extract_skills(text: str) -> List[str]:
+    """Extract skills using precise bullet point detection."""
+    skills = []
+    
+    # Find the skills section by looking for the section header and content
+    lines = text.split('\n')
+    in_skills = False
+    skills_lines = []
     
     for line in lines:
         line = line.strip()
-        if not line or len(line) < 10:
-            continue
-        
-        # Skip if it contains contact information
-        if re.search(r'@', line) or re.search(r'\+?\d', line) or re.search(r'linkedin\.com|github\.com', line):
-            continue
-        
-        # Skip if it's too short or looks like a fragment
-        if len(line) < 20 and not line.endswith(('.', '!', '?')):
-            continue
-        
-        # Clean up the text
-        cleaned = _clean_text(line)
-        if cleaned and _is_meaningful_text(cleaned):
-            summary_lines.append(cleaned)
-    
-    return _dedupe_list(summary_lines)
-
-
-def extract_skills_improved(lines: List[str]) -> List[str]:
-    """Extract skills with improved bullet point handling."""
-    skills = []
-    
-    for line in lines:
         if not line:
             continue
         
-        # Check if this is a bullet line
-        if _detect_bullet_line(line):
-            content = _extract_bullet_content(line)
+        # Check if we're entering skills section (exact match for section headers)
+        if re.match(r'^(?:TECHNICAL SKILLS|COMPÉTENCES|SKILLS)$', line, re.IGNORECASE):
+            in_skills = True
+            continue
+        
+        # Check if we're leaving skills section (exact match for section headers)
+        if in_skills and re.match(r'^(?:LANGUAGES|LANGUES|EDUCATION|FORMATION|EXPERIENCE|PROJECTS)$', line, re.IGNORECASE):
+            in_skills = False
+            continue
+        
+        if in_skills:
+            skills_lines.append(line)
+    
+    # Parse skills from the collected lines
+    for line in skills_lines:
+        if not line:
+            continue
+        
+        # Check for bullet points (including special Unicode characters)
+        if re.match(r'^[●○•\-\*]\s*', line):
+            content = re.sub(r'^[●○•\-\*]\s*', '', line)
             if content:
-                # Split by common separators
-                parts = re.split(r'[,:/;\|\u2013\u2014\-]', content)
-                for part in parts:
-                    skill = part.strip()
-                    if skill and len(skill) >= 2 and _is_meaningful_text(skill):
-                        skills.append(skill)
-        else:
-            # Handle non-bullet lines that might contain skills
-            if ':' in line:
-                # Extract content after colon
-                content = line.split(':', 1)[1].strip()
-                if content:
-                    parts = re.split(r'[,:/;\|\u2013\u2014\-]', content)
-                    for part in parts:
-                        skill = part.strip()
-                        if skill and len(skill) >= 2 and _is_meaningful_text(skill):
+                # Handle "Category: skill1, skill2, skill3" format
+                if ':' in content:
+                    parts = content.split(':', 1)
+                    if len(parts) == 2:
+                        skill_list = parts[1].strip()
+                        # Split by common separators
+                        skill_items = re.split(r'[,;/|]', skill_list)
+                        for skill in skill_items:
+                            skill = skill.strip()
+                            if skill and len(skill) >= 2:
+                                skills.append(skill)
+                else:
+                    # Single skill or comma-separated list
+                    skill_items = re.split(r'[,;/|]', content)
+                    for skill in skill_items:
+                        skill = skill.strip()
+                        if skill and len(skill) >= 2:
                             skills.append(skill)
     
     return _dedupe_list(skills)
 
 
-def extract_languages_improved(lines: List[str]) -> List[Dict[str, str]]:
-    """Extract language information with improved pattern matching."""
+# ----------------------- Languages extraction -----------------------
+
+def extract_languages(text: str) -> List[Dict[str, str]]:
+    """Extract languages using precise section detection."""
     languages = []
     
+    # Find the languages section by looking for the section header and content
+    lines = text.split('\n')
+    in_languages = False
+    languages_lines = []
+    
     for line in lines:
+        line = line.strip()
         if not line:
             continue
         
-        # Check if this is a bullet line
-        if _detect_bullet_line(line):
-            content = _extract_bullet_content(line)
+        # Check if we're entering languages section (exact match for section headers)
+        if re.match(r'^(?:LANGUAGES|LANGUES)$', line, re.IGNORECASE):
+            in_languages = True
+            continue
+        
+        # Check if we're leaving languages section (exact match for section headers)
+        if in_languages and re.match(r'^(?:CERTIFICATIONS|EDUCATION|FORMATION|EXPERIENCE|PROJECTS)$', line, re.IGNORECASE):
+            in_languages = False
+            continue
+        
+        if in_languages:
+            languages_lines.append(line)
+    
+    # Parse languages from the collected lines
+    for line in languages_lines:
+        if not line:
+            continue
+        
+        # Check for bullet points
+        if re.match(r'^[●○•\-\*]\s*', line):
+            content = re.sub(r'^[●○•\-\*]\s*', '', line)
             if content:
-                # Look for language: level pattern
+                # Look for "Language: Level" pattern
                 lang_match = re.match(r'^([A-Za-zÀ-ÿ]+)\s*[:\-–]\s*([A-Za-zÀ-ÿ\s]+)$', content)
                 if lang_match:
                     language = lang_match.group(1).title()
                     level = lang_match.group(2).strip().title()
-                    if language and level:
+                    if language and level and len(language) > 1:
                         languages.append({"language": language, "level": level})
     
     return languages
 
 
-def extract_education_improved(lines: List[str]) -> List[Dict[str, Any]]:
-    """Extract education information with improved parsing."""
+# ----------------------- Education extraction -----------------------
+
+def extract_education(text: str) -> List[Dict[str, Any]]:
+    """Extract education information with better structure detection."""
     education_entries = []
-    current_entry = None
+    
+    # Find the education section by looking for the section header and content
+    lines = text.split('\n')
+    in_education = False
+    education_lines = []
     
     for line in lines:
+        line = line.strip()
         if not line:
             continue
         
-        # Check if this is a bullet line
-        if _detect_bullet_line(line):
-            content = _extract_bullet_content(line)
+        # Check if we're entering education section (exact match for section headers)
+        if re.match(r'^(?:EDUCATION|FORMATION|ÉDUCATION)$', line, re.IGNORECASE):
+            in_education = True
+            continue
+        
+        # Check if we're leaving education section (exact match for section headers)
+        if in_education and re.match(r'^(?:Professional Experience|EXPERIENCE|PROJECTS)$', line, re.IGNORECASE):
+            in_education = False
+            continue
+        
+        if in_education:
+            education_lines.append(line)
+    
+    # Parse education from the collected lines
+    current_entry = None
+    
+    for line in education_lines:
+        if not line:
+            continue
+        
+        # Check for bullet points
+        if re.match(r'^[●○•\-\*]\s*', line):
+            content = re.sub(r'^[●○•\-\*]\s*', '', line)
             if content:
                 # Start new entry
                 if current_entry:
@@ -436,25 +351,53 @@ def extract_education_improved(lines: List[str]) -> List[Dict[str, Any]]:
     return education_entries
 
 
-def extract_experience_improved(lines: List[str]) -> List[Dict[str, Any]]:
-    """Extract experience information with improved parsing."""
+# ----------------------- Experience extraction -----------------------
+
+def extract_experience(text: str) -> List[Dict[str, Any]]:
+    """Extract experience information with better job detection."""
     experience_entries = []
-    current_entry = None
-    current_details = []
+    
+    # Find the experience section by looking for the section header and content
+    lines = text.split('\n')
+    in_experience = False
+    experience_lines = []
     
     for line in lines:
+        line = line.strip()
         if not line:
             continue
         
-        # Check if this is a bullet line
-        if _detect_bullet_line(line):
-            content = _extract_bullet_content(line)
+        # Check if we're entering experience section (exact match for section headers)
+        if re.match(r'^(?:Professional Experience|EXPERIENCE|EMPLOI)$', line, re.IGNORECASE):
+            in_experience = True
+            continue
+        
+        # Check if we're leaving experience section (exact match for section headers)
+        if in_experience and re.match(r'^(?:PROJECTS|EDUCATION|FORMATION)$', line, re.IGNORECASE):
+            in_experience = False
+            continue
+        
+        if in_experience:
+            experience_lines.append(line)
+    
+    # Parse experience from the collected lines
+    current_entry = None
+    current_details = []
+    
+    for line in experience_lines:
+        if not line:
+            continue
+        
+        # Check for bullet points
+        if re.match(r'^[●○•\-\*]\s*', line):
+            content = re.sub(r'^[●○•\-\*]\s*', '', line)
             if content:
-                # Check if this looks like a new entry (contains dates or company info)
+                # Check if this looks like a new job entry
                 has_date = re.search(r'\b(?:19|20)\d{2}\b', content)
-                has_company = re.search(r'\b(?:inc|corp|company|ltd|llc|sarl|eurl|sa|sas)\b', content, re.IGNORECASE)
+                has_company = re.search(r'\b(?:inc|corp|company|ltd|llc|sarl|eurl|sa|sas|system|engineering|tech)\b', content, re.IGNORECASE)
+                has_job_title = re.search(r'\b(?:intern|stagiaire|developer|développeur|assistant|manager|analyst|consultant)\b', content, re.IGNORECASE)
                 
-                if has_date or has_company or len(content.split()) <= 8:
+                if has_date or has_company or has_job_title or len(content.split()) <= 8:
                     # Finalize previous entry
                     if current_entry:
                         if current_details:
@@ -491,17 +434,43 @@ def extract_experience_improved(lines: List[str]) -> List[Dict[str, Any]]:
     return experience_entries
 
 
-def extract_projects_improved(lines: List[str]) -> List[Dict[str, Any]]:
+# ----------------------- Projects extraction -----------------------
+
+def extract_projects(text: str) -> List[Dict[str, Any]]:
     """Extract project information."""
     projects = []
     
+    # Find the projects section by looking for the section header and content
+    lines = text.split('\n')
+    in_projects = False
+    projects_lines = []
+    
     for line in lines:
+        line = line.strip()
         if not line:
             continue
         
-        # Check if this is a bullet line
-        if _detect_bullet_line(line):
-            content = _extract_bullet_content(line)
+        # Check if we're entering projects section (exact match for section headers)
+        if re.match(r'^(?:PROJECTS|PROJETS)$', line, re.IGNORECASE):
+            in_projects = True
+            continue
+        
+        # Check if we're leaving projects section (exact match for section headers)
+        if in_projects and re.match(r'^(?:EDUCATION|FORMATION|EXPERIENCE|SKILLS|LANGUAGES)$', line, re.IGNORECASE):
+            in_projects = False
+            continue
+        
+        if in_projects:
+            projects_lines.append(line)
+    
+    # Parse projects from the collected lines
+    for line in projects_lines:
+        if not line:
+            continue
+        
+        # Check for bullet points
+        if re.match(r'^[●○•\-\*]\s*', line):
+            content = re.sub(r'^[●○•\-\*]\s*', '', line)
             if content:
                 # Look for project description
                 if ':' in content:
@@ -519,107 +488,80 @@ def extract_projects_improved(lines: List[str]) -> List[Dict[str, Any]]:
     return projects
 
 
-# ----------------------- Improved section classification -----------------------
+# ----------------------- Summary extraction -----------------------
 
-def classify_sections_improved(raw_sections: Dict[str, List[str]]) -> Dict[str, List[str]]:
-    """Classify sections with improved heuristics."""
-    classified = {
-        "contact": [],
-        "professional_summary": [],
-        "skills": [],
-        "languages": [],
-        "education": [],
-        "experience": [],
-        "projects": [],
-    }
+def extract_summary(text: str) -> List[str]:
+    """Extract professional summary with better content detection."""
+    summary_lines = []
     
-    # Process each section
-    for header, lines in raw_sections.items():
-        if not lines:
+    # Find the summary section by looking for the section header and content
+    lines = text.split('\n')
+    in_summary = False
+    summary_lines = []
+    
+    for line in lines:
+        line = line.strip()
+        if not line:
             continue
         
-        header_lower = header.lower()
+        # Check if we're entering summary section (exact match for section headers)
+        if re.match(r'^(?:SUMMARY|RÉSUMÉ|PROFILE)$', line, re.IGNORECASE):
+            in_summary = True
+            continue
         
-        # Direct mapping based on header content
-        if any(keyword in header_lower for keyword in ["contact", "coordonnées", "contacto"]):
-            classified["contact"].extend(lines)
-        elif any(keyword in header_lower for keyword in ["summary", "resume", "profile", "about", "overview", "introduction", "présentation", "profil", "aperçu"]):
-            classified["professional_summary"].extend(lines)
-        elif any(keyword in header_lower for keyword in ["skills", "compétences", "competences", "aptitudes", "capacités", "capabilities", "technical"]):
-            classified["skills"].extend(lines)
-        elif any(keyword in header_lower for keyword in ["languages", "langues", "idiomas", "sprachen", "lingue"]):
-            classified["languages"].extend(lines)
-        elif any(keyword in header_lower for keyword in ["education", "formation", "études", "academic", "académique", "diplômes", "diplomas"]):
-            classified["education"].extend(lines)
-        elif any(keyword in header_lower for keyword in ["experience", "work", "employment", "emploi", "travail", "expérience", "carrière", "career", "professional"]):
-            classified["experience"].extend(lines)
-        elif any(keyword in header_lower for keyword in ["projects", "projets", "proyectos", "projekte", "progetti"]):
-            classified["projects"].extend(lines)
-        elif any(keyword in header_lower for keyword in ["certifications", "certificaciones", "zertifikate", "certificazioni"]):
-            # Add certifications to experience or create new section
-            classified["experience"].extend(lines)
-        else:
-            # Default classification based on content analysis
-            if header == "header":  # Top section
-                classified["professional_summary"].extend(lines)
-            else:
-                # Try to infer from content
-                text = "\n".join(lines)
-                if re.search(r'\b(?:19|20)\d{2}\b', text):
-                    if re.search(r'\b(?:bachelor|master|phd|degree|diploma|licence|ingénieur)\b', text, re.IGNORECASE):
-                        classified["education"].extend(lines)
-                    else:
-                        classified["experience"].extend(lines)
-                elif re.search(r'[,:/;\|\u2013\u2014\-]', text) and len(lines) <= 3:
-                    classified["skills"].extend(lines)
-                else:
-                    classified["professional_summary"].extend(lines)
+        # Check if we're leaving summary section (exact match for section headers)
+        if in_summary and re.match(r'^(?:TECHNICAL SKILLS|SKILLS|EDUCATION|FORMATION|EXPERIENCE|LANGUAGES|PROJECTS)$', line, re.IGNORECASE):
+            in_summary = False
+            continue
+        
+        if in_summary:
+            summary_lines.append(line)
     
-    return classified
-
-
-# ----------------------- Main assembly function -----------------------
-
-def assemble_cv_data_improved(sections: Dict[str, List[str]], text: str) -> Dict[str, Any]:
-    """Assemble the final CV data structure."""
-    # Extract name
-    name = extract_name_improved(text)
+    # Parse summary from the collected lines
+    summary_text = []
     
-    # Extract contact info from header section (regardless of classification)
-    header_contact = extract_contact_info_improved(sections.get("header", []))
+    for line in summary_lines:
+        if not line:
+            continue
+        
+        # Skip if it contains contact information
+        if re.search(r'@', line) or re.search(r'\+?\d', line) or re.search(r'linkedin\.com|github\.com', line):
+            continue
+        
+        # Skip if it's too short or looks like a fragment
+        if len(line) < 20 and not line.endswith(('.', '!', '?')):
+            continue
+        
+        # Clean up the text
+        cleaned = _clean_text(line)
+        if cleaned and _is_meaningful_text(cleaned):
+            summary_text.append(cleaned)
     
-    # Build the data structure
-    data = {
-        "name": name,
-        "contact_info": header_contact,  # Always extract from header
-        "professional_summary": extract_summary_improved(sections.get("professional_summary", [])),
-        "skills": extract_skills_improved(sections.get("skills", [])),
-        "languages": extract_languages_improved(sections.get("languages", [])),
-        "education": extract_education_improved(sections.get("education", [])),
-        "experience": extract_experience_improved(sections.get("experience", [])),
-        "projects": extract_projects_improved(sections.get("projects", [])),
-    }
-    
-    # Clean empty fields
-    return {k: v for k, v in data.items() if v and (not isinstance(v, list) or len(v) > 0) and (not isinstance(v, dict) or any(v.values()))}
+    return _dedupe_list(summary_text)
 
 
 # ----------------------- Main CV Extractor Class -----------------------
 
 class CVExtractor:
-    """Improved CV extractor with better section detection and parsing."""
+    """Improved CV extractor with better parsing accuracy."""
     
     def extract_cv_data(self, file_path: str) -> Dict[str, Any]:
         """Extract structured CV data with improved parsing."""
         text = load_text(file_path)
         
+        # Extract all information
+        data = {
+            "contact_info": extract_contact_info(text),
+            "professional_summary": extract_summary(text),
+            "skills": extract_skills(text),
+            "languages": extract_languages(text),
+            "education": extract_education(text),
+            "experience": extract_experience(text),
+            "projects": extract_projects(text),
+        }
         
-        # Improved section detection and classification
-        raw_sections = split_sections_improved(text)
-        classified_sections = classify_sections_improved(raw_sections)
-        
-        # Assemble final data
-        return assemble_cv_data_improved(classified_sections, text)
+        # Clean empty fields
+        return {k: v for k, v in data.items() if v and (not isinstance(v, list) or len(v) > 0) and (not isinstance(v, dict) or any(v.values()))}
 
 
 # ----------------------- CLI -----------------------
