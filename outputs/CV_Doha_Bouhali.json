@@ -141,78 +141,64 @@
   ],
   "education": [
     {
+      "date_range": "SEPT 2022- PRÉSENT",
       "details": [
+        "Génie Appliqué), Casablanca Licence Génie",
+        "informatique",
         "Programmation Web, Modélisation UML,",
         "Programmation SGBD, Systèmes et réseaux",
         "informatiques, Administration réseaux et systèmes",
         "SEPT 2020 - JUIN 2022 :FST (Faculté des sciences et",
-        "Techniques) ,Settat Maths Info Physique,"
+        "Techniques) ,Settat Maths Info Physique,",
+        "Algorithmique, Algèbre, Statistiques"
       ],
-      "degree": "​"
-    },
+      "degree": "IGA (Institut Supérieur du"
+    }
+  ],
+  "experience": [
     {
+      "date_range": "JUIN 2024 - AOÛT 2024",
       "details": [
-        "Expérience Professionnelle"
-      ],
-      "degree": "​ Algorithmique, Algèbre, Statistiques"
-    },
-    {
-      "details": [
-        "JUIN 2024 - AOÛT 2024 : Progiciel System,",
         "Casablanca",
         "Stagiaire en développement",
-        "d'applications mobiles"
-      ],
-      "degree": "​"
-    },
-    {
-      "details": [
+        "d'applications mobiles",
         "Utilisation de Flutter et Dart pour",
         "développer l’interface utilisateur d’une",
-        "application de gestion de commandes."
-      ],
-      "degree": "​"
-    },
-    {
-      "details": [
+        "application de gestion de commandes.",
         "Contribution au développement front-end en",
         "modifiant les fonctionnalités, les schémas de",
         "couleurs et en améliorant les éléments",
         "visuels."
       ],
-      "degree": "​"
+      "company": "Progiciel System",
+      "role": ""
     },
     {
+      "date_range": "Juin 2023 - Août 2023",
       "details": [
-        "Juin 2023 - Août 2023 :Traco Engineering,",
         "Casablanca",
-        "Stagiaire en Développement Web"
-      ],
-      "degree": "​"
-    },
-    {
-      "details": [
+        "Stagiaire en développement",
+        "d'applications mobiles",
+        "Utilisation de Flutter et Dart pour",
+        "développer l’interface utilisateur d’une",
+        "application de gestion de commandes.",
+        "Contribution au développement front-end en",
+        "modifiant les fonctionnalités, les schémas de",
+        "couleurs et en améliorant les éléments",
+        "visuels.",
+        "Stagiaire en Développement Web",
         "Développement et intégration d’un site vitrine",
         "pour la vente d’étiquettes et d’imprimantes",
-        "industrielles en HTML, CSS et JavaScript."
-      ],
-      "degree": "​"
-    },
-    {
-      "details": [
+        "industrielles en HTML, CSS et JavaScript.",
         "Personnalisation de l’affichage des produits",
         "avec descriptions détaillées et visuels",
-        "adaptés."
-      ],
-      "degree": "​"
-    },
-    {
-      "details": [
+        "adaptés.",
         "Ajout d’interactions avec JavaScript :",
         "animations sur le survol des produits, effets",
         "de transition."
       ],
-      "degree": "​"
+      "company": "Traco Engineering",
+      "role": ""
     }
   ]
 }

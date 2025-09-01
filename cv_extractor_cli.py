@@ -327,7 +327,7 @@ def extract_languages(text: str) -> List[Dict[str, str]]:
 # ----------------------- Education extraction -----------------------
 
 def extract_education(text: str) -> List[Dict[str, Any]]:
-    """Extract education information with better structure detection."""
+    """Extract education information with improved structure detection."""
     education_entries = []
     
     # Find the education section by looking for the section header and content
@@ -345,8 +345,8 @@ def extract_education(text: str) -> List[Dict[str, Any]]:
             in_education = True
             continue
         
-        # Check if we're leaving education section (exact match for section headers)
-        if in_education and re.match(r'^(?:Professional Experience|EXPERIENCE|PROJECTS)$', line, re.IGNORECASE):
+        # Check if we're leaving education section (more flexible matching)
+        if in_education and re.search(r'\b(?:Expérience Professionnelle|EXPERIENCE|PROJECTS|SKILLS|LANGUAGES)\b', line, re.IGNORECASE):
             in_education = False
             continue
         
@@ -360,36 +360,56 @@ def extract_education(text: str) -> List[Dict[str, Any]]:
         if not line:
             continue
         
-        # Check for bullet points
-        if re.match(r'^[●○•\-\*]\s*', line):
-            content = re.sub(r'^[●○•\-\*]\s*', '', line)
+        # Remove zero-width spaces and other invisible Unicode characters
+        line = re.sub(r'[\u200B\u200C\u200D\uFEFF]', '', line)
+        
+        # Check for date range pattern (e.g., "SEPT 2022- PRÉSENT :" or "SEPT 2020 - JUIN 2022 :")
+        # Use Unicode-aware pattern for French month names
+        date_range_match = re.match(r'^([A-ZÀ-ÿ]+\s+\d{4}[-–]\s*(?:PRÉSENT|\d{4}))\s*:\s*(.+)$', line, re.IGNORECASE)
+        if date_range_match:
+            # Start new entry
+            if current_entry:
+                education_entries.append(current_entry)
+            
+            date_range = date_range_match.group(1).strip()
+            content = date_range_match.group(2).strip()
+            
+            current_entry = {
+                "date_range": date_range,
+                "details": []
+            }
+            
+            # Try to extract institution and degree from content
             if content:
-                # Start new entry
-                if current_entry:
-                    education_entries.append(current_entry)
-                
-                current_entry = {"details": []}
-                
-                # Extract dates
-                dates = re.findall(r'\b(?:19|20)\d{2}\b', content)
-                if dates:
-                    if len(dates) >= 2:
-                        current_entry["start_year"] = dates[0]
-                        current_entry["end_year"] = dates[1]
-                    else:
-                        current_entry["start_year"] = dates[0]
-                
-                # Extract degree and institution
-                if re.search(r'\b(?:bachelor|licence|ingénieur|ingenieur|cycle|master|phd|doctorat|diplôme|diploma|degree|diplome|bac|baccalauréat|baccalaureat)\b', content, re.IGNORECASE):
-                    current_entry["degree"] = content
-                elif re.search(r'\b(?:university|université|faculté|faculte|school|lycée|lycee|ecole|institute|institut|academy|académie|academie)\b', content, re.IGNORECASE):
-                    current_entry["institution"] = content
+                # Look for institution patterns
+                institution_match = re.search(r'\(([^)]+)\)', content)
+                if institution_match:
+                    current_entry["institution"] = institution_match.group(1).strip()
+                    # Remove institution from content to get degree
+                    degree_content = re.sub(r'\([^)]+\)', '', content).strip()
+                    if degree_content:
+                        current_entry["degree"] = degree_content
                 else:
+                    # If no institution in parentheses, treat as degree
                     current_entry["degree"] = content
-        else:
-            # Add details to current entry
-            if current_entry and _is_meaningful_text(line):
+        
+        # Check for bullet points (coursework/details)
+        elif re.match(r'^[●○•\-\*]\s*', line):
+            content = re.sub(r'^[●○•\-\*]\s*', '', line)
+            if content and current_entry:
+                current_entry["details"].append(content.strip())
+        
+        # Check for continuation lines (no bullet, no date range)
+        elif current_entry and _is_meaningful_text(line):
+            # This might be a continuation of institution/degree or additional details
+            if not re.match(r'^[A-Z\s]+$', line):  # Not just uppercase words
                 current_entry["details"].append(line.strip())
+            else:
+                # Might be institution or degree continuation
+                if "degree" not in current_entry or not current_entry["degree"]:
+                    current_entry["degree"] = line.strip()
+                elif "institution" not in current_entry or not current_entry["institution"]:
+                    current_entry["institution"] = line.strip()
     
     # Add final entry
     if current_entry:
@@ -401,7 +421,7 @@ def extract_education(text: str) -> List[Dict[str, Any]]:
 # ----------------------- Experience extraction -----------------------
 
 def extract_experience(text: str) -> List[Dict[str, Any]]:
-    """Extract experience information with better job detection."""
+    """Extract experience information with improved structure detection."""
     experience_entries = []
     
     # Find the experience section by looking for the section header and content
@@ -414,13 +434,13 @@ def extract_experience(text: str) -> List[Dict[str, Any]]:
         if not line:
             continue
         
-        # Check if we're entering experience section (exact match for section headers)
-        if re.match(r'^(?:Professional Experience|EXPERIENCE|EMPLOI)$', line, re.IGNORECASE):
+        # Check if we're entering experience section (more flexible matching)
+        if re.search(r'\b(?:Expérience Professionnelle|EXPERIENCE|EMPLOI|Professional Experience)\b', line, re.IGNORECASE):
             in_experience = True
             continue
         
-        # Check if we're leaving experience section (exact match for section headers)
-        if in_experience and re.match(r'^(?:PROJECTS|EDUCATION|FORMATION)$', line, re.IGNORECASE):
+        # Check if we're leaving experience section (more flexible matching)
+        if in_experience and re.search(r'\b(?:PROJECTS|EDUCATION|FORMATION|SKILLS|LANGUAGES)\b', line, re.IGNORECASE):
             in_experience = False
             continue
         
@@ -435,42 +455,60 @@ def extract_experience(text: str) -> List[Dict[str, Any]]:
         if not line:
             continue
         
-        # Check for bullet points
-        if re.match(r'^[●○•\-\*]\s*', line):
-            content = re.sub(r'^[●○•\-\*]\s*', '', line)
+        # Remove zero-width spaces and other invisible Unicode characters
+        line = re.sub(r'[\u200B\u200C\u200D\uFEFF]', '', line)
+        
+        # Check for date range pattern (e.g., "JUIN 2024 - AOÛT 2024 :" or "Juin 2023 - Août 2023 :")
+        # Use Unicode-aware pattern for French month names
+        date_range_match = re.match(r'^([A-Za-zÀ-ÿ]+\s+\d{4}\s*[-–]\s*[A-Za-zÀ-ÿ]+\s+\d{4})\s*:\s*(.+)$', line, re.IGNORECASE)
+        if not date_range_match:
+            # Try alternative pattern without colon (e.g., "JUIN 2024 - AOÛT 2024 Progiciel System,")
+            date_range_match = re.match(r'^([A-Za-zÀ-ÿ]+\s+\d{4}\s*[-–]\s*[A-Za-zÀ-ÿ]+\s+\d{4})\s+(.+)$', line, re.IGNORECASE)
+        if not date_range_match:
+            # Try pattern with space before colon (e.g., "JUIN 2024 - AOÛT 2024 : Progiciel System,")
+            date_range_match = re.match(r'^([A-Za-zÀ-ÿ]+\s+\d{4}\s*[-–]\s*[A-Za-zÀ-ÿ]+\s+\d{4})\s+:\s*(.+)$', line, re.IGNORECASE)
+        if date_range_match:
+            # Finalize previous entry
+            if current_entry:
+                if current_details:
+                    current_entry["details"] = _dedupe_list(current_details)
+                experience_entries.append(current_entry)
+            
+            date_range = date_range_match.group(1).strip()
+            content = date_range_match.group(2).strip()
+            
+            current_entry = {
+                "date_range": date_range,
+                "details": []
+            }
+            
+            # Try to extract company and role from content
             if content:
-                # Check if this looks like a new job entry
-                has_date = re.search(r'\b(?:19|20)\d{2}\b', content)
-                has_company = re.search(r'\b(?:inc|corp|company|ltd|llc|sarl|eurl|sa|sas|system|engineering|tech)\b', content, re.IGNORECASE)
-                has_job_title = re.search(r'\b(?:intern|stagiaire|developer|développeur|assistant|manager|analyst|consultant)\b', content, re.IGNORECASE)
-                
-                if has_date or has_company or has_job_title or len(content.split()) <= 8:
-                    # Finalize previous entry
-                    if current_entry:
-                        if current_details:
-                            current_entry["details"] = _dedupe_list(current_details)
-                        experience_entries.append(current_entry)
-                    
-                    # Start new entry
-                    current_entry = {"title": content}
-                    current_details = []
-                    
-                    # Extract dates
-                    dates = re.findall(r'\b(?:19|20)\d{2}\b', content)
-                    if dates:
-                        if len(dates) >= 2:
-                            current_entry["start_year"] = dates[0]
-                            current_entry["end_year"] = dates[1]
-                        else:
-                            current_entry["start_year"] = dates[0]
+                # Split by comma to separate company and role
+                parts = content.split(',', 1)
+                if len(parts) >= 2:
+                    current_entry["company"] = parts[0].strip()
+                    current_entry["role"] = parts[1].strip()
                 else:
-                    # This is a detail line
-                    if current_entry and _is_meaningful_text(content):
-                        current_details.append(content)
-        else:
-            # Add non-bullet lines as details
-            if current_entry and _is_meaningful_text(line):
+                    current_entry["company"] = content
+        
+        # Check for bullet points (details)
+        elif re.match(r'^[●○•\-\*○]\s*', line):
+            content = re.sub(r'^[●○•\-\*○]\s*', '', line)
+            if content and current_entry and _is_meaningful_text(content):
+                current_details.append(content.strip())
+        
+        # Check for continuation lines (no bullet, no date range)
+        elif current_entry and _is_meaningful_text(line):
+            # This might be a continuation of company/role or additional details
+            if not re.match(r'^[A-Z\s]+$', line):  # Not just uppercase words
                 current_details.append(line.strip())
+            else:
+                # Might be company or role continuation
+                if "role" not in current_entry or not current_entry["role"]:
+                    current_entry["role"] = line.strip()
+                elif "company" not in current_entry or not current_entry["company"]:
+                    current_entry["company"] = line.strip()
     
     # Add final entry
     if current_entry:

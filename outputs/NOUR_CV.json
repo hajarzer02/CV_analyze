@@ -75,66 +75,43 @@
   ],
   "education": [
     {
+      "date_range": "SEPT 2024- PRÉSENT",
       "details": [
+        "commerce et de gestion), Agadir",
+        "1ère année-Tronc commun",
+        "Instruments quantitatifs, Comptabilité …",
         "SEPT 2023 - JUIN 2024 :Groupe scolaire Rodin",
-        "Mohammadia Baccalauréat,"
+        "Mohammadia Baccalauréat,",
+        "Mention très bien"
       ],
-      "degree": "​ Instruments quantitatifs, Comptabilité …"
-    },
+      "degree": "ENCG (Ecole nationale de"
+    }
+  ],
+  "experience": [
     {
+      "date_range": "JUIN 2024 - AOÛT 2024",
       "details": [
-        "Expérience Professionnelle"
-      ],
-      "degree": "​ Mention très bien"
-    },
-    {
-      "details": [
-        "JUIN 2024 - AOÛT 2024 : Traco Engineering,",
         "Casablanca",
-        "Assistante Administrative"
-      ],
-      "degree": "​"
-    },
-    {
-      "details": [
+        "Assistante Administrative",
         "Classement et traitement de documents",
-        "administratifs"
-      ],
-      "degree": "​"
-    },
-    {
-      "details": [
+        "administratifs",
         "Saisie et mise à jour de données sur",
-        "Excel"
-      ],
-      "degree": "​"
-    },
-    {
-      "details": [
+        "Excel",
         "Soutien à la gestion des tâches",
         "quotidiennes de bureau",
-        "Projets académiques"
-      ],
-      "degree": "​"
-    },
-    {
-      "details": [
-        "Étude de cas – Analyse d’une organisation​",
+        "Projets académiques",
+        "Étude de cas – Analyse d’une organisation",
         "Application de grilles d’analyse stratégique sur",
         "une entreprise locale, dans le cadre du module",
-        "\"Environnement des organisations\"."
-      ],
-      "degree": "​"
-    },
-    {
-      "details": [
+        "\"Environnement des organisations\".",
         "Mini-projet Excel – Suivi budgétaire",
-        "personnel​",
+        "personnel",
         "Création d’un tableau interactif avec formules,",
         "mise en forme conditionnelle et graphique de",
         "dépenses mensuelles."
       ],
-      "degree": "​"
+      "company": "Traco Engineering",
+      "role": ""
     }
   ]
 }
