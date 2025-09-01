@@ -20,6 +20,37 @@
     "seeking to enhance expertise and stay",
     "ahead in the tech field."
   ],
+  "skills": [
+    "Programming Languages: C",
+    "C++",
+    "JAVA",
+    "JavaScript",
+    "PHP",
+    "Dart",
+    "Web Technologies: HTML",
+    "CSS",
+    "Laravel",
+    "Databases: SQL",
+    "Oracle",
+    "Microsoft Access",
+    "Systems and Networks: OSI Model",
+    "Cisco",
+    "Packet Tracer",
+    "Software and Tools: MATLAB",
+    "Arduino",
+    "System Commands: CMD in Linux and",
+    "Windows"
+  ],
+  "languages": [
+    {
+      "language": "English",
+      "level": "Fluent"
+    },
+    {
+      "language": "French",
+      "level": "Excellent"
+    }
+  ],
   "education": [
     {
       "details": [

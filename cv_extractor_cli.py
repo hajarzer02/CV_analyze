@@ -171,7 +171,7 @@ def extract_contact_info(text: str) -> Dict[str, Any]:
 # ----------------------- Skills extraction -----------------------
 
 def extract_skills(text: str) -> List[str]:
-    """Extract skills using precise bullet point detection."""
+    """Extract skills using improved bullet point detection and Unicode handling."""
     skills = []
     
     # Find the skills section by looking for the section header and content
@@ -184,13 +184,14 @@ def extract_skills(text: str) -> List[str]:
         if not line:
             continue
         
-        # Check if we're entering skills section (exact match for section headers)
-        if re.match(r'^(?:TECHNICAL SKILLS|COMPÉTENCES|SKILLS)$', line, re.IGNORECASE):
+        # Check if we're entering skills section (more flexible matching)
+        if re.search(r'\b(?:TECHNICAL\s+SKILLS|COMPÉTENCES|SKILLS)\b', line, re.IGNORECASE):
             in_skills = True
             continue
         
-        # Check if we're leaving skills section (exact match for section headers)
-        if in_skills and re.match(r'^(?:LANGUAGES|LANGUES|EDUCATION|FORMATION|EXPERIENCE|PROJECTS)$', line, re.IGNORECASE):
+        # Check if we're leaving skills section (more flexible matching)
+        # Only leave if it's a standalone section header, not content
+        if in_skills and re.match(r'^(?:LANGUAGES|LANGUES|EDUCATION|FORMATION|EXPERIENCE|PROJECTS|CERTIFICATIONS)$', line, re.IGNORECASE):
             in_skills = False
             continue
         
@@ -198,32 +199,66 @@ def extract_skills(text: str) -> List[str]:
             skills_lines.append(line)
     
     # Parse skills from the collected lines
+    current_category = ""
+    current_skills = []
+    
     for line in skills_lines:
         if not line:
             continue
         
+        # Remove zero-width spaces and other invisible Unicode characters
+        line = re.sub(r'[\u200B\u200C\u200D\uFEFF]', '', line)
+        
         # Check for bullet points (including special Unicode characters)
-        if re.match(r'^[●○•\-\*]\s*', line):
+        bullet_match = re.match(r'^[●○•\-\*]\s*', line)
+        if bullet_match:
+            # Process previous category if exists
+            if current_skills:
+                for skill in current_skills:
+                    if skill and len(skill) >= 2:
+                        skills.append(skill)
+                current_skills = []
+            
+            # Extract content after bullet
             content = re.sub(r'^[●○•\-\*]\s*', '', line)
             if content:
                 # Handle "Category: skill1, skill2, skill3" format
                 if ':' in content:
                     parts = content.split(':', 1)
                     if len(parts) == 2:
+                        current_category = parts[0].strip()
                         skill_list = parts[1].strip()
                         # Split by common separators
                         skill_items = re.split(r'[,;/|]', skill_list)
                         for skill in skill_items:
                             skill = skill.strip()
                             if skill and len(skill) >= 2:
-                                skills.append(skill)
+                                # Don't include category names as skills
+                                if skill.lower() not in ['programming languages', 'web technologies', 'databases', 'systems and networks', 'software and tools', 'system commands']:
+                                    current_skills.append(skill)
                 else:
                     # Single skill or comma-separated list
                     skill_items = re.split(r'[,;/|]', content)
                     for skill in skill_items:
                         skill = skill.strip()
                         if skill and len(skill) >= 2:
-                            skills.append(skill)
+                            current_skills.append(skill)
+        else:
+            # This might be a continuation line (no bullet)
+            # Check if it looks like skill content
+            if line and not re.match(r'^[A-Z\s]+$', line):  # Not just uppercase words
+                # Split by common separators
+                skill_items = re.split(r'[,;/|]', line)
+                for skill in skill_items:
+                    skill = skill.strip()
+                    if skill and len(skill) >= 2:
+                        current_skills.append(skill)
+    
+    # Process final category
+    if current_skills:
+        for skill in current_skills:
+            if skill and len(skill) >= 2:
+                skills.append(skill)
     
     return _dedupe_list(skills)
 
@@ -231,7 +266,7 @@ def extract_skills(text: str) -> List[str]:
 # ----------------------- Languages extraction -----------------------
 
 def extract_languages(text: str) -> List[Dict[str, str]]:
-    """Extract languages using precise section detection."""
+    """Extract languages using improved section detection and Unicode handling."""
     languages = []
     
     # Find the languages section by looking for the section header and content
@@ -249,8 +284,8 @@ def extract_languages(text: str) -> List[Dict[str, str]]:
             in_languages = True
             continue
         
-        # Check if we're leaving languages section (exact match for section headers)
-        if in_languages and re.match(r'^(?:CERTIFICATIONS|EDUCATION|FORMATION|EXPERIENCE|PROJECTS)$', line, re.IGNORECASE):
+        # Check if we're leaving languages section (more flexible matching)
+        if in_languages and re.search(r'\b(?:CERTIFICATIONS|EDUCATION|FORMATION|EXPERIENCE|PROJECTS|SKILLS)\b', line, re.IGNORECASE):
             in_languages = False
             continue
         
@@ -261,6 +296,9 @@ def extract_languages(text: str) -> List[Dict[str, str]]:
     for line in languages_lines:
         if not line:
             continue
+        
+        # Remove zero-width spaces and other invisible Unicode characters
+        line = re.sub(r'[\u200B\u200C\u200D\uFEFF]', '', line)
         
         # Check for bullet points
         if re.match(r'^[●○•\-\*]\s*', line):
@@ -273,6 +311,15 @@ def extract_languages(text: str) -> List[Dict[str, str]]:
                     level = lang_match.group(2).strip().title()
                     if language and level and len(language) > 1:
                         languages.append({"language": language, "level": level})
+        else:
+            # Check if it's a language line without bullet (continuation)
+            # Look for "Language: Level" pattern
+            lang_match = re.match(r'^([A-Za-zÀ-ÿ]+)\s*[:\-–]\s*([A-Za-zÀ-ÿ\s]+)$', line)
+            if lang_match:
+                language = lang_match.group(1).title()
+                level = lang_match.group(2).strip().title()
+                if language and level and len(language) > 1:
+                    languages.append({"language": language, "level": level})
     
     return languages
 

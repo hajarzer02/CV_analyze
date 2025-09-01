@@ -18,14 +18,18 @@ def debug_cv_parsing(file_path):
         if not line:
             continue
         
+        # Show character codes for debugging
+        if i >= 15 and i <= 25:  # Around skills section
+            print(f"Line {i}: '{line}' (codes: {[ord(c) for c in line[:10]]})")
+        
         # Check if we're entering skills section
-        if re.search(r'\b(?:TECHNICAL SKILLS|COMPÉTENCES|SKILLS)\b', line, re.IGNORECASE):
+        if re.search(r'\b(?:TECHNICAL\s+SKILLS|COMPÉTENCES|SKILLS)\b', line, re.IGNORECASE):
             print(f"ENTERING SKILLS at line {i}: '{line}'")
             in_skills = True
             continue
         
         # Check if we're leaving skills section
-        if in_skills and re.search(r'\b(?:LANGUAGES|LANGUES|EDUCATION|FORMATION|EXPERIENCE|PROJECTS)\b', line, re.IGNORECASE):
+        if in_skills and re.match(r'^(?:LANGUAGES|LANGUES|EDUCATION|FORMATION|EXPERIENCE|PROJECTS|CERTIFICATIONS)$', line, re.IGNORECASE):
             print(f"LEAVING SKILLS at line {i}: '{line}'")
             in_skills = False
             continue
@@ -37,7 +41,7 @@ def debug_cv_parsing(file_path):
     print(f"\nTotal skills lines collected: {len(skills_lines)}")
     print("Skills lines:")
     for line in skills_lines:
-        print(f"  '{line}'")
+        print(f"  '{line}' (codes: {[ord(c) for c in line[:10]]})")
     
     print("\n=== DEBUGGING LANGUAGES EXTRACTION ===")
     
