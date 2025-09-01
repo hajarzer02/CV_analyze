@@ -613,9 +613,6 @@ class CVExtractor:
         """Extract structured CV data with improved parsing."""
         text = load_text(file_path)
         
-        # Debug dump
-        with open("debug_extracted_text.txt", "w", encoding="utf-8") as dbg:
-            dbg.write(text)
         
         # Improved section detection and classification
         raw_sections = split_sections_improved(text)
