@@ -1,0 +1,74 @@
+{
+  "info": {
+    "name": "CV Extraction API",
+    "description": "API endpoints for CV extraction (PDF, DOCX, TXT) with no AI or job recommendation features.",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["health"]
+        },
+        "description": "Check API health."
+      }
+    },
+    {
+      "name": "Analyze CV File",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "cv_file",
+              "type": "file",
+              "src": "sample_cv.txt",
+              "description": "Upload CV file (PDF, DOCX, or TXT)"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:5000/analyze",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["analyze"]
+        },
+        "description": "Upload and extract CV data from file."
+      }
+    },
+    {
+      "name": "Analyze CV Text",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cv_text\": \"John Doe\\nSoftware Developer\\nEmail: john@example.com\\nPhone: +1234567890\\n\\nSkills:\\n- Python\\n- JavaScript\\n- React\\n- SQL\\n\\nExperience:\\n- Software Developer at Tech Corp (2020-2023)\\n- Junior Developer at StartupXYZ (2018-2020)\\n\\nEducation:\\n- Bachelor in Computer Science\\n- University of Technology (2014-2018)\""
+        },
+        "url": {
+          "raw": "http://localhost:5000/analyze-text",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["analyze-text"]
+        },
+        "description": "Extract CV data from raw text (no file upload)."
+      }
+    }
+  ]
+}

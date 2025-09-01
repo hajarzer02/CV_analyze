@@ -1,0 +1,5 @@
+python-dotenv==1.0.0
+python-docx==0.8.11
+flask==3.0.0
+werkzeug==3.0.1
+requests==2.32.4

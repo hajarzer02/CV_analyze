@@ -1,0 +1,100 @@
+{
+  "name": "Doha Bouhali",
+  "professional_summary": [
+    "Computer science student with a solid",
+    "foundation in app and web development,",
+    "dedicated to crafting robust and scalable",
+    "software solutions. Experienced in",
+    "developing dynamic applications and",
+    "tackling complex challenges, always",
+    "seeking to enhance expertise and stay",
+    "ahead in the tech field.",
+    "Contributed to web development using HTML,",
+    "CSS, and JavaScript.",
+    "Collaborated with the team on design and",
+    "layout improvements for the website.",
+    "Implemented styling and interactivity to",
+    "enhance user experience."
+  ],
+  "skills": [
+    "OSI Model",
+    "MATLAB",
+    "Arduino",
+    "CMD in Linux and"
+  ],
+  "education": [
+    {
+      "details": [
+        "SEPT 2022- PRESENT : IGA (Institut Supérieur",
+        "du Génie Appliqué), Casablanca Bachelor's",
+        "Degree in Computer Science"
+      ],
+      "degree": "​"
+    },
+    {
+      "details": [
+        "Networks"
+      ],
+      "degree": "Specialization in Web/App Programming and"
+    },
+    {
+      "details": [
+        "SEPT 2020 - JUN 2022 :FST (Faculté des sciences",
+        "et Techniques) ,Settat Maths Software",
+        "Physics,"
+      ],
+      "degree": "​"
+    },
+    {
+      "details": [
+        "Professional Experience"
+      ],
+      "degree": "Algorithmics , Algebra, Statistics"
+    },
+    {
+      "details": [
+        "JUN 2024 - AUG 2024: Progiciel System, Casablanca"
+      ],
+      "degree": "​"
+    }
+  ],
+  "experience": [
+    {
+      "title": "​",
+      "details": [
+        "AI Career Essentials – ALX Africa",
+        "Morocco (April 2024 - May 2024)",
+        "Machine learning, Python, TensorFlow"
+      ]
+    },
+    {
+      "title": "​",
+      "details": [
+        "Developed user interfaces using Flutter and",
+        "Dart."
+      ]
+    },
+    {
+      "title": "​",
+      "details": [
+        "Contributed to the front-end development of",
+        "the app by modifying features, updating color",
+        "schemes, and enhancing visual elements to",
+        "improve user experience."
+      ]
+    },
+    {
+      "title": "​",
+      "details": [
+        "JUN 2023 - AUG 2023 :Traco Engineering, Casablanca",
+        "using Packet Tracer"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "title": "​",
+      "description": ""
+    }
+  ]
+}
