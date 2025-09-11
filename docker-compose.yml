@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: cvdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/cvdb
+      LLAMA3_API_KEY: ${LLAMA3_API_KEY:-}
+      LLAMA3_API_URL: ${LLAMA3_API_URL:-https://api.example.com/llama3}
+    depends_on:
+      - postgres
+    volumes:
+      - ./uploads:/app/uploads
+      - ./cv_files:/app/cv_files
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: http://localhost:8000
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

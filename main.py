@@ -1,48 +1,203 @@
+from fastapi import FastAPI, File, UploadFile, Depends, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
+from typing import List
 import os
 import json
+import shutil
+from datetime import datetime
+
+from database import get_db, create_tables, Candidate, JobRecommendation
+from models import (
+    CandidateResponse, 
+    CandidateSummary, 
+    JobRecommendationResponse, 
+    UploadResponse,
+    ExtractedCVData
+)
 from cv_extractor_cli import CVExtractor
+from llama_service import LlamaService
 
-def main():
-    cv_folder = "cv_files"
+# Create FastAPI app
+app = FastAPI(title="CV Analysis & Job Recommendation API", version="1.0.0")
 
-    output_folder = "outputs"
-    extracted_data_folder = "extracted_data"
-    os.makedirs(cv_folder, exist_ok=True)
-    os.makedirs(output_folder, exist_ok=True)
-    os.makedirs(extracted_data_folder, exist_ok=True)
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # React app URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    extractor = CVExtractor()
-    cv_files = [f for f in os.listdir(cv_folder) if f.lower().endswith((".pdf", ".docx", ".txt"))]
+# Create tables on startup
+@app.on_event("startup")
+def startup_event():
+    create_tables()
 
-    if not cv_files:
-        print(f"No CV files found in {cv_folder}/")
-        print("Add PDF, DOCX, or TXT files to analyze")
-        return
+# Initialize services
+cv_extractor = CVExtractor()
+llama_service = LlamaService()
 
-    print(f"Found {len(cv_files)} CV file(s)\n")
+# Create uploads directory
+UPLOAD_DIR = "uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
+@app.post("/upload-cv", response_model=UploadResponse)
+async def upload_cv(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    """
+    Upload a CV file, extract data, and store in database.
+    """
+    try:
+        # Validate file type
+        if not file.filename.lower().endswith(('.pdf', '.docx', '.doc', '.txt')):
+            raise HTTPException(
+                status_code=400, 
+                detail="Unsupported file type. Please upload PDF, DOCX, or TXT files."
+            )
+        
+        # Save uploaded file
+        file_path = os.path.join(UPLOAD_DIR, file.filename)
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        
+        # Extract CV data using existing extractor
+        extracted_data = cv_extractor.extract_cv_data(file_path)
+        
+        # Extract basic info for database
+        contact_info = extracted_data.get("contact_info", {})
+        name = None
+        if contact_info.get("emails"):
+            # Try to extract name from first email
+            email = contact_info["emails"][0]
+            name = email.split("@")[0].replace(".", " ").replace("_", " ").title()
+        
+        # Create candidate record
+        candidate = Candidate(
+            name=name,
+            email=contact_info.get("emails", [None])[0] if contact_info.get("emails") else None,
+            phone=contact_info.get("phones", [None])[0] if contact_info.get("phones") else None,
+            location=contact_info.get("address", ""),
+            raw_cv_path=file_path,
+            extracted_data=json.dumps(extracted_data)
+        )
+        
+        db.add(candidate)
+        db.commit()
+        db.refresh(candidate)
+        
+        return UploadResponse(
+            candidate_id=candidate.id,
+            extracted_data=extracted_data,
+            message="CV uploaded and processed successfully"
+        )
+        
+    except Exception as e:
+        # Clean up file if there was an error
+        if 'file_path' in locals() and os.path.exists(file_path):
+            os.remove(file_path)
+        raise HTTPException(status_code=500, detail=f"Error processing CV: {str(e)}")
 
-    for i, filename in enumerate(cv_files, 1):
-        filepath = os.path.join(cv_folder, filename)
-        print(f"[{i}/{len(cv_files)}] {filename}")
-        try:
-            # Extract raw text and save to extracted_data
-            from cv_extractor_cli import load_text
-            raw_text = load_text(filepath)
-            txt_output_file = os.path.join(extracted_data_folder, f"{os.path.splitext(filename)[0]}.txt")
-            with open(txt_output_file, 'w', encoding='utf-8') as txtf:
-                txtf.write(raw_text)
+@app.get("/candidate/{candidate_id}", response_model=CandidateResponse)
+async def get_candidate(candidate_id: int, db: Session = Depends(get_db)):
+    """
+    Get candidate profile with extracted data and recommendations.
+    """
+    candidate = db.query(Candidate).filter(Candidate.id == candidate_id).first()
+    if not candidate:
+        raise HTTPException(status_code=404, detail="Candidate not found")
+    
+    # Parse extracted data
+    extracted_data = json.loads(candidate.extracted_data) if candidate.extracted_data else {}
+    
+    # Get recommendations
+    recommendations = []
+    job_recs = db.query(JobRecommendation).filter(JobRecommendation.candidate_id == candidate_id).all()
+    for rec in job_recs:
+        recommendations.append(json.loads(rec.recommendations))
+    
+    return CandidateResponse(
+        id=candidate.id,
+        name=candidate.name,
+        email=candidate.email,
+        phone=candidate.phone,
+        location=candidate.location,
+        raw_cv_path=candidate.raw_cv_path,
+        extracted_data=extracted_data,
+        created_at=candidate.created_at,
+        recommendations=recommendations
+    )
 
-            # Now extract structured data and save as JSON
-            result = extractor.extract_cv_data(filepath)
-            output_file = os.path.join(output_folder, f"{os.path.splitext(filename)[0]}.json")
-            with open(output_file, 'w', encoding='utf-8') as f:
-                json.dump(result, f, ensure_ascii=False, indent=2)
-            print(f"✓ Saved: {output_file}\n")
-        except Exception as e:
-            print(f"✗ Error: {e}\n")
+@app.post("/recommend/{candidate_id}", response_model=JobRecommendationResponse)
+async def generate_recommendations(candidate_id: int, db: Session = Depends(get_db)):
+    """
+    Generate job recommendations for a candidate using LLaMA 3.
+    """
+    candidate = db.query(Candidate).filter(Candidate.id == candidate_id).first()
+    if not candidate:
+        raise HTTPException(status_code=404, detail="Candidate not found")
+    
+    # Parse extracted data
+    extracted_data = json.loads(candidate.extracted_data) if candidate.extracted_data else {}
+    
+    # Generate recommendations using LLaMA service
+    recommendations = llama_service.generate_recommendations(extracted_data)
+    
+    # Store recommendations in database
+    job_recommendation = JobRecommendation(
+        candidate_id=candidate_id,
+        recommendations=json.dumps(recommendations)
+    )
+    
+    db.add(job_recommendation)
+    db.commit()
+    db.refresh(job_recommendation)
+    
+    return JobRecommendationResponse(
+        id=job_recommendation.id,
+        candidate_id=candidate_id,
+        recommendations=recommendations,
+        created_at=job_recommendation.created_at
+    )
 
-    print("Extraction complete!")
+@app.get("/candidates", response_model=List[CandidateSummary])
+async def get_candidates(db: Session = Depends(get_db)):
+    """
+    Get list of all candidates with summary information.
+    """
+    candidates = db.query(Candidate).all()
+    
+    result = []
+    for candidate in candidates:
+        extracted_data = json.loads(candidate.extracted_data) if candidate.extracted_data else {}
+        skills = extracted_data.get("skills", [])
+        
+        result.append(CandidateSummary(
+            id=candidate.id,
+            name=candidate.name,
+            skills=skills,
+            location=candidate.location,
+            created_at=candidate.created_at
+        ))
+    
+    return result
+
+@app.get("/")
+async def root():
+    """
+    Root endpoint with API information.
+    """
+    return {
+        "message": "CV Analysis & Job Recommendation API",
+        "version": "1.0.0",
+        "endpoints": {
+            "upload_cv": "POST /upload-cv",
+            "get_candidate": "GET /candidate/{id}",
+            "generate_recommendations": "POST /recommend/{id}",
+            "get_candidates": "GET /candidates"
+        }
+    }
 
 if __name__ == "__main__":
-    main()
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
