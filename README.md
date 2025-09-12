@@ -6,7 +6,7 @@ A full-stack application that extracts information from CVs and provides AI-powe
 
 - **CV Upload & Processing**: Support for PDF, DOCX, DOC, and TXT files
 - **Intelligent Data Extraction**: Automatically extracts contact info, skills, education, experience, and more
-- **AI-Powered Recommendations**: Uses LLaMA 3 API to generate personalized job recommendations
+- **AI-Powered Recommendations**: Uses LLaMA 3.1 models (Together AI, Hugging Face API, or local) to generate personalized job recommendations
 - **Modern Web Interface**: React frontend with TailwindCSS for a beautiful user experience
 - **Database Storage**: PostgreSQL integration for persistent data storage
 
@@ -27,8 +27,8 @@ A full-stack application that extracts information from CVs and provides AI-powe
 - **React Dropzone**: File upload with drag & drop
 
 ### AI Integration
-- **LLaMA 3 API**: For generating job recommendations
-- **Dummy Fallback**: Works without API key for testing
+- **LLaMA 3.1 Models**: Together AI (primary), Hugging Face API, or local HuggyLLaMA
+- **Smart Fallback**: Together AI → HF API → Local LLaMA → Dummy recommendations
 
 ## 📋 Prerequisites
 
@@ -50,8 +50,10 @@ cp env.example .env
 
 # Edit .env with your database credentials
 # DATABASE_URL=postgresql://user:password@localhost:5432/cvdb
-# LLAMA3_API_KEY=your_api_key_here
-# LLAMA3_API_URL=https://api.example.com/llama3
+# TOGETHER_API_KEY=5752d15c55df315184a82fdca124ecbad6e08be30ca5bb5bd578e68a95426a49
+# TOGETHER_MODEL=meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo
+# HF_API_KEY=hf_your_hf_api_key_here
+# HF_MODEL=tiiuae/falcon-7b-instruct
 
 # Create PostgreSQL database
 createdb cvdb
@@ -170,11 +172,16 @@ GET /candidates
 
 ## 🤖 AI Integration
 
-The system integrates with LLaMA 3 API for generating job recommendations. If no API key is provided, it falls back to dummy recommendations for testing purposes.
+The system uses LLaMA 3.1 models for generating job recommendations with intelligent fallback:
 
-### LLaMA 3 Prompt
+1. **Together AI LLaMA 3.1** (if `TOGETHER_API_KEY` is provided) - **Primary**
+2. **Hugging Face Inference API** (if `HF_API_KEY` is provided) - **Fallback**
+3. **Local HuggyLLaMA** (if GPU is available) - **Fallback**
+4. **Dummy Recommendations** (fallback for testing) - **Fallback**
 
-The system sends candidate data to LLaMA 3 with this prompt:
+### LLaMA 3.1 Prompt
+
+The system sends candidate data to LLaMA 3.1 with this prompt:
 
 ```
 You are an assistant that recommends job roles based on CV data.

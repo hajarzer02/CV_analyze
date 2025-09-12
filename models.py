@@ -20,7 +20,7 @@ class CandidateResponse(BaseModel):
     raw_cv_path: str
     extracted_data: Dict[str, Any]
     created_at: datetime
-    recommendations: Optional[List[Dict[str, Any]]] = None
+    recommendations: Optional[List[List[Dict[str, str]]]] = None
 
     class Config:
         from_attributes = True

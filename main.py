@@ -16,7 +16,7 @@ from models import (
     ExtractedCVData
 )
 from cv_extractor_cli import CVExtractor
-from llama_service import LlamaService
+from llama_service import LlamaService  # Now uses LLaMA models
 
 # Create FastAPI app
 app = FastAPI(title="CV Analysis & Job Recommendation API", version="1.0.0")
@@ -131,7 +131,7 @@ async def get_candidate(candidate_id: int, db: Session = Depends(get_db)):
 @app.post("/recommend/{candidate_id}", response_model=JobRecommendationResponse)
 async def generate_recommendations(candidate_id: int, db: Session = Depends(get_db)):
     """
-    Generate job recommendations for a candidate using LLaMA 3.
+    Generate job recommendations for a candidate using LLaMA models.
     """
     candidate = db.query(Candidate).filter(Candidate.id == candidate_id).first()
     if not candidate:
