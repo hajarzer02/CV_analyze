@@ -13,7 +13,10 @@ from models import (
     CandidateSummary, 
     JobRecommendationResponse, 
     UploadResponse,
-    ExtractedCVData
+    ExtractedCVData,
+    StatusUpdateRequest,
+    JobMatchRequest,
+    JobMatchResponse
 )
 from cv_extractor_cli import CVExtractor
 from llama_service import LlamaService  # Now uses LLaMA models
@@ -124,6 +127,7 @@ async def get_candidate(candidate_id: int, db: Session = Depends(get_db)):
         location=candidate.location,
         raw_cv_path=candidate.raw_cv_path,
         extracted_data=extracted_data,
+        status=candidate.status or 'New',
         created_at=candidate.created_at,
         recommendations=recommendations
     )
@@ -208,10 +212,105 @@ async def get_candidates(db: Session = Depends(get_db)):
             name=candidate.name,
             skills=skills,
             location=candidate.location,
+            status=candidate.status or 'New',
             created_at=candidate.created_at
         ))
     
     return result
+
+@app.patch("/candidate/{candidate_id}/status")
+async def update_candidate_status(
+    candidate_id: int, 
+    status_update: StatusUpdateRequest, 
+    db: Session = Depends(get_db)
+):
+    """
+    Update candidate status.
+    """
+    candidate = db.query(Candidate).filter(Candidate.id == candidate_id).first()
+    if not candidate:
+        raise HTTPException(status_code=404, detail="Candidate not found")
+    
+    # Validate status
+    valid_statuses = ['New', 'Interview Scheduled', 'Offer', 'Hired', 'Rejected']
+    if status_update.status not in valid_statuses:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Invalid status. Must be one of: {', '.join(valid_statuses)}"
+        )
+    
+    candidate.status = status_update.status
+    db.commit()
+    
+    return {"message": f"Candidate status updated to {status_update.status}"}
+
+@app.post("/match-job", response_model=List[JobMatchResponse])
+async def match_job(job_request: JobMatchRequest, db: Session = Depends(get_db)):
+    """
+    Match candidates against a job description.
+    """
+    try:
+        # Extract required skills from job description using LLaMA
+        required_skills = llama_service.extract_skills_from_job_description(job_request.job_description)
+        
+        # Get all candidates
+        candidates = db.query(Candidate).all()
+        
+        matches = []
+        for candidate in candidates:
+            extracted_data = json.loads(candidate.extracted_data) if candidate.extracted_data else {}
+            candidate_skills = extracted_data.get("skills", [])
+            
+            # Calculate match percentage
+            match_percentage, missing_skills = calculate_skill_match(candidate_skills, required_skills)
+            
+            matches.append(JobMatchResponse(
+                candidate_id=candidate.id,
+                match=match_percentage,
+                missing_skills=missing_skills
+            ))
+        
+        # Sort by match percentage (highest first)
+        matches.sort(key=lambda x: x.match, reverse=True)
+        
+        return matches
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error matching job: {str(e)}")
+
+def calculate_skill_match(candidate_skills: List[str], required_skills: List[str]) -> tuple[int, List[str]]:
+    """
+    Calculate match percentage and missing skills.
+    """
+    if not required_skills:
+        return 100, []
+    
+    # Normalize skills to lowercase for comparison
+    candidate_skills_lower = [skill.lower().strip() for skill in candidate_skills]
+    required_skills_lower = [skill.lower().strip() for skill in required_skills]
+    
+    # Find matching skills
+    matching_skills = []
+    missing_skills = []
+    
+    for required_skill in required_skills_lower:
+        # Check for exact match or partial match
+        matched = False
+        for candidate_skill in candidate_skills_lower:
+            if (required_skill in candidate_skill or 
+                candidate_skill in required_skill or
+                any(word in candidate_skill for word in required_skill.split() if len(word) > 2)):
+                matching_skills.append(required_skill)
+                matched = True
+                break
+        
+        if not matched:
+            missing_skills.append(required_skill)
+    
+    # Calculate match percentage
+    match_percentage = int((len(matching_skills) / len(required_skills_lower)) * 100)
+    
+    return match_percentage, missing_skills
 
 @app.get("/")
 async def root():
@@ -226,7 +325,9 @@ async def root():
             "get_candidate": "GET /candidate/{id}",
             "generate_recommendations": "POST /recommend/{id}",
             "get_candidates": "GET /candidates",
-            "delete_candidate": "DELETE /candidates/{id}"
+            "delete_candidate": "DELETE /candidates/{id}",
+            "update_candidate_status": "PATCH /candidate/{id}/status",
+            "match_job": "POST /match-job"
         }
     }
 

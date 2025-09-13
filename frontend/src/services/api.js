@@ -46,4 +46,16 @@ export const deleteCandidate = async (id) => {
   return response.data;
 };
 
+// Update candidate status
+export const updateCandidateStatus = async (id, status) => {
+  const response = await api.patch(`/candidate/${id}/status`, { status });
+  return response.data;
+};
+
+// Match job against candidates
+export const matchJob = async (jobDescription) => {
+  const response = await api.post('/match-job', { job_description: jobDescription });
+  return response.data;
+};
+
 export default api;

@@ -19,6 +19,7 @@ class CandidateResponse(BaseModel):
     location: Optional[str]
     raw_cv_path: str
     extracted_data: Dict[str, Any]
+    status: str = 'New'
     created_at: datetime
     recommendations: Optional[List[List[Dict[str, str]]]] = None
 
@@ -30,6 +31,7 @@ class CandidateSummary(BaseModel):
     name: Optional[str]
     skills: List[str]
     location: Optional[str]
+    status: str = 'New'
     created_at: datetime
 
     class Config:
@@ -48,6 +50,17 @@ class UploadResponse(BaseModel):
     candidate_id: int
     extracted_data: Dict[str, Any]
     message: str
+
+class StatusUpdateRequest(BaseModel):
+    status: str
+
+class JobMatchRequest(BaseModel):
+    job_description: str
+
+class JobMatchResponse(BaseModel):
+    candidate_id: int
+    match: int
+    missing_skills: List[str]
 
 # Internal data models (matching the existing CV extractor output)
 class ContactInfo(BaseModel):

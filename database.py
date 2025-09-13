@@ -27,6 +27,7 @@ class Candidate(Base):
     location = Column(Text)
     raw_cv_path = Column(Text)
     extracted_data = Column(Text)  # JSONB as text for SQLite compatibility
+    status = Column(Text, default='New')  # New, Interview Scheduled, Offer, Hired, Rejected
     created_at = Column(DateTime, default=datetime.utcnow)
     
     # Relationship

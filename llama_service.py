@@ -327,3 +327,55 @@ Example format:
                 "reason": "Technical background combined with communication skills indicates potential for product management positions."
             }
         ]
+    
+    def extract_skills_from_job_description(self, job_description: str) -> List[str]:
+        """
+        Extract required skills from a job description using LLaMA.
+        """
+        if self.provider == "dummy":
+            return self._get_dummy_skills()
+        
+        try:
+            # Create prompt for skill extraction
+            prompt = f"""Extract the technical skills and requirements from this job description. 
+            Return only a JSON array of skill names, no explanations.
+
+            Job Description:
+            {job_description}
+
+            Example format:
+            ["Python", "React", "PostgreSQL", "Docker", "AWS"]
+            """
+            
+            # Call the appropriate LLaMA provider
+            response = self.generate_llama_content(prompt)
+            
+            # Parse the response
+            return self._parse_skills_response(response)
+            
+        except Exception as e:
+            print(f"Error extracting skills from job description: {e}")
+            return self._get_dummy_skills()
+    
+    def _parse_skills_response(self, response: str) -> List[str]:
+        """Parse the LLaMA response to extract skills."""
+        try:
+            # Try to extract JSON array from the response
+            import re
+            json_match = re.search(r'\[.*?\]', response, re.DOTALL)
+            if json_match:
+                json_str = json_match.group(0)
+                skills = json.loads(json_str)
+                
+                # Validate the structure
+                if isinstance(skills, list):
+                    return [skill.strip() for skill in skills if isinstance(skill, str)]
+        except Exception as e:
+            print(f"Error parsing skills response: {e}")
+        
+        # Fallback to dummy data if parsing fails
+        return self._get_dummy_skills()
+    
+    def _get_dummy_skills(self) -> List[str]:
+        """Return dummy skills for testing when API key is not available."""
+        return ["Python", "JavaScript", "React", "Node.js", "PostgreSQL", "Docker", "AWS"]
