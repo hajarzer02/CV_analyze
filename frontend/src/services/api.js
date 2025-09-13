@@ -40,4 +40,10 @@ export const generateRecommendations = async (id) => {
   return response.data;
 };
 
+// Delete candidate
+export const deleteCandidate = async (id) => {
+  const response = await api.delete(`/candidates/${id}`);
+  return response.data;
+};
+
 export default api;

@@ -160,6 +160,37 @@ async def generate_recommendations(candidate_id: int, db: Session = Depends(get_
         created_at=job_recommendation.created_at
     )
 
+@app.delete("/candidates/{candidate_id}")
+async def delete_candidate(candidate_id: int, db: Session = Depends(get_db)):
+    """
+    Delete a candidate and all associated data.
+    """
+    # Check if candidate exists
+    candidate = db.query(Candidate).filter(Candidate.id == candidate_id).first()
+    if not candidate:
+        raise HTTPException(status_code=404, detail="Candidate not found")
+    
+    try:
+        # Delete associated job recommendations first (due to foreign key constraint)
+        db.query(JobRecommendation).filter(JobRecommendation.candidate_id == candidate_id).delete()
+        
+        # Delete the candidate
+        db.delete(candidate)
+        db.commit()
+        
+        # Optionally delete the uploaded file
+        if candidate.raw_cv_path and os.path.exists(candidate.raw_cv_path):
+            try:
+                os.remove(candidate.raw_cv_path)
+            except Exception as e:
+                print(f"Warning: Could not delete file {candidate.raw_cv_path}: {e}")
+        
+        return {"message": f"Candidate {candidate_id} deleted successfully"}
+        
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error deleting candidate: {str(e)}")
+
 @app.get("/candidates", response_model=List[CandidateSummary])
 async def get_candidates(db: Session = Depends(get_db)):
     """
@@ -194,7 +225,8 @@ async def root():
             "upload_cv": "POST /upload-cv",
             "get_candidate": "GET /candidate/{id}",
             "generate_recommendations": "POST /recommend/{id}",
-            "get_candidates": "GET /candidates"
+            "get_candidates": "GET /candidates",
+            "delete_candidate": "DELETE /candidates/{id}"
         }
     }
 

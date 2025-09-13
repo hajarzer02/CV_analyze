@@ -151,19 +151,24 @@ def extract_contact_info(text: str) -> Dict[str, Any]:
     if linkedin_match:
         contact_info["linkedin"] = linkedin_match.group(0)
     
-    # Extract address (look for postal code patterns)
-    address_patterns = [
-        r'[A-Za-zÀ-ÿ\s]+\d{4,5}\s*[A-Za-zÀ-ÿ\s]*',  # French postal code
-        r'[A-Za-zÀ-ÿ\s]+,\s*[A-Za-zÀ-ÿ\s]+',  # City, Country format
-    ]
-    
-    for pattern in address_patterns:
-        address_match = re.search(pattern, text)
-        if address_match:
-            address = address_match.group(0).strip()
-            if len(address) > 10:  # Filter out very short matches
-                contact_info["address"] = address
-                break
+    # Extract address using dynamic extraction
+    try:
+        from address_extractor import extract_contact_address
+        contact_info["address"] = extract_contact_address(text)
+    except ImportError:
+        # Fallback to simple pattern matching if address_extractor is not available
+        address_patterns = [
+            r'[A-Za-zÀ-ÿ\s]+\d{4,5}\s*[A-Za-zÀ-ÿ\s]*',  # French postal code
+            r'[A-Za-zÀ-ÿ\s]+,\s*[A-Za-zÀ-ÿ\s]+',  # City, Country format
+        ]
+        
+        for pattern in address_patterns:
+            address_match = re.search(pattern, text)
+            if address_match:
+                address = address_match.group(0).strip()
+                if len(address) > 10:  # Filter out very short matches
+                    contact_info["address"] = address
+                    break
     
     return contact_info
 
