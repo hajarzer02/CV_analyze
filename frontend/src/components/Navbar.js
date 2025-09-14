@@ -6,8 +6,8 @@ const Navbar = () => {
   const location = useLocation();
 
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: Users },
-    { path: '/upload', label: 'Upload CV', icon: Upload },
+    { path: '/', label: 'Tableau de Bord', icon: Users },
+    { path: '/upload', label: 'Télécharger CV', icon: Upload },
   ];
 
   return (
@@ -16,7 +16,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center space-x-2">
             <FileText className="h-8 w-8 text-primary-600" />
-            <span className="text-xl font-bold text-gray-900">CV Analysis</span>
+            <span className="text-xl font-bold text-gray-900">Analyse de CV</span>
           </Link>
           
           <div className="flex space-x-8">

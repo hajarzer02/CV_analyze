@@ -27,7 +27,7 @@ const UploadCV = () => {
         navigate(`/candidate/${response.candidate_id}`);
       }, 2000);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Upload failed. Please try again.');
+      setError(err.response?.data?.detail || 'Échec du téléchargement. Veuillez réessayer.');
       setUploadStatus('error');
     } finally {
       setUploading(false);
@@ -49,9 +49,9 @@ const UploadCV = () => {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Upload CV</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Télécharger un CV</h1>
         <p className="text-gray-600">
-          Upload a CV file to extract information and generate job recommendations
+          Téléchargez un fichier CV pour extraire les informations et générer des recommandations d'emploi
         </p>
       </div>
 
@@ -69,32 +69,32 @@ const UploadCV = () => {
           {uploading ? (
             <div className="space-y-4">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-              <p className="text-gray-600">Processing your CV...</p>
+              <p className="text-gray-600">Traitement de votre CV...</p>
             </div>
           ) : uploadStatus === 'success' ? (
             <div className="space-y-4">
               <CheckCircle className="h-12 w-12 text-green-500 mx-auto" />
-              <p className="text-green-600 font-medium">CV uploaded successfully!</p>
-              <p className="text-gray-600">Redirecting to profile...</p>
+              <p className="text-green-600 font-medium">CV téléchargé avec succès !</p>
+              <p className="text-gray-600">Redirection vers le profil...</p>
             </div>
           ) : uploadStatus === 'error' ? (
             <div className="space-y-4">
               <AlertCircle className="h-12 w-12 text-red-500 mx-auto" />
-              <p className="text-red-600 font-medium">Upload failed</p>
-              <p className="text-gray-600">Please try again</p>
+              <p className="text-red-600 font-medium">Échec du téléchargement</p>
+              <p className="text-gray-600">Veuillez réessayer</p>
             </div>
           ) : (
             <div className="space-y-4">
               <Upload className="h-12 w-12 text-gray-400 mx-auto" />
               <div>
                 <p className="text-lg font-medium text-gray-900">
-                  {isDragActive ? 'Drop the file here' : 'Drag & drop a CV file here'}
+                  {isDragActive ? 'Déposez le fichier ici' : 'Glissez-déposez un fichier CV ici'}
                 </p>
-                <p className="text-gray-600">or click to select a file</p>
+                <p className="text-gray-600">ou cliquez pour sélectionner un fichier</p>
               </div>
               <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
                 <FileText className="h-4 w-4" />
-                <span>PDF, DOCX, DOC, or TXT files only</span>
+                <span>Fichiers PDF, DOCX, DOC ou TXT uniquement</span>
               </div>
             </div>
           )}
@@ -111,7 +111,7 @@ const UploadCV = () => {
       )}
 
       <div className="mt-8 text-center">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Supported File Types</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Types de Fichiers Supportés</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="p-4 bg-gray-50 rounded-lg">
             <FileText className="h-8 w-8 text-red-500 mx-auto mb-2" />

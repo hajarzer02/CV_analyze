@@ -28,7 +28,7 @@ const Dashboard = () => {
       const data = await getCandidates();
       setCandidates(data);
     } catch (err) {
-      setError('Failed to fetch candidates');
+      setError('Échec du chargement des candidats');
       console.error('Error fetching candidates:', err);
     } finally {
       setLoading(false);
@@ -52,7 +52,7 @@ const Dashboard = () => {
       // Close modal
       setDeleteModal({ isOpen: false, candidate: null });
     } catch (err) {
-      setError('Failed to delete candidate');
+      setError('Échec de la suppression du candidat');
       console.error('Error deleting candidate:', err);
     } finally {
       setDeleting(false);
@@ -74,7 +74,7 @@ const Dashboard = () => {
           : candidate
       ));
     } catch (err) {
-      setError('Failed to update candidate status');
+      setError('Échec de la mise à jour du statut du candidat');
       console.error('Error updating status:', err);
     }
   };
@@ -98,7 +98,7 @@ const Dashboard = () => {
       setMatchResults(matchMap);
       setShowMatchMode(true);
     } catch (err) {
-      setError('Failed to match job');
+      setError('Échec de la correspondance d\'emploi');
       console.error('Error matching job:', err);
     } finally {
       setIsMatching(false);
@@ -142,8 +142,8 @@ const Dashboard = () => {
           bValue = b.status || 'New';
           break;
         default:
-          aValue = a.name || 'Unknown';
-          bValue = b.name || 'Unknown';
+          aValue = a.name || 'Inconnu';
+          bValue = b.name || 'Inconnu';
       }
       
       if (sortOrder === 'asc') {
@@ -155,7 +155,7 @@ const Dashboard = () => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('fr-FR', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -178,7 +178,7 @@ const Dashboard = () => {
           onClick={fetchCandidates}
           className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
         >
-          Try Again
+          Réessayer
         </button>
       </div>
     );
@@ -187,28 +187,28 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Candidates Dashboard</h1>
-        <Link
+        <h1 className="text-3xl font-bold text-gray-900">Tableau de Bord des Candidats</h1>
+        {/* <Link
           to="/upload"
           className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
         >
-          Upload New CV
-        </Link>
+          Télécharger un Nouveau CV
+        </Link> */}
       </div>
 
       {/* Job Matching Section */}
       <div className="bg-white shadow-sm rounded-lg p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Job Matching</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Correspondance d'Emploi</h2>
         <div className="space-y-4">
           <div>
             <label htmlFor="job-description" className="block text-sm font-medium text-gray-700 mb-2">
-              Job Description
+              Description du Poste
             </label>
             <textarea
               id="job-description"
               value={jobDescription}
               onChange={(e) => setJobDescription(e.target.value)}
-              placeholder="Paste a job description here..."
+              placeholder="Collez une description de poste ici..."
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
               rows={4}
             />
@@ -220,7 +220,7 @@ const Dashboard = () => {
               className="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <Search className="h-4 w-4 mr-2" />
-              {isMatching ? 'Matching...' : 'Match Candidates'}
+              {isMatching ? 'Correspondance...' : 'Correspondre aux Candidats'}
             </button>
             {showMatchMode && (
               <button
@@ -228,7 +228,7 @@ const Dashboard = () => {
                 className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
               >
                 <X className="h-4 w-4 mr-2" />
-                Clear Match
+                Effacer la Correspondance
               </button>
             )}
           </div>
@@ -242,7 +242,7 @@ const Dashboard = () => {
             <div className="flex items-center">
               <Search className="h-5 w-5 text-blue-600 mr-2" />
               <span className="text-blue-800 font-medium">
-                Matching against: {jobDescription.substring(0, 50)}...
+                Correspondance avec : {jobDescription.substring(0, 50)}...
               </span>
             </div>
             <button
@@ -258,13 +258,13 @@ const Dashboard = () => {
       {candidates.length === 0 ? (
         <div className="text-center py-12">
           <Code className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No candidates found</h3>
-          <p className="text-gray-600 mb-4">Upload your first CV to get started</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun candidat trouvé</h3>
+          <p className="text-gray-600 mb-4">Téléchargez votre premier CV pour commencer</p>
           <Link
             to="/upload"
             className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
           >
-            Upload CV
+            Télécharger CV
           </Link>
         </div>
       ) : (
@@ -281,15 +281,15 @@ const Dashboard = () => {
                     }}
                   >
                     <div className="flex items-center">
-                      Name
+                      Nom
                       <ChevronDown className={`h-4 w-4 ml-1 ${sortBy === 'name' ? (sortOrder === 'asc' ? 'rotate-180' : '') : 'opacity-50'}`} />
                     </div>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Skills
+                    Compétences
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Location
+                    Localisation
                   </th>
                   <th 
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
@@ -299,7 +299,7 @@ const Dashboard = () => {
                     }}
                   >
                     <div className="flex items-center">
-                      Status
+                      Statut
                       <ChevronDown className={`h-4 w-4 ml-1 ${sortBy === 'status' ? (sortOrder === 'asc' ? 'rotate-180' : '') : 'opacity-50'}`} />
                     </div>
                   </th>
@@ -312,18 +312,18 @@ const Dashboard = () => {
                       }}
                     >
                       <div className="flex items-center">
-                        Match %
+                        Correspondance %
                         <ChevronDown className={`h-4 w-4 ml-1 ${sortBy === 'match' ? (sortOrder === 'asc' ? 'rotate-180' : '') : 'opacity-50'}`} />
                       </div>
                     </th>
                   )}
                   {showMatchMode && (
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Missing Skills
+                      Compétences Manquantes
                     </th>
                   )}
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date Uploaded
+                    Date de Téléchargement
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
@@ -335,7 +335,7 @@ const Dashboard = () => {
                   <tr key={candidate.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
-                        {candidate.name || 'Unknown'}
+                        {candidate.name || 'Inconnu'}
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -350,7 +350,7 @@ const Dashboard = () => {
                         ))}
                         {candidate.skills.length > 3 && (
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                            +{candidate.skills.length - 3} more
+                            +{candidate.skills.length - 3} de plus
                           </span>
                         )}
                       </div>
@@ -358,7 +358,7 @@ const Dashboard = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center text-sm text-gray-600">
                         <MapPin className="h-4 w-4 mr-1" />
-                        {candidate.location || 'Not specified'}
+                        {candidate.location || 'Non spécifié'}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -367,11 +367,11 @@ const Dashboard = () => {
                         onChange={(e) => handleStatusChange(candidate.id, e.target.value)}
                         className={`text-xs font-medium px-2.5 py-0.5 rounded-full border-0 ${getStatusColor(candidate.status || 'New')}`}
                       >
-                        <option value="New">New</option>
-                        <option value="Interview Scheduled">Interview Scheduled</option>
-                        <option value="Offer">Offer</option>
-                        <option value="Hired">Hired</option>
-                        <option value="Rejected">Rejected</option>
+                        <option value="New">Nouveau</option>
+                        <option value="Interview Scheduled">Entretien Programmé</option>
+                        <option value="Offer">Offre</option>
+                        <option value="Hired">Embauché</option>
+                        <option value="Rejected">Rejeté</option>
                       </select>
                     </td>
                     {showMatchMode && (
@@ -394,7 +394,7 @@ const Dashboard = () => {
                           ))}
                           {(matchResults?.[candidate.id]?.missing_skills || []).length > 3 && (
                             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                              +{(matchResults?.[candidate.id]?.missing_skills || []).length - 3} more
+                              +{(matchResults?.[candidate.id]?.missing_skills || []).length - 3} de plus
                             </span>
                           )}
                         </div>
@@ -413,14 +413,14 @@ const Dashboard = () => {
                           className="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-primary-700 bg-primary-100 hover:bg-primary-200 transition-colors"
                         >
                           <Eye className="h-4 w-4 mr-1" />
-                          View
+                          Voir
                         </Link>
                         <button
                           onClick={() => handleDeleteClick(candidate)}
                           className="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 transition-colors"
                         >
                           <Trash2 className="h-4 w-4 mr-1" />
-                          Delete
+                          Supprimer
                         </button>
                       </div>
                     </td>
@@ -441,12 +441,12 @@ const Dashboard = () => {
                 <AlertTriangle className="h-6 w-6 text-red-600" />
               </div>
               <h3 className="text-lg font-medium text-gray-900 mt-4">
-                Delete Candidate
+                Supprimer le Candidat
               </h3>
               <div className="mt-2 px-7 py-3">
                 <p className="text-sm text-gray-500">
-                  Are you sure you want to delete <strong>{deleteModal.candidate?.name || 'this candidate'}</strong>? 
-                  This action cannot be undone and will also delete all associated job recommendations.
+                  Êtes-vous sûr de vouloir supprimer <strong>{deleteModal.candidate?.name || 'ce candidat'}</strong> ? 
+                  Cette action ne peut pas être annulée et supprimera également toutes les recommandations d'emploi associées.
                 </p>
               </div>
               <div className="flex justify-center space-x-4 mt-4">
@@ -455,7 +455,7 @@ const Dashboard = () => {
                   disabled={deleting}
                   className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors disabled:opacity-50"
                 >
-                  Cancel
+                  Annuler
                 </button>
                 <button
                   onClick={handleDeleteConfirm}
@@ -465,10 +465,10 @@ const Dashboard = () => {
                   {deleting ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Deleting...
+                      Suppression...
                     </>
                   ) : (
-                    'Delete'
+                    'Supprimer'
                   )}
                 </button>
               </div>

@@ -33,7 +33,7 @@ const CandidateProfile = () => {
       const data = await getCandidate(id);
       setCandidate(data);
     } catch (err) {
-      setError('Failed to fetch candidate profile');
+      setError('Échec du chargement du profil du candidat');
       console.error('Error fetching candidate:', err);
     } finally {
       setLoading(false);
@@ -51,7 +51,7 @@ const CandidateProfile = () => {
         recommendations: [...(prev.recommendations || []), response.recommendations]
       }));
     } catch (err) {
-      setError('Failed to generate recommendations');
+      setError('Échec de la génération des recommandations');
       console.error('Error generating recommendations:', err);
     } finally {
       setGeneratingRecs(false);
@@ -69,12 +69,12 @@ const CandidateProfile = () => {
   if (error || !candidate) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-600 mb-4">{error || 'Candidate not found'}</div>
+        <div className="text-red-600 mb-4">{error || 'Candidat non trouvé'}</div>
         <Link
           to="/"
           className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
         >
-          Back to Dashboard
+          Retour au Tableau de Bord
         </Link>
       </div>
     );
@@ -102,9 +102,9 @@ const CandidateProfile = () => {
           </Link>
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
-              {candidate.name || 'Unknown Candidate'}
+              {candidate.name || 'Candidat Inconnu'}
             </h1>
-            <p className="text-gray-600">Candidate Profile</p>
+            <p className="text-gray-600">Profil du Candidat</p>
           </div>
         </div>
       </div>
@@ -116,7 +116,7 @@ const CandidateProfile = () => {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
               <User className="h-5 w-5 mr-2" />
-              Contact Information
+              Informations de Contact
             </h2>
             <div className="space-y-3">
               {contactInfo.emails?.map((email, index) => (
@@ -160,7 +160,7 @@ const CandidateProfile = () => {
           {/* Professional Summary */}
           {summary.length > 0 && (
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Professional Summary</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Résumé Professionnel</h2>
               <div className="space-y-2">
                 {summary.map((line, index) => (
                   <p key={index} className="text-gray-600">{line}</p>
@@ -174,7 +174,7 @@ const CandidateProfile = () => {
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                 <Code className="h-5 w-5 mr-2" />
-                Skills
+                Compétences
               </h2>
               <div className="flex flex-wrap gap-2">
                 {skills.map((skill, index) => (
@@ -194,7 +194,7 @@ const CandidateProfile = () => {
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                 <Globe className="h-5 w-5 mr-2" />
-                Languages
+                Langues
               </h2>
               <div className="space-y-2">
                 {languages.map((lang, index) => (
@@ -212,7 +212,7 @@ const CandidateProfile = () => {
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                 <GraduationCap className="h-5 w-5 mr-2" />
-                Education
+                Formation
               </h2>
               <div className="space-y-4">
                 {education.map((edu, index) => (
@@ -248,7 +248,7 @@ const CandidateProfile = () => {
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                 <Briefcase className="h-5 w-5 mr-2" />
-                Experience
+                Expérience
               </h2>
               <div className="space-y-4">
                 {experience.map((exp, index) => (
@@ -280,7 +280,7 @@ const CandidateProfile = () => {
           {/* Projects */}
           {projects.length > 0 && (
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Projects</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Projets</h2>
               <div className="space-y-4">
                 {projects.map((project, index) => (
                   <div key={index} className="border rounded-lg p-4">
@@ -301,7 +301,7 @@ const CandidateProfile = () => {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-900 flex items-center">
                 <Lightbulb className="h-5 w-5 mr-2" />
-                Job Recommendations
+                Recommandations d'Emploi
               </h2>
               <button
                 onClick={handleGenerateRecommendations}
@@ -311,12 +311,12 @@ const CandidateProfile = () => {
                 {generatingRecs ? (
                   <>
                     <RefreshCw className="h-4 w-4 animate-spin" />
-                    <span>Generating...</span>
+                    <span>Génération...</span>
                   </>
                 ) : (
                   <>
                     <Lightbulb className="h-4 w-4" />
-                    <span>Generate Recommendations</span>
+                    <span>Générer des Recommandations</span>
                   </>
                 )}
               </button>
@@ -338,9 +338,9 @@ const CandidateProfile = () => {
             ) : (
               <div className="text-center py-8">
                 <Lightbulb className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 mb-4">No recommendations yet</p>
+                <p className="text-gray-600 mb-4">Aucune recommandation pour le moment</p>
                 <p className="text-sm text-gray-500">
-                  Click "Generate Recommendations" to get AI-powered job suggestions
+                  Cliquez sur "Générer des Recommandations" pour obtenir des suggestions d'emploi alimentées par l'IA
                 </p>
               </div>
             )}
