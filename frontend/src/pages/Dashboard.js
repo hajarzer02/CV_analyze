@@ -206,8 +206,15 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="flex flex-col justify-center items-center h-64 space-y-4">
+        <div className="relative">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent absolute top-0 left-0"></div>
+        </div>
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-gray-700">Chargement des candidats</h3>
+          <p className="text-gray-500 text-sm">Analyse des données en cours...</p>
+        </div>
       </div>
     );
   }
@@ -215,13 +222,20 @@ const Dashboard = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-600 mb-4">{error}</div>
-        <button
-          onClick={fetchCandidates}
-          className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
-        >
-          Réessayer
-        </button>
+        <div className="bg-red-50 border border-red-200 rounded-xl p-6 max-w-md mx-auto">
+          <div className="p-3 bg-red-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+            <AlertTriangle className="h-8 w-8 text-red-600" />
+          </div>
+          <h3 className="text-lg font-semibold text-red-800 mb-2">Erreur de chargement</h3>
+          <p className="text-red-600 mb-4">{error}</p>
+          <button
+            onClick={fetchCandidates}
+            className="inline-flex items-center px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors duration-200 shadow-lg hover:shadow-xl"
+          >
+            <Code className="h-4 w-4 mr-2" />
+            Réessayer
+          </button>
+        </div>
       </div>
     );
   }
@@ -229,214 +243,362 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Tableau de Bord des Candidats</h1>
+        <div className="flex items-center space-x-4">
+          <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
+            <Code className="h-8 w-8 text-white" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              Tableau de Bord des Candidats
+            </h1>
+            <p className="text-gray-600 text-sm mt-1">
+              Gérez et analysez vos candidats avec l'intelligence artificielle
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Job Matching Section */}
-      <div className="bg-white shadow-sm rounded-lg p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Correspondance d'Emploi</h2>
-        <div className="space-y-4">
-          <div>
-            <label htmlFor="job-description" className="block text-sm font-medium text-gray-700 mb-2">
-              Description du Poste
-            </label>
-            <textarea
-              id="job-description"
-              value={jobDescription}
-              onChange={(e) => setJobDescription(e.target.value)}
-              placeholder="Collez une description de poste ici..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              rows={4}
-            />
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl shadow-lg border border-blue-200 overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
+          <div className="flex items-center">
+            <div className="p-2 bg-white/20 rounded-lg mr-3">
+              <Search className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">Correspondance d'Emploi IA</h2>
+              <p className="text-blue-100 text-sm">Trouvez les meilleurs candidats grâce à l'intelligence artificielle</p>
+            </div>
           </div>
-          <div className="flex space-x-3">
-            <button
-              onClick={handleJobMatch}
-              disabled={!jobDescription.trim() || isMatching}
-              className="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <Search className="h-4 w-4 mr-2" />
-              {isMatching ? 'Correspondance...' : 'Correspondre aux Candidats'}
-            </button>
-            {showMatchMode && (
+        </div>
+        
+        <div className="p-6">
+          <div className="space-y-6">
+            {/* Job Description Input */}
+            <div className="space-y-3">
+              <label htmlFor="job-description" className="block text-sm font-semibold text-gray-700">
+                Description du Poste
+              </label>
+              <div className="relative">
+                <textarea
+                  id="job-description"
+                  value={jobDescription}
+                  onChange={(e) => setJobDescription(e.target.value)}
+                  placeholder="Décrivez le poste recherché... (ex: Développeur React avec 3 ans d'expérience, maîtrise de TypeScript, expérience avec les tests unitaires)"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
+                  rows={4}
+                />
+                <div className="absolute bottom-3 right-3 text-xs text-gray-400">
+                  {jobDescription.length}/500 caractères
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
-                onClick={handleClearMatch}
-                className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
+                onClick={handleJobMatch}
+                disabled={!jobDescription.trim() || isMatching}
+                className="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
-                <X className="h-4 w-4 mr-2" />
-                Effacer la Correspondance
+                {isMatching ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                    Analyse en cours...
+                  </>
+                ) : (
+                  <>
+                    <Search className="h-5 w-5 mr-3" />
+                    Analyser les Candidats
+                  </>
+                )}
               </button>
-            )}
+              
+              {showMatchMode && (
+                <button
+                  onClick={handleClearMatch}
+                  className="inline-flex items-center justify-center px-6 py-3 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-md hover:shadow-lg"
+                >
+                  <X className="h-5 w-5 mr-2" />
+                  Effacer
+                </button>
+              )}
+            </div>
+
+            {/* Tips Section */}
+            <div className="bg-white/60 rounded-lg p-4 border border-blue-200">
+              <h4 className="font-semibold text-gray-800 mb-2 flex items-center">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                Conseils pour de meilleurs résultats
+              </h4>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>• Incluez les compétences techniques requises</li>
+                <li>• Mentionnez le niveau d'expérience souhaité</li>
+                <li>• Ajoutez les technologies et outils spécifiques</li>
+                <li>• Décrivez les responsabilités principales</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Match Mode Banner */}
       {showMatchMode && (
-        <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Search className="h-5 w-5 text-blue-600 mr-2" />
-              <div>
-                <span className="text-blue-800 font-medium">
-                  Correspondance avec : {jobDescription.substring(0, 50)}...
-                </span>
-                <p className="text-blue-600 text-sm mt-1">
-                  Les candidats sont triés automatiquement par pourcentage de correspondance (du plus élevé au plus faible)
-                </p>
+        <div className="bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 border-2 border-green-200 rounded-xl shadow-lg overflow-hidden animate-in slide-in-from-top-2 duration-500">
+          <div className="p-6">
+            <div className="flex items-start justify-between">
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0">
+                  <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg">
+                    <Search className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <h3 className="text-lg font-bold text-green-800">Mode Correspondance Actif</h3>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 animate-pulse">
+                      <span className="w-2 h-2 bg-green-500 rounded-full mr-1.5"></span>
+                      En cours
+                    </span>
+                  </div>
+                  <div className="bg-white/70 rounded-lg p-3 border border-green-200">
+                    <p className="text-sm font-medium text-gray-700 mb-1">Recherche basée sur :</p>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      "{jobDescription.length > 100 ? jobDescription.substring(0, 100) + '...' : jobDescription}"
+                    </p>
+                  </div>
+                  <div className="mt-3 flex items-center space-x-4 text-sm text-green-700">
+                    <div className="flex items-center">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                      Tri automatique par correspondance
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2"></div>
+                      {candidates.length} candidat{candidates.length > 1 ? 's' : ''} analysé{candidates.length > 1 ? 's' : ''}
+                    </div>
+                  </div>
+                </div>
               </div>
+              <button
+                onClick={handleClearMatch}
+                className="flex-shrink-0 p-2 text-green-600 hover:text-green-800 hover:bg-white/50 rounded-lg transition-all duration-200 group"
+                title="Fermer le mode correspondance"
+              >
+                <X className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
+              </button>
             </div>
-            <button
-              onClick={handleClearMatch}
-              className="text-blue-600 hover:text-blue-800"
-            >
-              <X className="h-4 w-4" />
-            </button>
           </div>
+          
+          {/* Progress indicator */}
+          <div className="h-1 bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 animate-pulse"></div>
         </div>
       )}
 
       {/* Filters and Search Section */}
-      <div className="bg-white shadow-sm rounded-lg p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Filtres et Recherche</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Search by name */}
-          <div>
-            <label htmlFor="search-name" className="block text-sm font-medium text-gray-700 mb-2">
-              Rechercher par nom
-            </label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                id="search-name"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Nom du candidat..."
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              />
-              {searchTerm && (
-                <button
-                  onClick={() => setSearchTerm('')}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
+      <div className="bg-gradient-to-br from-gray-50 to-slate-100 rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+        <div className="bg-gradient-to-r from-slate-600 to-gray-700 px-6 py-4">
+          <div className="flex items-center">
+            <div className="p-2 bg-white/20 rounded-lg mr-3">
+              <Search className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">Filtres et Recherche</h2>
+              <p className="text-gray-200 text-sm">Affinez votre recherche de candidats</p>
             </div>
           </div>
+        </div>
+        
+        <div className="p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Search by name */}
+            <div className="space-y-3">
+              <label htmlFor="search-name" className="block text-sm font-semibold text-gray-700 flex items-center">
+                <Search className="h-4 w-4 mr-2 text-blue-600" />
+                Rechercher par nom
+              </label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Search className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" />
+                </div>
+                <input
+                  type="text"
+                  id="search-name"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Tapez le nom du candidat..."
+                  className="w-full pl-10 pr-10 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                />
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+            </div>
 
-          {/* Status filter */}
-          <div>
-            <label htmlFor="status-filter" className="block text-sm font-medium text-gray-700 mb-2">
-              Filtrer par statut
-            </label>
-            <select
-              id="status-filter"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-            >
-              <option value="all">Tous les statuts</option>
-              <option value="New">Nouveau</option>
-              <option value="Interview Scheduled">Entretien Programmé</option>
-              <option value="Offer">Offre</option>
-              <option value="Hired">Embauché</option>
-              <option value="Rejected">Rejeté</option>
-            </select>
-          </div>
+            {/* Status filter */}
+            <div className="space-y-3">
+              <label htmlFor="status-filter" className="block text-sm font-semibold text-gray-700 flex items-center">
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                Filtrer par statut
+              </label>
+              <div className="relative">
+                <select
+                  id="status-filter"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white appearance-none cursor-pointer"
+                >
+                  <option value="all">Tous les statuts</option>
+                  <option value="New"> Nouveau</option>
+                  <option value="Interview Scheduled"> Entretien Programmé</option>
+                  <option value="Offer"> Offre</option>
+                  <option value="Hired"> Embauché</option>
+                  <option value="Rejected"> Rejeté</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <ChevronDown className="h-5 w-5 text-gray-400" />
+                </div>
+              </div>
+            </div>
 
-          {/* Date sort */}
-          <div>
-            <label htmlFor="date-sort" className="block text-sm font-medium text-gray-700 mb-2">
-              Trier par date
-            </label>
-            <select
-              id="date-sort"
-              value={dateSortOrder}
-              onChange={(e) => {
-                setDateSortOrder(e.target.value);
-                setSortBy('date');
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-            >
-              <option value="newest">Plus récent en premier</option>
-              <option value="oldest">Plus ancien en premier</option>
-            </select>
+            {/* Date sort */}
+            <div className="space-y-3">
+              <label htmlFor="date-sort" className="block text-sm font-semibold text-gray-700 flex items-center">
+                <Calendar className="h-4 w-4 mr-2 text-purple-600" />
+                Trier par date
+              </label>
+              <div className="relative">
+                <select
+                  id="date-sort"
+                  value={dateSortOrder}
+                  onChange={(e) => {
+                    setDateSortOrder(e.target.value);
+                    setSortBy('date');
+                  }}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white appearance-none cursor-pointer"
+                >
+                  <option value="newest"> Plus récent en premier</option>
+                  <option value="oldest"> Plus ancien en premier</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <ChevronDown className="h-5 w-5 text-gray-400" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Active filters indicator and clear button */}
         {(searchTerm || statusFilter !== 'all' || dateSortOrder !== 'newest') && (
-          <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex flex-wrap gap-2">
-              <span className="text-sm text-gray-600">Filtres actifs :</span>
-              {searchTerm && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  Recherche: "{searchTerm}"
-                  <button
-                    onClick={() => setSearchTerm('')}
-                    className="ml-1 text-blue-600 hover:text-blue-800"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
+          <div className="mt-6 p-4 bg-white/80 rounded-xl border border-gray-200">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-sm font-semibold text-gray-700 flex items-center">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+                  Filtres actifs :
                 </span>
-              )}
-              {statusFilter !== 'all' && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  Statut: {statusFilter}
-                  <button
-                    onClick={() => setStatusFilter('all')}
-                    className="ml-1 text-green-600 hover:text-green-800"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </span>
-              )}
-              {dateSortOrder !== 'newest' && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                  Date: {dateSortOrder === 'oldest' ? 'Plus ancien' : 'Plus récent'}
-                  <button
-                    onClick={() => setDateSortOrder('newest')}
-                    className="ml-1 text-purple-600 hover:text-purple-800"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </span>
-              )}
+                <div className="flex flex-wrap gap-2">
+                  {searchTerm && (
+                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">
+                      <Search className="h-3 w-3 mr-1.5" />
+                      "{searchTerm}"
+                      <button
+                        onClick={() => setSearchTerm('')}
+                        className="ml-2 text-blue-600 hover:text-blue-800 transition-colors duration-200"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  )}
+                  {statusFilter !== 'all' && (
+                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-green-100 text-green-800 border border-green-200 shadow-sm">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-1.5"></div>
+                      {statusFilter}
+                      <button
+                        onClick={() => setStatusFilter('all')}
+                        className="ml-2 text-green-600 hover:text-green-800 transition-colors duration-200"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  )}
+                  {dateSortOrder !== 'newest' && (
+                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-purple-100 text-purple-800 border border-purple-200 shadow-sm">
+                      <Calendar className="h-3 w-3 mr-1.5" />
+                      {dateSortOrder === 'oldest' ? 'Plus ancien' : 'Plus récent'}
+                      <button
+                        onClick={() => setDateSortOrder('newest')}
+                        className="ml-2 text-purple-600 hover:text-purple-800 transition-colors duration-200"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setSearchTerm('');
+                  setStatusFilter('all');
+                  setDateSortOrder('newest');
+                  setSortBy('name');
+                }}
+                className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold rounded-xl hover:from-red-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Effacer tous les filtres
+              </button>
             </div>
-            <button
-              onClick={() => {
-                setSearchTerm('');
-                setStatusFilter('all');
-                setDateSortOrder('newest');
-                setSortBy('name');
-              }}
-              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-            >
-              <X className="h-4 w-4 mr-2" />
-              Effacer tous les filtres
-            </button>
           </div>
         )}
       </div>
 
       {/* Results count */}
       {candidates.length > 0 && (
-        <div className="bg-gray-50 px-6 py-3 rounded-lg">
-          <p className="text-sm text-gray-600">
-            {(() => {
-              const filteredCandidates = filterAndSortCandidates(candidates);
-              const totalCandidates = candidates.length;
-              const filteredCount = filteredCandidates.length;
-              
-              if (filteredCount === totalCandidates) {
-                return `${totalCandidates} candidat${totalCandidates > 1 ? 's' : ''} au total`;
-              } else {
-                return `${filteredCount} candidat${filteredCount > 1 ? 's' : ''} sur ${totalCandidates} (filtré${searchTerm || statusFilter !== 'all' ? 's' : ''})`;
-              }
-            })()}
-          </p>
+        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-xl p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-indigo-100 rounded-lg">
+                <Code className="h-5 w-5 text-indigo-600" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-800">
+                  {(() => {
+                    const filteredCandidates = filterAndSortCandidates(candidates);
+                    const totalCandidates = candidates.length;
+                    const filteredCount = filteredCandidates.length;
+                    
+                    if (filteredCount === totalCandidates) {
+                      return `${totalCandidates} candidat${totalCandidates > 1 ? 's' : ''} au total`;
+                    } else {
+                      return `${filteredCount} candidat${filteredCount > 1 ? 's' : ''} sur ${totalCandidates} (filtré${searchTerm || statusFilter !== 'all' ? 's' : ''})`;
+                    }
+                  })()}
+                </p>
+                <p className="text-xs text-gray-600">
+                  {(() => {
+                    const filteredCandidates = filterAndSortCandidates(candidates);
+                    const totalCandidates = candidates.length;
+                    const filteredCount = filteredCandidates.length;
+                    
+                    if (filteredCount === totalCandidates) {
+                      return "Tous les candidats sont affichés";
+                    } else {
+                      return `Filtrage actif - ${totalCandidates - filteredCount} candidat${totalCandidates - filteredCount > 1 ? 's' : ''} masqué${totalCandidates - filteredCount > 1 ? 's' : ''}`;
+                    }
+                  })()}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
+              <span className="text-xs text-indigo-600 font-medium">Mise à jour en temps réel</span>
+            </div>
+          </div>
         </div>
       )}
 
