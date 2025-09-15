@@ -15,8 +15,13 @@ const Dashboard = () => {
   const [isMatching, setIsMatching] = useState(false);
   const [matchResults, setMatchResults] = useState(null);
   const [showMatchMode, setShowMatchMode] = useState(false);
-  const [sortBy, setSortBy] = useState('name'); // name, match, status
+  const [sortBy, setSortBy] = useState('name'); // name, match, status, date
   const [sortOrder, setSortOrder] = useState('asc'); // asc, desc
+  
+  // Filter and search state
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all'); // all, New, Interview Scheduled, Offer, Hired, Rejected
+  const [dateSortOrder, setDateSortOrder] = useState('newest'); // newest, oldest
 
   useEffect(() => {
     fetchCandidates();
@@ -134,8 +139,21 @@ const Dashboard = () => {
     return 'bg-red-100';
   };
 
-  const sortCandidates = (candidates) => {
-    return [...candidates].sort((a, b) => {
+  const filterAndSortCandidates = (candidates) => {
+    // Appliquer les filtres
+    let filteredCandidates = candidates.filter(candidate => {
+      // Filtre par nom (recherche)
+      const matchesSearch = !searchTerm || 
+        (candidate.name && candidate.name.toLowerCase().includes(searchTerm.toLowerCase()));
+      
+      // Filtre par statut
+      const matchesStatus = statusFilter === 'all' || candidate.status === statusFilter;
+      
+      return matchesSearch && matchesStatus;
+    });
+
+    // Appliquer le tri
+    return [...filteredCandidates].sort((a, b) => {
       let aValue, bValue;
       
       // Si le mode de correspondance est actif, trier automatiquement par pourcentage de correspondance
@@ -156,6 +174,15 @@ const Dashboard = () => {
           aValue = a.status || 'New';
           bValue = b.status || 'New';
           break;
+        case 'date':
+          aValue = new Date(a.created_at);
+          bValue = new Date(b.created_at);
+          // Pour les dates, utiliser l'ordre spécifique
+          if (dateSortOrder === 'newest') {
+            return bValue - aValue; // Plus récent en premier
+          } else {
+            return aValue - bValue; // Plus ancien en premier
+          }
         default:
           aValue = a.name || 'Inconnu';
           bValue = b.name || 'Inconnu';
@@ -203,12 +230,6 @@ const Dashboard = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Tableau de Bord des Candidats</h1>
-        {/* <Link
-          to="/upload"
-          className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
-        >
-          Télécharger un Nouveau CV
-        </Link> */}
       </div>
 
       {/* Job Matching Section */}
@@ -275,6 +296,150 @@ const Dashboard = () => {
         </div>
       )}
 
+      {/* Filters and Search Section */}
+      <div className="bg-white shadow-sm rounded-lg p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Filtres et Recherche</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Search by name */}
+          <div>
+            <label htmlFor="search-name" className="block text-sm font-medium text-gray-700 mb-2">
+              Rechercher par nom
+            </label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                type="text"
+                id="search-name"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Nom du candidat..."
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Status filter */}
+          <div>
+            <label htmlFor="status-filter" className="block text-sm font-medium text-gray-700 mb-2">
+              Filtrer par statut
+            </label>
+            <select
+              id="status-filter"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+            >
+              <option value="all">Tous les statuts</option>
+              <option value="New">Nouveau</option>
+              <option value="Interview Scheduled">Entretien Programmé</option>
+              <option value="Offer">Offre</option>
+              <option value="Hired">Embauché</option>
+              <option value="Rejected">Rejeté</option>
+            </select>
+          </div>
+
+          {/* Date sort */}
+          <div>
+            <label htmlFor="date-sort" className="block text-sm font-medium text-gray-700 mb-2">
+              Trier par date
+            </label>
+            <select
+              id="date-sort"
+              value={dateSortOrder}
+              onChange={(e) => {
+                setDateSortOrder(e.target.value);
+                setSortBy('date');
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+            >
+              <option value="newest">Plus récent en premier</option>
+              <option value="oldest">Plus ancien en premier</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Active filters indicator and clear button */}
+        {(searchTerm || statusFilter !== 'all' || dateSortOrder !== 'newest') && (
+          <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex flex-wrap gap-2">
+              <span className="text-sm text-gray-600">Filtres actifs :</span>
+              {searchTerm && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  Recherche: "{searchTerm}"
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="ml-1 text-blue-600 hover:text-blue-800"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              {statusFilter !== 'all' && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  Statut: {statusFilter}
+                  <button
+                    onClick={() => setStatusFilter('all')}
+                    className="ml-1 text-green-600 hover:text-green-800"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              {dateSortOrder !== 'newest' && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  Date: {dateSortOrder === 'oldest' ? 'Plus ancien' : 'Plus récent'}
+                  <button
+                    onClick={() => setDateSortOrder('newest')}
+                    className="ml-1 text-purple-600 hover:text-purple-800"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+            </div>
+            <button
+              onClick={() => {
+                setSearchTerm('');
+                setStatusFilter('all');
+                setDateSortOrder('newest');
+                setSortBy('name');
+              }}
+              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            >
+              <X className="h-4 w-4 mr-2" />
+              Effacer tous les filtres
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Results count */}
+      {candidates.length > 0 && (
+        <div className="bg-gray-50 px-6 py-3 rounded-lg">
+          <p className="text-sm text-gray-600">
+            {(() => {
+              const filteredCandidates = filterAndSortCandidates(candidates);
+              const totalCandidates = candidates.length;
+              const filteredCount = filteredCandidates.length;
+              
+              if (filteredCount === totalCandidates) {
+                return `${totalCandidates} candidat${totalCandidates > 1 ? 's' : ''} au total`;
+              } else {
+                return `${filteredCount} candidat${filteredCount > 1 ? 's' : ''} sur ${totalCandidates} (filtré${searchTerm || statusFilter !== 'all' ? 's' : ''})`;
+              }
+            })()}
+          </p>
+        </div>
+      )}
+
       {candidates.length === 0 ? (
         <div className="text-center py-12">
           <Code className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -286,6 +451,23 @@ const Dashboard = () => {
           >
             Télécharger CV
           </Link>
+        </div>
+      ) : filterAndSortCandidates(candidates).length === 0 ? (
+        <div className="text-center py-12">
+          <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun candidat ne correspond aux filtres</h3>
+          <p className="text-gray-600 mb-4">Essayez de modifier vos critères de recherche ou de filtrage</p>
+          <button
+            onClick={() => {
+              setSearchTerm('');
+              setStatusFilter('all');
+              setDateSortOrder('newest');
+              setSortBy('name');
+            }}
+            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+          >
+            Effacer tous les filtres
+          </button>
         </div>
       ) : (
         <div className="bg-white shadow-sm rounded-lg overflow-hidden">
@@ -346,8 +528,17 @@ const Dashboard = () => {
                       Compétences Manquantes
                     </th>
                   )}
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date de Téléchargement
+                  <th 
+                    className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${showMatchMode ? 'cursor-default' : 'cursor-pointer hover:bg-gray-100'}`}
+                    onClick={showMatchMode ? undefined : () => {
+                      setSortBy('date');
+                      setSortOrder(sortBy === 'date' && sortOrder === 'asc' ? 'desc' : 'asc');
+                    }}
+                  >
+                    <div className="flex items-center">
+                      Date de Téléchargement
+                      <ChevronDown className={`h-4 w-4 ml-1 ${showMatchMode ? 'opacity-30' : (sortBy === 'date' ? (sortOrder === 'asc' ? 'rotate-180' : '') : 'opacity-50')}`} />
+                    </div>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
@@ -355,7 +546,7 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {sortCandidates(candidates).map((candidate) => (
+                {filterAndSortCandidates(candidates).map((candidate) => (
                   <tr key={candidate.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
