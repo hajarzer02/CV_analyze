@@ -128,10 +128,25 @@ const Dashboard = () => {
     return 'text-red-600 font-semibold';
   };
 
+  const getMatchBackgroundColor = (match) => {
+    if (match >= 80) return 'bg-green-100';
+    if (match >= 60) return 'bg-yellow-100';
+    return 'bg-red-100';
+  };
+
   const sortCandidates = (candidates) => {
     return [...candidates].sort((a, b) => {
       let aValue, bValue;
       
+      // Si le mode de correspondance est actif, trier automatiquement par pourcentage de correspondance
+      if (showMatchMode && matchResults) {
+        aValue = matchResults[a.id]?.match || 0;
+        bValue = matchResults[b.id]?.match || 0;
+        // Tri décroissant (plus élevé en premier)
+        return bValue - aValue;
+      }
+      
+      // Sinon, utiliser le tri normal basé sur sortBy
       switch (sortBy) {
         case 'match':
           aValue = matchResults?.[a.id]?.match || 0;
@@ -241,9 +256,14 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Search className="h-5 w-5 text-blue-600 mr-2" />
-              <span className="text-blue-800 font-medium">
-                Correspondance avec : {jobDescription.substring(0, 50)}...
-              </span>
+              <div>
+                <span className="text-blue-800 font-medium">
+                  Correspondance avec : {jobDescription.substring(0, 50)}...
+                </span>
+                <p className="text-blue-600 text-sm mt-1">
+                  Les candidats sont triés automatiquement par pourcentage de correspondance (du plus élevé au plus faible)
+                </p>
+              </div>
             </div>
             <button
               onClick={handleClearMatch}
@@ -274,15 +294,15 @@ const Dashboard = () => {
               <thead className="bg-gray-50">
                 <tr>
                   <th 
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                    onClick={() => {
+                    className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${showMatchMode ? 'cursor-default' : 'cursor-pointer hover:bg-gray-100'}`}
+                    onClick={showMatchMode ? undefined : () => {
                       setSortBy('name');
                       setSortOrder(sortBy === 'name' && sortOrder === 'asc' ? 'desc' : 'asc');
                     }}
                   >
                     <div className="flex items-center">
                       Nom
-                      <ChevronDown className={`h-4 w-4 ml-1 ${sortBy === 'name' ? (sortOrder === 'asc' ? 'rotate-180' : '') : 'opacity-50'}`} />
+                      <ChevronDown className={`h-4 w-4 ml-1 ${showMatchMode ? 'opacity-30' : (sortBy === 'name' ? (sortOrder === 'asc' ? 'rotate-180' : '') : 'opacity-50')}`} />
                     </div>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -292,15 +312,15 @@ const Dashboard = () => {
                     Emails
                   </th>
                   <th 
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                    onClick={() => {
+                    className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${showMatchMode ? 'cursor-default' : 'cursor-pointer hover:bg-gray-100'}`}
+                    onClick={showMatchMode ? undefined : () => {
                       setSortBy('status');
                       setSortOrder(sortBy === 'status' && sortOrder === 'asc' ? 'desc' : 'asc');
                     }}
                   >
                     <div className="flex items-center">
                       Statut
-                      <ChevronDown className={`h-4 w-4 ml-1 ${sortBy === 'status' ? (sortOrder === 'asc' ? 'rotate-180' : '') : 'opacity-50'}`} />
+                      <ChevronDown className={`h-4 w-4 ml-1 ${showMatchMode ? 'opacity-30' : (sortBy === 'status' ? (sortOrder === 'asc' ? 'rotate-180' : '') : 'opacity-50')}`} />
                     </div>
                   </th>
                   {showMatchMode && (
@@ -313,7 +333,11 @@ const Dashboard = () => {
                     >
                       <div className="flex items-center">
                         Correspondance %
-                        <ChevronDown className={`h-4 w-4 ml-1 ${sortBy === 'match' ? (sortOrder === 'asc' ? 'rotate-180' : '') : 'opacity-50'}`} />
+                        <ChevronDown className={`h-4 w-4 ml-1 text-blue-600 ${sortBy === 'match' ? (sortOrder === 'asc' ? 'rotate-180' : '') : 'opacity-50'}`} />
+                        {showMatchMode && (
+                          <span className="ml-2 text-xs text-blue-600 font-normal">
+                          </span>
+                        )}
                       </div>
                     </th>
                   )}
@@ -357,7 +381,7 @@ const Dashboard = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center text-sm text-gray-600">
-                        <span className="text-gray-500 mr-1">@</span>
+                        {/* <span className="text-gray-500 mr-1">@</span> */}
                         {candidate.email || 'Non spécifié'}
                       </div>
                     </td>
@@ -376,7 +400,7 @@ const Dashboard = () => {
                     </td>
                     {showMatchMode && (
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className={`text-sm ${getMatchColor(matchResults?.[candidate.id]?.match || 0)}`}>
+                        <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getMatchColor(matchResults?.[candidate.id]?.match || 0)} ${getMatchBackgroundColor(matchResults?.[candidate.id]?.match || 0)}`}>
                           {matchResults?.[candidate.id]?.match || 0}%
                         </div>
                       </td>
