@@ -632,227 +632,264 @@ const Dashboard = () => {
           </button>
         </div>
       ) : (
-        <div className="bg-white shadow-sm rounded-lg overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th 
-                    className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${showMatchMode ? 'cursor-default' : 'cursor-pointer hover:bg-gray-100'}`}
-                    onClick={showMatchMode ? undefined : () => {
-                      setSortBy('name');
-                      setSortOrder(sortBy === 'name' && sortOrder === 'asc' ? 'desc' : 'asc');
-                    }}
-                  >
-                    <div className="flex items-center">
-                      Nom
-                      <ChevronDown className={`h-4 w-4 ml-1 ${showMatchMode ? 'opacity-30' : (sortBy === 'name' ? (sortOrder === 'asc' ? 'rotate-180' : '') : 'opacity-50')}`} />
-                    </div>
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Compétences
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Emails
-                  </th>
-                  <th 
-                    className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${showMatchMode ? 'cursor-default' : 'cursor-pointer hover:bg-gray-100'}`}
-                    onClick={showMatchMode ? undefined : () => {
-                      setSortBy('status');
-                      setSortOrder(sortBy === 'status' && sortOrder === 'asc' ? 'desc' : 'asc');
-                    }}
-                  >
-                    <div className="flex items-center">
-                      Statut
-                      <ChevronDown className={`h-4 w-4 ml-1 ${showMatchMode ? 'opacity-30' : (sortBy === 'status' ? (sortOrder === 'asc' ? 'rotate-180' : '') : 'opacity-50')}`} />
-                    </div>
-                  </th>
-                  {showMatchMode && (
-                    <th 
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                      onClick={() => {
-                        setSortBy('match');
-                        setSortOrder(sortBy === 'match' && sortOrder === 'asc' ? 'desc' : 'asc');
-                      }}
-                    >
-                      <div className="flex items-center">
-                        Correspondance %
-                        <ChevronDown className={`h-4 w-4 ml-1 text-blue-600 ${sortBy === 'match' ? (sortOrder === 'asc' ? 'rotate-180' : '') : 'opacity-50'}`} />
-                        {showMatchMode && (
-                          <span className="ml-2 text-xs text-blue-600 font-normal">
-                          </span>
-                        )}
+        <div className="space-y-6">
+          {/* Table Header with Sort Controls */}
+          <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-xl p-6 border border-gray-200">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Candidats</h3>
+                <p className="text-sm text-gray-600">
+                  {filterAndSortCandidates(candidates).length} candidat{filterAndSortCandidates(candidates).length > 1 ? 's' : ''} trouvé{filterAndSortCandidates(candidates).length > 1 ? 's' : ''}
+                </p>
+              </div>
+              
+              {/* Sort Controls */}
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => {
+                    setSortBy('name');
+                    setSortOrder(sortBy === 'name' && sortOrder === 'asc' ? 'desc' : 'asc');
+                  }}
+                  className={`inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    sortBy === 'name' 
+                      ? 'bg-blue-100 text-blue-700 border border-blue-200' 
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+                  }`}
+                >
+                  <span>Nom</span>
+                  <ChevronDown className={`h-4 w-4 ml-1 ${sortBy === 'name' ? (sortOrder === 'asc' ? 'rotate-180' : '') : 'opacity-50'}`} />
+                </button>
+                
+                <button
+                  onClick={() => {
+                    setSortBy('status');
+                    setSortOrder(sortBy === 'status' && sortOrder === 'asc' ? 'desc' : 'asc');
+                  }}
+                  className={`inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    sortBy === 'status' 
+                      ? 'bg-green-100 text-green-700 border border-green-200' 
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+                  }`}
+                >
+                  <span>Statut</span>
+                  <ChevronDown className={`h-4 w-4 ml-1 ${sortBy === 'status' ? (sortOrder === 'asc' ? 'rotate-180' : '') : 'opacity-50'}`} />
+                </button>
+                
+                <button
+                  onClick={() => {
+                    setSortBy('date');
+                    setSortOrder(sortBy === 'date' && sortOrder === 'asc' ? 'desc' : 'asc');
+                  }}
+                  className={`inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    sortBy === 'date' 
+                      ? 'bg-purple-100 text-purple-700 border border-purple-200' 
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+                  }`}
+                >
+                  <Calendar className="h-4 w-4 mr-1" />
+                  <span>Date</span>
+                  <ChevronDown className={`h-4 w-4 ml-1 ${sortBy === 'date' ? (sortOrder === 'asc' ? 'rotate-180' : '') : 'opacity-50'}`} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Candidates Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filterAndSortCandidates(candidates).map((candidate, index) => (
+              <div
+                key={candidate.id}
+                className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group"
+                style={{
+                  animationDelay: `${index * 100}ms`,
+                  animation: 'fadeInUp 0.6s ease-out forwards'
+                }}
+              >
+                {/* Card Header */}
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-100">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                        {(candidate.name || 'U').charAt(0).toUpperCase()}
                       </div>
-                    </th>
-                  )}
-                  {showMatchMode && (
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Compétences Manquantes
-                    </th>
-                  )}
-                  <th 
-                    className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${showMatchMode ? 'cursor-default' : 'cursor-pointer hover:bg-gray-100'}`}
-                    onClick={showMatchMode ? undefined : () => {
-                      setSortBy('date');
-                      setSortOrder(sortBy === 'date' && sortOrder === 'asc' ? 'desc' : 'asc');
-                    }}
-                  >
-                    <div className="flex items-center">
-                      Date de Téléchargement
-                      <ChevronDown className={`h-4 w-4 ml-1 ${showMatchMode ? 'opacity-30' : (sortBy === 'date' ? (sortOrder === 'asc' ? 'rotate-180' : '') : 'opacity-50')}`} />
-                    </div>
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filterAndSortCandidates(candidates).map((candidate) => (
-                  <tr key={candidate.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {candidate.name || 'Inconnu'}
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
+                          {candidate.name || 'Inconnu'}
+                        </h3>
+                        <p className="text-sm text-gray-600 flex items-center">
+                          <span className="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
+                          {candidate.email || 'Email non spécifié'}
+                        </p>
                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-1">
-                        {candidate.skills.slice(0, 3).map((skill, index) => (
+                    </div>
+                    
+                    {/* Match Score Badge */}
+                    {showMatchMode && (
+                      <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-bold shadow-lg ${getMatchColor(matchResults?.[candidate.id]?.match || 0)} ${getMatchBackgroundColor(matchResults?.[candidate.id]?.match || 0)}`}>
+                        {matchResults?.[candidate.id]?.match || 0}%
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Card Body */}
+                <div className="p-6 space-y-4">
+                  {/* Skills Section */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                      <Code className="h-4 w-4 mr-2 text-blue-600" />
+                      Compétences
+                    </h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {candidate.skills.slice(0, 4).map((skill, skillIndex) => (
+                        <span
+                          key={skillIndex}
+                          className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 border border-blue-200"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                      {candidate.skills.length > 4 && (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                          +{candidate.skills.length - 4} autres
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Missing Skills (Match Mode) */}
+                  {showMatchMode && matchResults?.[candidate.id]?.missing_skills && matchResults[candidate.id].missing_skills.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                        <AlertTriangle className="h-4 w-4 mr-2 text-red-500" />
+                        Compétences manquantes
+                      </h4>
+                      <div className="flex flex-wrap gap-1.5">
+                        {matchResults[candidate.id].missing_skills.slice(0, 3).map((skill, skillIndex) => (
                           <span
-                            key={index}
-                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
+                            key={skillIndex}
+                            className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-red-100 text-red-800 border border-red-200"
                           >
                             {skill}
                           </span>
                         ))}
-                        {candidate.skills.length > 3 && (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                            +{candidate.skills.length - 3} de plus
+                        {matchResults[candidate.id].missing_skills.length > 3 && (
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                            +{matchResults[candidate.id].missing_skills.length - 3} autres
                           </span>
                         )}
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center text-sm text-gray-600">
-                        {/* <span className="text-gray-500 mr-1">@</span> */}
-                        {candidate.email || 'Non spécifié'}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    </div>
+                  )}
+
+                  {/* Status and Date */}
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                    <div className="flex items-center space-x-2">
                       <select
                         value={candidate.status || 'New'}
                         onChange={(e) => handleStatusChange(candidate.id, e.target.value)}
-                        className={`text-xs font-medium px-2.5 py-0.5 rounded-full border-0 ${getStatusColor(candidate.status || 'New')}`}
+                        className={`text-xs font-semibold px-3 py-1.5 rounded-lg border-0 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ${getStatusColor(candidate.status || 'New')}`}
                       >
                         <option value="New">Nouveau</option>
-                        <option value="Interview Scheduled">Entretien Programmé</option>
+                        <option value="Interview Scheduled">Entretien</option>
                         <option value="Offer">Offre</option>
                         <option value="Hired">Embauché</option>
                         <option value="Rejected">Rejeté</option>
                       </select>
-                    </td>
-                    {showMatchMode && (
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getMatchColor(matchResults?.[candidate.id]?.match || 0)} ${getMatchBackgroundColor(matchResults?.[candidate.id]?.match || 0)}`}>
-                          {matchResults?.[candidate.id]?.match || 0}%
-                        </div>
-                      </td>
-                    )}
-                    {showMatchMode && (
-                      <td className="px-6 py-4">
-                        <div className="flex flex-wrap gap-1">
-                          {(matchResults?.[candidate.id]?.missing_skills || []).slice(0, 3).map((skill, index) => (
-                            <span
-                              key={index}
-                              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800"
-                            >
-                              {skill}
-                            </span>
-                          ))}
-                          {(matchResults?.[candidate.id]?.missing_skills || []).length > 3 && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                              +{(matchResults?.[candidate.id]?.missing_skills || []).length - 3} de plus
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                    )}
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Calendar className="h-4 w-4 mr-1" />
-                        {formatDate(candidate.created_at)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        <Link
-                          to={`/candidate/${candidate.id}`}
-                          className="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-primary-700 bg-primary-100 hover:bg-primary-200 transition-colors"
-                        >
-                          <Eye className="h-4 w-4 mr-1" />
-                          Voir
-                        </Link>
-                        <button
-                          onClick={() => handleDeleteClick(candidate)}
-                          className="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 transition-colors"
-                        >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Supprimer
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </div>
+                    <div className="flex items-center text-xs text-gray-500">
+                      <Calendar className="h-3 w-3 mr-1" />
+                      {formatDate(candidate.created_at)}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Card Footer */}
+                <div className="bg-gray-50 px-6 py-4 border-t border-gray-100">
+                  <div className="flex space-x-2">
+                    <Link
+                      to={`/candidate/${candidate.id}`}
+                      className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      Voir le profil
+                    </Link>
+                    <button
+                      onClick={() => handleDeleteClick(candidate)}
+                      className="inline-flex items-center justify-center px-4 py-2 bg-white text-red-600 text-sm font-semibold rounded-lg border border-red-200 hover:bg-red-50 hover:border-red-300 transition-all duration-200 shadow-md hover:shadow-lg"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
       {/* Delete Confirmation Modal */}
       {deleteModal.isOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3 text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
-                <AlertTriangle className="h-6 w-6 text-red-600" />
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mt-4">
-                Supprimer le Candidat
-              </h3>
-              <div className="mt-2 px-7 py-3">
-                <p className="text-sm text-gray-500">
-                  Êtes-vous sûr de vouloir supprimer <strong>{deleteModal.candidate?.name || 'ce candidat'}</strong> ? 
-                  Cette action ne peut pas être annulée et supprimera également toutes les recommandations d'emploi associées.
+        <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all duration-300 scale-100">
+            <div className="p-8">
+              <div className="text-center">
+                <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
+                  <AlertTriangle className="h-8 w-8 text-red-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Supprimer le Candidat
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Êtes-vous sûr de vouloir supprimer <strong className="text-gray-900">{deleteModal.candidate?.name || 'ce candidat'}</strong> ? 
+                  Cette action ne peut pas être annulée.
                 </p>
-              </div>
-              <div className="flex justify-center space-x-4 mt-4">
-                <button
-                  onClick={handleDeleteCancel}
-                  disabled={deleting}
-                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors disabled:opacity-50"
-                >
-                  Annuler
-                </button>
-                <button
-                  onClick={handleDeleteConfirm}
-                  disabled={deleting}
-                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center"
-                >
-                  {deleting ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Suppression...
-                    </>
-                  ) : (
-                    'Supprimer'
-                  )}
-                </button>
+                
+                <div className="flex space-x-3">
+                  <button
+                    onClick={handleDeleteCancel}
+                    disabled={deleting}
+                    className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-all duration-200 disabled:opacity-50"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    onClick={handleDeleteConfirm}
+                    disabled={deleting}
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 disabled:opacity-50 flex items-center justify-center shadow-lg hover:shadow-xl"
+                  >
+                    {deleting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                        Suppression...
+                      </>
+                    ) : (
+                      <>
+                        <Trash2 className="h-5 w-5 mr-2" />
+                        Supprimer
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* CSS Animations */}
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 };
