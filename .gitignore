@@ -1,0 +1,6 @@
+# Node modules
+node_modules/
+frontend/node_modules/
+
+# Cache et pack temporaire
+frontend/node_modules/.cache/
