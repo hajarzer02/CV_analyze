@@ -1,4 +1,5 @@
 from fastapi import FastAPI, File, UploadFile, Depends, HTTPException, status
+from datetime import timedelta
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
@@ -13,7 +14,7 @@ import os
 # Add ai-service to path for llama_service only
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ai-service'))
 
-from database import get_db, create_tables, Candidate, JobRecommendation
+from database import get_db, create_tables, Candidate, JobRecommendation, User
 from models import (
     CandidateResponse, 
     CandidateSummary, 
@@ -22,7 +23,18 @@ from models import (
     ExtractedCVData,
     StatusUpdateRequest,
     JobMatchRequest,
-    JobMatchResponse
+    JobMatchResponse,
+    UserCreate,
+    UserLogin,
+    UserResponse,
+    Token
+)
+from auth import (
+    authenticate_user, 
+    create_access_token, 
+    get_password_hash, 
+    get_current_active_user,
+    ACCESS_TOKEN_EXPIRE_MINUTES
 )
 from cv_extractor_cli import CVExtractor
 from llama_service import LlamaService  # Now uses LLaMA models
@@ -52,8 +64,94 @@ llama_service = LlamaService()
 UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
+# Authentication endpoints
+@app.post("/auth/register", response_model=UserResponse)
+async def register_user(user: UserCreate, db: Session = Depends(get_db)):
+    """Register a new user."""
+    # Check if user already exists
+    existing_user = db.query(User).filter(User.email == user.email).first()
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered"
+        )
+    
+    # Create new user
+    hashed_password = get_password_hash(user.password)
+    db_user = User(
+        name=user.name,
+        email=user.email,
+        hashed_password=hashed_password
+    )
+    
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    
+    return UserResponse(
+        id=db_user.id,
+        name=db_user.name,
+        email=db_user.email,
+        is_active=db_user.is_active == 'true',
+        created_at=db_user.created_at
+    )
+
+@app.post("/auth/login", response_model=Token)
+async def login_user(user_credentials: UserLogin, db: Session = Depends(get_db)):
+    """Authenticate user and return access token."""
+    user = authenticate_user(db, user_credentials.email, user_credentials.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    if user.is_active != 'true':
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Inactive user"
+        )
+    
+    # Create access token
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    if user_credentials.remember_me:
+        access_token_expires = timedelta(days=7)  # Longer expiry for remember me
+    
+    access_token = create_access_token(
+        data={"sub": str(user.id)}, expires_delta=access_token_expires
+    )
+    
+    return Token(
+        access_token=access_token,
+        token_type="bearer",
+        user=UserResponse(
+            id=user.id,
+            name=user.name,
+            email=user.email,
+            is_active=user.is_active == 'true',
+            created_at=user.created_at
+        )
+    )
+
+@app.get("/auth/me", response_model=UserResponse)
+async def get_current_user_info(current_user: User = Depends(get_current_active_user)):
+    """Get current user information."""
+    return UserResponse(
+        id=current_user.id,
+        name=current_user.name,
+        email=current_user.email,
+        is_active=current_user.is_active == 'true',
+        created_at=current_user.created_at
+    )
+
+@app.post("/auth/logout")
+async def logout_user(current_user: User = Depends(get_current_active_user)):
+    """Logout user (client should remove token)."""
+    return {"message": "Successfully logged out"}
+
 @app.post("/upload-cv", response_model=UploadResponse)
-async def upload_cv(file: UploadFile = File(...), db: Session = Depends(get_db)):
+async def upload_cv(file: UploadFile = File(...), db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
     """
     Upload a CV file, extract data, and store in database.
     """
@@ -121,7 +219,7 @@ async def upload_cv(file: UploadFile = File(...), db: Session = Depends(get_db))
         raise HTTPException(status_code=500, detail=f"Error processing CV: {str(e)}")
 
 @app.get("/candidate/{candidate_id}", response_model=CandidateResponse)
-async def get_candidate(candidate_id: int, db: Session = Depends(get_db)):
+async def get_candidate(candidate_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
     """
     Get candidate profile with extracted data and recommendations.
     """
@@ -152,7 +250,7 @@ async def get_candidate(candidate_id: int, db: Session = Depends(get_db)):
     )
 
 @app.post("/recommend/{candidate_id}", response_model=JobRecommendationResponse)
-async def generate_recommendations(candidate_id: int, db: Session = Depends(get_db)):
+async def generate_recommendations(candidate_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
     """
     Generate job recommendations for a candidate using LLaMA models.
     """
@@ -184,7 +282,7 @@ async def generate_recommendations(candidate_id: int, db: Session = Depends(get_
     )
 
 @app.delete("/candidates/{candidate_id}")
-async def delete_candidate(candidate_id: int, db: Session = Depends(get_db)):
+async def delete_candidate(candidate_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
     """
     Delete a candidate and all associated data.
     """
@@ -215,7 +313,7 @@ async def delete_candidate(candidate_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Error deleting candidate: {str(e)}")
 
 @app.get("/candidates", response_model=List[CandidateSummary])
-async def get_candidates(db: Session = Depends(get_db)):
+async def get_candidates(db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
     """
     Get list of all candidates with summary information.
     """
@@ -242,7 +340,8 @@ async def get_candidates(db: Session = Depends(get_db)):
 async def update_candidate_status(
     candidate_id: int, 
     status_update: StatusUpdateRequest, 
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
     """
     Update candidate status.
@@ -265,7 +364,7 @@ async def update_candidate_status(
     return {"message": f"Candidate status updated to {status_update.status}"}
 
 @app.post("/match-job", response_model=List[JobMatchResponse])
-async def match_job(job_request: JobMatchRequest, db: Session = Depends(get_db)):
+async def match_job(job_request: JobMatchRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
     """
     Match candidates against a job description.
     """

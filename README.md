@@ -23,8 +23,16 @@ pip install -r requirements.txt
 **Environment Variables (.env):**
 ```env
 DATABASE_URL=postgresql://username:password@localhost:5432/cv_analysis
+SECRET_KEY=your-secret-key-change-this-in-production-make-it-long-and-random
+ACCESS_TOKEN_EXPIRE_MINUTES=30
 TOGETHER_API_KEY=your_together_api_key
 HF_API_KEY=your_huggingface_api_key
+```
+
+**Create admin user (first time setup):**
+```bash
+cd backend
+python create_admin_user.py
 ```
 
 **Start the backend:**
@@ -105,6 +113,14 @@ npm start
 - ✅ Interactive dashboards
 - ✅ Mobile-friendly interface
 
+### Authentication & Security
+- ✅ JWT-based authentication
+- ✅ User registration and login
+- ✅ Password hashing with bcrypt
+- ✅ Protected API endpoints
+- ✅ Remember me functionality
+- ✅ Secure token management
+
 ## 🐳 Docker Support
 
 ```bash
@@ -120,10 +136,18 @@ docker-compose up --build
 - `POST /analyze-text` - Analyze CV text
 
 ### Full API (FastAPI)
+
+#### Authentication
+- `POST /auth/register` - Register new user
+- `POST /auth/login` - User login
+- `GET /auth/me` - Get current user info
+- `POST /auth/logout` - User logout
+
+#### CV Management (Protected)
 - `GET /candidates` - List all candidates
 - `POST /upload-cv` - Upload and analyze CV
 - `GET /candidate/{id}` - Get candidate details
-- `POST /candidate/{id}/recommendations` - Generate recommendations
+- `POST /recommend/{id}` - Generate recommendations
 - `POST /match-job` - Match candidates to job
 - `PATCH /candidate/{id}/status` - Update candidate status
 - `DELETE /candidates/{id}` - Delete candidate

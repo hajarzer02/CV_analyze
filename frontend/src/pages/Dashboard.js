@@ -245,9 +245,20 @@ const Dashboard = () => {
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-4">
           <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
-            <Code className="h-8 w-8 text-white" />
+            <div className="relative h-8 w-8 mx-auto">
+              {/* User circle */}
+              <div className="w-4 h-4 bg-white rounded-full mx-auto mb-1"></div>
+              {/* Body */}
+              <div className="w-6 h-3 bg-white rounded-t-full mx-auto"></div>
+              {/* Analysis dots */}
+              <div className="absolute top-0 right-0 flex flex-col space-y-0.5">
+                <div className="w-1 h-1 bg-yellow-400 rounded-full"></div>
+                <div className="w-1 h-1 bg-green-400 rounded-full"></div>
+                <div className="w-1 h-1 bg-red-400 rounded-full"></div>
+              </div>
+            </div>
           </div>
-          <div>
+        <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
               Tableau de Bord des Candidats
             </h1>
@@ -258,281 +269,233 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Job Matching Section */}
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl shadow-lg border border-blue-200 overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
-          <div className="flex items-center">
-            <div className="p-2 bg-white/20 rounded-lg mr-3">
-              <Search className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-white">Correspondance d'Emploi IA</h2>
-              <p className="text-blue-100 text-sm">Trouvez les meilleurs candidats grâce à l'intelligence artificielle</p>
+{/* Job Matching and Filters - Side by Side Layout */}
+<div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+  {/* Job Matching Section */}
+  <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl shadow-lg border border-blue-200 overflow-hidden">
+    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3">
+      <div className="flex items-center">
+        <div className="p-1.5 bg-white/20 rounded-lg mr-3">
+          <Search className="h-5 w-5 text-white" />
+        </div>
+        <div>
+          <h2 className="text-lg font-bold text-white">Correspondance d'Emploi IA</h2>
+          <p className="text-blue-100 text-xs">Trouvez les meilleurs candidats grâce à l'IA</p>
+        </div>
+      </div>
+    </div>
+    
+    <div className="p-4">
+      <div className="space-y-4">
+        {/* Job Description Input */}
+        <div className="space-y-2">
+          <label htmlFor="job-description" className="block text-sm font-medium text-gray-700">
+            Description du Poste
+          </label>
+          <div className="relative">
+            <textarea
+              id="job-description"
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
+              placeholder="Décrivez le poste recherché... (ex: Développeur React avec 3 ans d'expérience, maîtrise de TypeScript, expérience avec les tests unitaires)"
+              className="w-full px-3 py-2.5 text-sm border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
+              rows={3}
+            />
+            <div className="absolute bottom-2 right-2 text-xs text-gray-400">
+              {jobDescription.length}/500
             </div>
           </div>
         </div>
-        
-        <div className="p-6">
-          <div className="space-y-6">
-            {/* Job Description Input */}
-            <div className="space-y-3">
-              <label htmlFor="job-description" className="block text-sm font-semibold text-gray-700">
-                Description du Poste
-              </label>
-              <div className="relative">
-                <textarea
-                  id="job-description"
-                  value={jobDescription}
-                  onChange={(e) => setJobDescription(e.target.value)}
-                  placeholder="Décrivez le poste recherché... (ex: Développeur React avec 3 ans d'expérience, maîtrise de TypeScript, expérience avec les tests unitaires)"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
-                  rows={4}
-                />
-                <div className="absolute bottom-3 right-3 text-xs text-gray-400">
-                  {jobDescription.length}/500 caractères
-                </div>
-              </div>
-            </div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={handleJobMatch}
-                disabled={!jobDescription.trim() || isMatching}
-                className="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-              >
-                {isMatching ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                    Analyse en cours...
-                  </>
-                ) : (
-                  <>
-                    <Search className="h-5 w-5 mr-3" />
-                    Analyser les Candidats
-                  </>
-                )}
-              </button>
-              
-              {showMatchMode && (
-                <button
-                  onClick={handleClearMatch}
-                  className="inline-flex items-center justify-center px-6 py-3 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-md hover:shadow-lg"
-                >
-                  <X className="h-5 w-5 mr-2" />
-                  Effacer
-                </button>
-              )}
-            </div>
+        {/* Action Buttons */}
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={handleJobMatch}
+            disabled={!jobDescription.trim() || isMatching}
+            className="w-full inline-flex items-center justify-center px-4 py-2.5 text-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+          >
+            {isMatching ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Analyse en cours...
+              </>
+            ) : (
+              <>
+                <Search className="h-4 w-4 mr-2" />
+                Analyser les Candidats
+              </>
+            )}
+          </button>
+          
+          {showMatchMode && (
+            <button
+              onClick={handleClearMatch}
+              className="w-full inline-flex items-center justify-center px-4 py-2.5 text-sm bg-white text-gray-700 font-medium rounded-lg border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm hover:shadow-md"
+            >
+              <X className="h-4 w-4 mr-1.5" />
+              Effacer
+            </button>
+          )}
+        </div>
 
-            {/* Tips Section */}
-            <div className="bg-white/60 rounded-lg p-4 border border-blue-200">
-              <h4 className="font-semibold text-gray-800 mb-2 flex items-center">
-                <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+        {/* Tips Section - Compact Version */}
+        <div className="bg-white/70 rounded-lg p-3 border border-blue-200">
+          <div className="flex items-start space-x-2">
+            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+            <div className="min-w-0 flex-1">
+              <h4 className="font-medium text-gray-800 text-xs mb-1.5">
                 Conseils pour de meilleurs résultats
               </h4>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Incluez les compétences techniques requises</li>
-                <li>• Mentionnez le niveau d'expérience souhaité</li>
-                <li>• Ajoutez les technologies et outils spécifiques</li>
-                <li>• Décrivez les responsabilités principales</li>
-              </ul>
+              <div className="space-y-0.5 text-xs text-gray-600">
+                <div>• Compétences techniques requises</div>
+                <div>• Niveau d'expérience souhaité</div>
+                <div>• Technologies et outils spécifiques</div>
+                <div>• Responsabilités principales</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
 
-      {/* Match Mode Banner */}
-      {showMatchMode && (
-        <div className="bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 border-2 border-green-200 rounded-xl shadow-lg overflow-hidden animate-in slide-in-from-top-2 duration-500">
-          <div className="p-6">
-            <div className="flex items-start justify-between">
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg">
-                    <Search className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <h3 className="text-lg font-bold text-green-800">Mode Correspondance Actif</h3>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 animate-pulse">
-                      <span className="w-2 h-2 bg-green-500 rounded-full mr-1.5"></span>
-                      En cours
-                    </span>
-                  </div>
-                  <div className="bg-white/70 rounded-lg p-3 border border-green-200">
-                    <p className="text-sm font-medium text-gray-700 mb-1">Recherche basée sur :</p>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      "{jobDescription.length > 100 ? jobDescription.substring(0, 100) + '...' : jobDescription}"
-                    </p>
-                  </div>
-                  <div className="mt-3 flex items-center space-x-4 text-sm text-green-700">
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                      Tri automatique par correspondance
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2"></div>
-                      {candidates.length} candidat{candidates.length > 1 ? 's' : ''} analysé{candidates.length > 1 ? 's' : ''}
-                    </div>
-                  </div>
-                </div>
-              </div>
+  {/* Filters and Search Section */}
+  <div className="bg-gradient-to-br from-gray-50 to-slate-100 rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+    <div className="bg-gradient-to-r from-slate-600 to-gray-700 px-4 py-3">
+      <div className="flex items-center">
+        <div className="p-1.5 bg-white/20 rounded-lg mr-3">
+          <Search className="h-5 w-5 text-white" />
+        </div>
+        <div>
+          <h2 className="text-lg font-bold text-white">Filtres et Recherche</h2>
+          <p className="text-gray-200 text-xs">Affinez votre recherche de candidats</p>
+        </div>
+      </div>
+    </div>
+    
+    <div className="p-4">
+      <div className="space-y-4">
+        {/* Search by name */}
+        <div className="space-y-2">
+          <label htmlFor="search-name" className="block text-sm font-medium text-gray-700 flex items-center">
+            <Search className="h-3.5 w-3.5 mr-1.5 text-blue-600" />
+            Rechercher par nom
+          </label>
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-4 w-4 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" />
+            </div>
+            <input
+              type="text"
+              id="search-name"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Tapez le nom du candidat..."
+              className="w-full pl-9 pr-9 py-2.5 text-sm border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+            />
+            {searchTerm && (
               <button
-                onClick={handleClearMatch}
-                className="flex-shrink-0 p-2 text-green-600 hover:text-green-800 hover:bg-white/50 rounded-lg transition-all duration-200 group"
-                title="Fermer le mode correspondance"
+                onClick={() => setSearchTerm('')}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-200"
               >
-                <X className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
+                <X className="h-4 w-4" />
               </button>
-            </div>
-          </div>
-          
-          {/* Progress indicator */}
-          <div className="h-1 bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 animate-pulse"></div>
-        </div>
-      )}
-
-      {/* Filters and Search Section */}
-      <div className="bg-gradient-to-br from-gray-50 to-slate-100 rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-        <div className="bg-gradient-to-r from-slate-600 to-gray-700 px-6 py-4">
-          <div className="flex items-center">
-            <div className="p-2 bg-white/20 rounded-lg mr-3">
-              <Search className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-white">Filtres et Recherche</h2>
-              <p className="text-gray-200 text-sm">Affinez votre recherche de candidats</p>
-            </div>
+            )}
           </div>
         </div>
-        
-        <div className="p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Search by name */}
-            <div className="space-y-3">
-              <label htmlFor="search-name" className="block text-sm font-semibold text-gray-700 flex items-center">
-                <Search className="h-4 w-4 mr-2 text-blue-600" />
-                Rechercher par nom
-              </label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" />
-                </div>
-                <input
-                  type="text"
-                  id="search-name"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Tapez le nom du candidat..."
-                  className="w-full pl-10 pr-10 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
-                />
-                {searchTerm && (
-                  <button
-                    onClick={() => setSearchTerm('')}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                )}
-              </div>
-            </div>
 
-            {/* Status filter */}
-            <div className="space-y-3">
-              <label htmlFor="status-filter" className="block text-sm font-semibold text-gray-700 flex items-center">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                Filtrer par statut
-              </label>
-              <div className="relative">
-                <select
-                  id="status-filter"
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white appearance-none cursor-pointer"
-                >
-                  <option value="all">Tous les statuts</option>
-                  <option value="New"> Nouveau</option>
-                  <option value="Interview Scheduled"> Entretien Programmé</option>
-                  <option value="Offer"> Offre</option>
-                  <option value="Hired"> Embauché</option>
-                  <option value="Rejected"> Rejeté</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <ChevronDown className="h-5 w-5 text-gray-400" />
-                </div>
-              </div>
+        {/* Status filter */}
+        <div className="space-y-2">
+          <label htmlFor="status-filter" className="block text-sm font-medium text-gray-700 flex items-center">
+            <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></div>
+            Filtrer par statut
+          </label>
+          <div className="relative">
+            <select
+              id="status-filter"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full px-3 py-2.5 text-sm border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white appearance-none cursor-pointer"
+            >
+              <option value="all">Tous les statuts</option>
+              <option value="New">Nouveau</option>
+              <option value="Interview Scheduled">Entretien Programmé</option>
+              <option value="Offer">Offre</option>
+              <option value="Hired">Embauché</option>
+              <option value="Rejected">Rejeté</option>
+            </select>
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <ChevronDown className="h-4 w-4 text-gray-400" />
             </div>
+          </div>
+        </div>
 
-            {/* Date sort */}
-            <div className="space-y-3">
-              <label htmlFor="date-sort" className="block text-sm font-semibold text-gray-700 flex items-center">
-                <Calendar className="h-4 w-4 mr-2 text-purple-600" />
-                Trier par date
-              </label>
-              <div className="relative">
-                <select
-                  id="date-sort"
-                  value={dateSortOrder}
-                  onChange={(e) => {
-                    setDateSortOrder(e.target.value);
-                    setSortBy('date');
-                  }}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white appearance-none cursor-pointer"
-                >
-                  <option value="newest"> Plus récent en premier</option>
-                  <option value="oldest"> Plus ancien en premier</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <ChevronDown className="h-5 w-5 text-gray-400" />
-                </div>
-              </div>
+        {/* Date sort */}
+        <div className="space-y-2">
+          <label htmlFor="date-sort" className="block text-sm font-medium text-gray-700 flex items-center">
+            <Calendar className="h-3.5 w-3.5 mr-1.5 text-purple-600" />
+            Trier par date
+          </label>
+          <div className="relative">
+            <select
+              id="date-sort"
+              value={dateSortOrder}
+              onChange={(e) => {
+                setDateSortOrder(e.target.value);
+                setSortBy('date');
+              }}
+              className="w-full px-3 py-2.5 text-sm border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white appearance-none cursor-pointer"
+            >
+              <option value="newest">Plus récent en premier</option>
+              <option value="oldest">Plus ancien en premier</option>
+            </select>
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <ChevronDown className="h-4 w-4 text-gray-400" />
             </div>
           </div>
         </div>
 
         {/* Active filters indicator and clear button */}
         {(searchTerm || statusFilter !== 'all' || dateSortOrder !== 'newest') && (
-          <div className="mt-6 p-4 bg-white/80 rounded-xl border border-gray-200">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="text-sm font-semibold text-gray-700 flex items-center">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+          <div className="p-3 bg-white/80 rounded-lg border border-gray-200">
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-medium text-gray-700 flex items-center">
+                  <div className="w-1.5 h-1.5 bg-orange-500 rounded-full mr-1.5"></div>
                   Filtres actifs :
                 </span>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5">
                   {searchTerm && (
-                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">
-                      <Search className="h-3 w-3 mr-1.5" />
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">
+                      <Search className="h-3 w-3 mr-1" />
                       "{searchTerm}"
                       <button
                         onClick={() => setSearchTerm('')}
-                        className="ml-2 text-blue-600 hover:text-blue-800 transition-colors duration-200"
+                        className="ml-1.5 text-blue-600 hover:text-blue-800 transition-colors duration-200"
                       >
                         <X className="h-3 w-3" />
                       </button>
                     </span>
                   )}
                   {statusFilter !== 'all' && (
-                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-green-100 text-green-800 border border-green-200 shadow-sm">
-                      <div className="w-2 h-2 bg-green-500 rounded-full mr-1.5"></div>
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200 shadow-sm">
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></div>
                       {statusFilter}
                       <button
                         onClick={() => setStatusFilter('all')}
-                        className="ml-2 text-green-600 hover:text-green-800 transition-colors duration-200"
+                        className="ml-1.5 text-green-600 hover:text-green-800 transition-colors duration-200"
                       >
                         <X className="h-3 w-3" />
                       </button>
                     </span>
                   )}
                   {dateSortOrder !== 'newest' && (
-                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-purple-100 text-purple-800 border border-purple-200 shadow-sm">
-                      <Calendar className="h-3 w-3 mr-1.5" />
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200 shadow-sm">
+                      <Calendar className="h-3 w-3 mr-1" />
                       {dateSortOrder === 'oldest' ? 'Plus ancien' : 'Plus récent'}
                       <button
                         onClick={() => setDateSortOrder('newest')}
-                        className="ml-2 text-purple-600 hover:text-purple-800 transition-colors duration-200"
+                        className="ml-1.5 text-purple-600 hover:text-purple-800 transition-colors duration-200"
                       >
                         <X className="h-3 w-3" />
                       </button>
@@ -547,15 +510,70 @@ const Dashboard = () => {
                   setDateSortOrder('newest');
                   setSortBy('name');
                 }}
-                className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold rounded-xl hover:from-red-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="w-full inline-flex items-center justify-center px-3 py-1.5 text-sm bg-gradient-to-r from-red-500 to-pink-500 text-white font-medium rounded-lg hover:from-red-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
               >
-                <X className="h-4 w-4 mr-2" />
+                <X className="h-3.5 w-3.5 mr-1.5" />
                 Effacer tous les filtres
               </button>
             </div>
           </div>
         )}
       </div>
+    </div>
+  </div>
+</div>
+
+{/* Match Mode Banner - Full Width Below */}
+{showMatchMode && (
+  <div className="bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 border-2 border-green-200 rounded-xl shadow-lg overflow-hidden animate-in slide-in-from-top-2 duration-500">
+    <div className="p-4">
+      <div className="flex items-start justify-between">
+        <div className="flex items-start space-x-3">
+          <div className="flex-shrink-0">
+            <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg shadow-md">
+              <Search className="h-4 w-4 text-white" />
+            </div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center space-x-2 mb-2">
+              <h3 className="text-base font-bold text-green-800">Mode Correspondance Actif</h3>
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 animate-pulse">
+                <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>
+                En cours
+              </span>
+            </div>
+            <div className="bg-white/70 rounded-md p-2.5 border border-green-200 mb-2">
+              <p className="text-xs font-medium text-gray-700 mb-1">Recherche basée sur :</p>
+              <p className="text-gray-600 text-xs leading-relaxed">
+                "{jobDescription.length > 120 ? jobDescription.substring(0, 120) + '...' : jobDescription}"
+              </p>
+            </div>
+            <div className="flex items-center space-x-3 text-xs text-green-700">
+              <div className="flex items-center">
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></div>
+                Tri automatique par correspondance
+              </div>
+              <div className="flex items-center">
+                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5"></div>
+                {candidates.length} candidat{candidates.length > 1 ? 's' : ''} analysé{candidates.length > 1 ? 's' : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+        <button
+          onClick={handleClearMatch}
+          className="flex-shrink-0 p-1.5 text-green-600 hover:text-green-800 hover:bg-white/50 rounded-lg transition-all duration-200 group"
+          title="Fermer le mode correspondance"
+        >
+          <X className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
+        </button>
+      </div>
+    </div>
+    
+    {/* Progress indicator */}
+    <div className="h-0.5 bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 animate-pulse"></div>
+  </div>
+)}
 
       {/* Results count */}
       {candidates.length > 0 && (

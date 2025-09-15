@@ -17,6 +17,17 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 # Database Models
+class User(Base):
+    __tablename__ = "users"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(Text, nullable=False)
+    email = Column(Text, unique=True, index=True, nullable=False)
+    hashed_password = Column(Text, nullable=False)
+    is_active = Column(String, default='true')
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
 class Candidate(Base):
     __tablename__ = "candidates"
     

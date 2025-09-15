@@ -9,6 +9,34 @@ const api = axios.create({
   },
 });
 
+// Add request interceptor to include auth token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor to handle auth errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token expired or invalid
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Upload CV
 export const uploadCV = async (file) => {
   const formData = new FormData();
@@ -55,6 +83,42 @@ export const updateCandidateStatus = async (id, status) => {
 // Match job against candidates
 export const matchJob = async (jobDescription) => {
   const response = await api.post('/match-job', { job_description: jobDescription });
+  return response.data;
+};
+
+// Authentication functions
+export const login = async (email, password, rememberMe = false) => {
+  const response = await api.post('/auth/login', {
+    email,
+    password,
+    remember_me: rememberMe
+  });
+  return response.data;
+};
+
+export const register = async (name, email, password) => {
+  const response = await api.post('/auth/register', {
+    name,
+    email,
+    password
+  });
+  return response.data;
+};
+
+export const logout = async () => {
+  try {
+    await api.post('/auth/logout');
+  } catch (error) {
+    // Even if logout fails on server, clear local storage
+    console.warn('Logout request failed:', error);
+  } finally {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  }
+};
+
+export const getCurrentUser = async () => {
+  const response = await api.get('/auth/me');
   return response.data;
 };
 

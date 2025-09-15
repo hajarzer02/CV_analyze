@@ -29,3 +29,8 @@ torch
 transformers
 accelerate
 requests
+
+# Authentication & Security
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
