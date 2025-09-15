@@ -24,7 +24,7 @@ function AppContent() {
     <Router>
       <div className="min-h-screen bg-gray-50">
         {isAuthenticated && <Navbar />}
-        <main className={isAuthenticated ? "container mx-auto px-4 py-8" : ""}>
+        <main className={isAuthenticated ? "container mx-auto px-4 py-4" : ""}>
           <Routes>
             {/* Public routes */}
             <Route path="/login" element={<Login />} />
