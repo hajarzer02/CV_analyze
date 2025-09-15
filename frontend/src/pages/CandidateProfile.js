@@ -218,14 +218,20 @@ const CandidateProfile = () => {
                   <button
                     onClick={() => setShowStatusDropdown(!showStatusDropdown)}
                     disabled={updatingStatus}
-                    className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium ${getStatusColors(candidate?.status || 'New')} hover:opacity-80 disabled:opacity-50 transition-colors`}
+                    className={`group inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold ${getStatusColors(candidate?.status || 'New')} hover:opacity-90 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md`}
+                    title="Cliquer pour changer le statut"
                   >
+                    {updatingStatus ? (
+                      <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+                    ) : (
+                      <div className={`w-2 h-2 rounded-full mr-2 ${getStatusColors(candidate?.status || 'New').split(' ')[0].replace('bg-', 'bg-')}`}></div>
+                    )}
                     {getStatusTranslation(candidate?.status || 'New')}
-                    <ChevronDown className="h-3 w-3 ml-1" />
+                    <ChevronDown className={`h-4 w-4 ml-2 transition-transform duration-200 ${showStatusDropdown ? 'rotate-180' : ''}`} />
                   </button>
                   
                   {showStatusDropdown && (
-                    <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50 animate-in slide-in-from-top-2 duration-200">
                       {['New', 'Interview Scheduled', 'Offer', 'Hired', 'Rejected'].map((status) => (
                         <button
                           key={status}
@@ -233,10 +239,10 @@ const CandidateProfile = () => {
                             handleStatusUpdate(status);
                             setShowStatusDropdown(false);
                           }}
-                          className="w-full text-left px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-100 transition-colors flex items-center space-x-2"
+                          className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center space-x-3 group"
                         >
-                          <div className={`w-2 h-2 rounded-full ${getStatusColors(status).split(' ')[0].replace('bg-', 'bg-')}`}></div>
-                          <span>{getStatusTranslation(status)}</span>
+                          <div className={`w-3 h-3 rounded-full ${getStatusColors(status).split(' ')[0].replace('bg-', 'bg-')}`}></div>
+                          <span className="font-medium">{getStatusTranslation(status)}</span>
                         </button>
                       ))}
                     </div>
@@ -250,68 +256,68 @@ const CandidateProfile = () => {
 
       <div className="container mx-auto px-4 py-6">
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         {/* Left Column - CV Information */}
-          <div className="xl:col-span-2 space-y-4">
+          <div className="xl:col-span-2 space-y-6">
           {/* Contact Information */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-              <div className="bg-indigo-600 p-4">
-                <h2 className="text-lg font-semibold text-white flex items-center">
-              <User className="h-5 w-5 mr-2" />
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+              <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-5">
+                <h2 className="text-lg font-bold text-white flex items-center">
+                  <User className="h-5 w-5 mr-3" />
               Informations de Contact
             </h2>
               </div>
-              <div className="p-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="p-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {contactInfo.emails?.map((email, index) => (
-                    <div key={index} className="group flex items-center p-3 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors">
-                      <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-indigo-200 transition-colors">
-                        <Mail className="h-4 w-4 text-indigo-600" />
+                    <div key={index} className="group flex items-center p-4 bg-gray-50 rounded-xl hover:bg-blue-50 transition-all duration-200 border border-gray-100 hover:border-blue-200">
+                      <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-4 group-hover:bg-blue-200 transition-colors">
+                        <Mail className="h-5 w-5 text-blue-600" />
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 font-medium">Email</p>
-                        <a href={`mailto:${email}`} className="text-sm text-gray-900 hover:text-indigo-600 font-medium transition-colors">
+                        <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Email</p>
+                        <a href={`mailto:${email}`} className="text-sm text-gray-900 hover:text-blue-600 font-medium transition-colors">
                     {email}
                   </a>
                       </div>
                 </div>
               ))}
               {contactInfo.phones?.map((phone, index) => (
-                    <div key={index} className="group flex items-center p-3 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors">
-                      <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-gray-200 transition-colors">
-                        <Phone className="h-4 w-4 text-gray-600" />
+                    <div key={index} className="group flex items-center p-4 bg-gray-50 rounded-xl hover:bg-blue-50 transition-all duration-200 border border-gray-100 hover:border-blue-200">
+                      <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4 group-hover:bg-gray-200 transition-colors">
+                        <Phone className="h-5 w-5 text-gray-600" />
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 font-medium">Téléphone</p>
-                        <a href={`tel:${phone}`} className="text-sm text-gray-900 hover:text-indigo-600 font-medium transition-colors">
+                        <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Téléphone</p>
+                        <a href={`tel:${phone}`} className="text-sm text-gray-900 hover:text-blue-600 font-medium transition-colors">
                     {phone}
                   </a>
                       </div>
                 </div>
               ))}
               {contactInfo.address && (
-                    <div className="group flex items-center p-3 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors md:col-span-2">
-                      <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-gray-200 transition-colors">
-                        <MapPin className="h-4 w-4 text-gray-600" />
+                    <div className="group flex items-center p-4 bg-gray-50 rounded-xl hover:bg-blue-50 transition-all duration-200 border border-gray-100 hover:border-blue-200 md:col-span-2">
+                      <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4 group-hover:bg-gray-200 transition-colors">
+                        <MapPin className="h-5 w-5 text-gray-600" />
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 font-medium">Adresse</p>
+                        <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Adresse</p>
                         <span className="text-sm text-gray-900 font-medium">{contactInfo.address}</span>
                       </div>
                 </div>
               )}
               {contactInfo.linkedin && (
-                    <div className="group flex items-center p-3 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors md:col-span-2">
-                      <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-gray-200 transition-colors">
-                        <Linkedin className="h-4 w-4 text-gray-600" />
+                    <div className="group flex items-center p-4 bg-gray-50 rounded-xl hover:bg-blue-50 transition-all duration-200 border border-gray-100 hover:border-blue-200 md:col-span-2">
+                      <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4 group-hover:bg-gray-200 transition-colors">
+                        <Linkedin className="h-5 w-5 text-gray-600" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-xs text-gray-500 font-medium">LinkedIn</p>
+                        <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">LinkedIn</p>
                   <a 
                     href={`https://${contactInfo.linkedin}`} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                          className="text-sm text-gray-900 hover:text-indigo-600 font-medium transition-colors flex items-center"
+                          className="text-sm text-gray-900 hover:text-blue-600 font-medium transition-colors flex items-center"
                   >
                     {contactInfo.linkedin}
                           <ExternalLink className="h-3 w-3 ml-2" />
@@ -325,19 +331,19 @@ const CandidateProfile = () => {
 
           {/* Professional Summary */}
           {summary.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div className="bg-indigo-600 p-4">
-                  <h2 className="text-lg font-semibold text-white flex items-center">
-                    <Award className="h-5 w-5 mr-2" />
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 p-5">
+                  <h2 className="text-lg font-bold text-white flex items-center">
+                    <Award className="h-5 w-5 mr-3" />
                     Résumé Professionnel
                   </h2>
                 </div>
-                <div className="p-4">
-                  <div className="space-y-3">
+                <div className="p-5">
+                  <div className="space-y-4">
                 {summary.map((line, index) => (
-                      <div key={index} className="flex items-start space-x-2">
-                        <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full mt-2 flex-shrink-0"></div>
-                        <p className="text-sm text-gray-700 leading-relaxed">{line}</p>
+                      <div key={index} className="flex items-start space-x-3">
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full mt-2 flex-shrink-0"></div>
+                        <p className="text-sm text-gray-700 leading-relaxed font-medium">{line}</p>
                       </div>
                 ))}
                   </div>
@@ -347,21 +353,21 @@ const CandidateProfile = () => {
 
           {/* Skills */}
           {skills.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div className="bg-gray-700 p-4">
-                  <h2 className="text-lg font-semibold text-white flex items-center">
-                <Code className="h-5 w-5 mr-2" />
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                <div className="bg-gradient-to-r from-slate-700 to-slate-800 p-5">
+                  <h2 className="text-lg font-bold text-white flex items-center">
+                    <Code className="h-5 w-5 mr-3" />
                     Compétences Techniques
               </h2>
                 </div>
-                <div className="p-4">
-              <div className="flex flex-wrap gap-2">
+                <div className="p-5">
+                  <div className="flex flex-wrap gap-3">
                 {skills.map((skill, index) => (
                   <span
                     key={index}
-                        className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-800 hover:bg-gray-200 transition-colors"
+                        className="group inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-slate-100 text-slate-800 hover:bg-slate-200 hover:scale-105 transition-all duration-200 border border-slate-200 hover:border-slate-300"
                   >
-                        <Star className="h-3 w-3 mr-1.5" />
+                        <Star className="h-4 w-4 mr-2 group-hover:animate-pulse" />
                     {skill}
                   </span>
                 ))}
@@ -372,24 +378,24 @@ const CandidateProfile = () => {
 
           {/* Languages */}
           {languages.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div className="bg-indigo-600 p-4">
-                  <h2 className="text-lg font-semibold text-white flex items-center">
-                <Globe className="h-5 w-5 mr-2" />
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                <div className="bg-gradient-to-r from-violet-600 to-violet-700 p-5">
+                  <h2 className="text-lg font-bold text-white flex items-center">
+                    <Globe className="h-5 w-5 mr-3" />
                 Langues
               </h2>
                 </div>
-                <div className="p-4">
-                  <div className="space-y-3">
+                <div className="p-5">
+                  <div className="space-y-4">
                 {languages.map((lang, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-                            <Globe className="h-4 w-4 text-indigo-600" />
+                      <div key={index} className="group flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-violet-50 transition-all duration-200 border border-gray-100 hover:border-violet-200">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center group-hover:bg-violet-200 transition-colors">
+                            <Globe className="h-5 w-5 text-violet-600" />
                           </div>
-                    <span className="font-medium text-gray-900">{lang.language}</span>
+                          <span className="font-semibold text-gray-900">{lang.language}</span>
                         </div>
-                        <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-medium">
+                        <span className="px-3 py-1.5 bg-violet-100 text-violet-800 rounded-full text-xs font-semibold">
                           {lang.level}
                         </span>
                   </div>
@@ -401,43 +407,43 @@ const CandidateProfile = () => {
 
           {/* Education */}
           {education.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div className="bg-gray-700 p-4">
-                  <h2 className="text-lg font-semibold text-white flex items-center">
-                <GraduationCap className="h-5 w-5 mr-2" />
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                <div className="bg-gradient-to-r from-slate-700 to-slate-800 p-5">
+                  <h2 className="text-lg font-bold text-white flex items-center">
+                    <GraduationCap className="h-5 w-5 mr-3" />
                 Formation
               </h2>
                 </div>
-                <div className="p-4">
-              <div className="space-y-4">
+                <div className="p-5">
+                  <div className="space-y-6">
                 {education.map((edu, index) => (
                       <div key={index} className="relative">
-                        <div className="flex items-start space-x-3">
+                        <div className="flex items-start space-x-4">
                           <div className="flex-shrink-0">
-                            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                              <GraduationCap className="h-4 w-4 text-gray-600" />
+                            <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center">
+                              <GraduationCap className="h-6 w-6 text-slate-600" />
                             </div>
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                       <div>
-                                <h3 className="text-sm font-semibold text-gray-900">{edu.degree}</h3>
+                                <h3 className="text-base font-bold text-gray-900">{edu.degree}</h3>
                         {edu.institution && (
-                                  <p className="text-xs text-gray-600 font-medium">{edu.institution}</p>
+                                  <p className="text-sm text-gray-600 font-semibold">{edu.institution}</p>
                         )}
                       </div>
                       {edu.date_range && (
-                                <div className="flex items-center mt-1 sm:mt-0">
-                                  <Calendar className="h-3 w-3 text-gray-400 mr-1" />
-                                  <span className="text-xs text-gray-500 font-medium">{edu.date_range}</span>
+                                <div className="flex items-center mt-2 sm:mt-0">
+                                  <Calendar className="h-4 w-4 text-gray-400 mr-2" />
+                                  <span className="text-sm text-gray-500 font-medium">{edu.date_range}</span>
                                 </div>
                       )}
                     </div>
                     {edu.details.length > 0 && (
-                      <ul className="mt-2 space-y-1">
+                              <ul className="mt-3 space-y-2">
                         {edu.details.map((detail, detailIndex) => (
-                                  <li key={detailIndex} className="flex items-start space-x-2 text-xs text-gray-600">
-                                    <div className="w-1 h-1 bg-gray-400 rounded-full mt-1.5 flex-shrink-0"></div>
+                                  <li key={detailIndex} className="flex items-start space-x-3 text-sm text-gray-600">
+                                    <div className="w-1.5 h-1.5 bg-slate-400 rounded-full mt-2 flex-shrink-0"></div>
                                     <span>{detail}</span>
                           </li>
                         ))}
@@ -446,7 +452,7 @@ const CandidateProfile = () => {
                           </div>
                         </div>
                         {index < education.length - 1 && (
-                          <div className="absolute left-4 top-8 w-0.5 h-4 bg-gray-200"></div>
+                          <div className="absolute left-6 top-12 w-0.5 h-6 bg-gray-200"></div>
                     )}
                   </div>
                 ))}
@@ -457,41 +463,41 @@ const CandidateProfile = () => {
 
           {/* Experience */}
           {experience.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div className="bg-indigo-600 p-4">
-                  <h2 className="text-lg font-semibold text-white flex items-center">
-                <Briefcase className="h-5 w-5 mr-2" />
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 p-5">
+                  <h2 className="text-lg font-bold text-white flex items-center">
+                    <Briefcase className="h-5 w-5 mr-3" />
                     Expérience Professionnelle
               </h2>
                 </div>
-                <div className="p-4">
-              <div className="space-y-4">
+                <div className="p-5">
+                  <div className="space-y-6">
                 {experience.map((exp, index) => (
                       <div key={index} className="relative">
-                        <div className="flex items-start space-x-3">
+                        <div className="flex items-start space-x-4">
                           <div className="flex-shrink-0">
-                            <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-                              <Briefcase className="h-4 w-4 text-indigo-600" />
+                            <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                              <Briefcase className="h-6 w-6 text-emerald-600" />
                             </div>
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                       <div>
-                                <h3 className="text-sm font-semibold text-gray-900">{exp.role}</h3>
-                                <p className="text-xs text-gray-600 font-medium">{exp.company}</p>
+                                <h3 className="text-base font-bold text-gray-900">{exp.role}</h3>
+                                <p className="text-sm text-gray-600 font-semibold">{exp.company}</p>
                       </div>
                       {exp.date_range && (
-                                <div className="flex items-center mt-1 sm:mt-0">
-                                  <Calendar className="h-3 w-3 text-gray-400 mr-1" />
-                                  <span className="text-xs text-gray-500 font-medium">{exp.date_range}</span>
+                                <div className="flex items-center mt-2 sm:mt-0">
+                                  <Calendar className="h-4 w-4 text-gray-400 mr-2" />
+                                  <span className="text-sm text-gray-500 font-medium">{exp.date_range}</span>
                                 </div>
                       )}
                     </div>
                     {exp.details.length > 0 && (
-                      <ul className="mt-2 space-y-1">
+                              <ul className="mt-3 space-y-2">
                         {exp.details.map((detail, detailIndex) => (
-                                  <li key={detailIndex} className="flex items-start space-x-2 text-xs text-gray-600">
-                                    <div className="w-1 h-1 bg-indigo-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                                  <li key={detailIndex} className="flex items-start space-x-3 text-sm text-gray-600">
+                                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full mt-2 flex-shrink-0"></div>
                                     <span>{detail}</span>
                           </li>
                         ))}
@@ -500,7 +506,7 @@ const CandidateProfile = () => {
                           </div>
                         </div>
                         {index < experience.length - 1 && (
-                          <div className="absolute left-4 top-8 w-0.5 h-4 bg-gray-200"></div>
+                          <div className="absolute left-6 top-12 w-0.5 h-6 bg-gray-200"></div>
                     )}
                   </div>
                 ))}
@@ -509,101 +515,101 @@ const CandidateProfile = () => {
             </div>
           )}
 
-            {/* Projects */}
-            {projects.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div className="bg-indigo-600 p-4">
-                  <h2 className="text-lg font-semibold text-white flex items-center">
-                    <Target className="h-5 w-5 mr-2" />
+          {/* Projects */}
+          {projects.length > 0 && (
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-5">
+                  <h2 className="text-lg font-bold text-white flex items-center">
+                    <Target className="h-5 w-5 mr-3" />
                     Projets
                   </h2>
                 </div>
-                <div className="p-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {projects.map((project, index) => (
-                      <div key={index} className="group bg-gray-50 rounded-lg p-3 hover:bg-indigo-50 transition-colors border border-gray-100">
-                        <div className="flex items-start space-x-2">
-                          <div className="w-6 h-6 bg-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
-                            <Target className="h-3 w-3 text-indigo-600" />
+                <div className="p-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {projects.map((project, index) => (
+                      <div key={index} className="group bg-gray-50 rounded-xl p-4 hover:bg-blue-50 transition-all duration-200 border border-gray-100 hover:border-blue-200 hover:shadow-md">
+                        <div className="flex items-start space-x-3">
+                          <div className="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                            <Target className="h-4 w-4 text-blue-600" />
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-medium text-gray-900 mb-1 text-sm">{project.title}</h3>
-                            {project.description && (
+                            <h3 className="font-bold text-gray-900 mb-2 text-sm">{project.title}</h3>
+                    {project.description && (
                               <p className="text-gray-600 text-xs leading-relaxed">{project.description}</p>
-                            )}
+                    )}
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
-              </div>
-            )}
+            </div>
+          )}
         </div>
 
-          {/* Right Column - Job Recommendations */}
+        {/* Right Column - Job Recommendations */}
           <div className="xl:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden sticky top-4">
-              <div className="bg-indigo-600 p-4">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden sticky top-6 hover:shadow-xl transition-all duration-300">
+              <div className="bg-gradient-to-r from-violet-600 to-violet-700 p-5">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-white flex items-center">
-                    <Lightbulb className="h-5 w-5 mr-2" />
+                  <h2 className="text-lg font-bold text-white flex items-center">
+                    <Lightbulb className="h-5 w-5 mr-3" />
                     Recommandations IA
-                  </h2>
-                  <Sparkles className="h-4 w-4 text-white" />
+              </h2>
+                  <Sparkles className="h-5 w-5 text-white animate-pulse" />
                 </div>
               </div>
-              <div className="p-4">
-                <button
-                  onClick={handleGenerateRecommendations}
-                  disabled={generatingRecs}
-                  className="w-full mb-4 px-4 py-2.5 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 transition-colors"
-                >
-                  {generatingRecs ? (
-                    <>
-                      <RefreshCw className="h-4 w-4 animate-spin" />
-                      <span className="text-sm">Génération...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Lightbulb className="h-4 w-4" />
+              <div className="p-5">
+              <button
+                onClick={handleGenerateRecommendations}
+                disabled={generatingRecs}
+                  className="w-full mb-5 px-5 py-3 bg-gradient-to-r from-violet-600 to-violet-700 text-white font-semibold rounded-xl hover:from-violet-700 hover:to-violet-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 disabled:hover:scale-100"
+              >
+                {generatingRecs ? (
+                  <>
+                      <RefreshCw className="h-5 w-5 animate-spin" />
+                      <span className="text-sm">Génération en cours...</span>
+                  </>
+                ) : (
+                  <>
+                      <Lightbulb className="h-5 w-5" />
                       <span className="text-sm">Générer des Recommandations</span>
-                    </>
-                  )}
-                </button>
+                  </>
+                )}
+              </button>
 
-                {recommendations && recommendations.length > 0 ? (
-                  <div className="space-y-3">
-                    {recommendations.map((recGroup, groupIndex) => (
-                      <div key={groupIndex} className="space-y-2">
-                        {recGroup.map((rec, index) => (
-                          <div key={index} className="group bg-gray-50 rounded-lg p-3 hover:bg-indigo-50 transition-colors border border-gray-100">
-                            <div className="flex items-start space-x-2">
-                              <div className="w-6 h-6 bg-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
-                                <TrendingUp className="h-3 w-3 text-indigo-600" />
+            {recommendations && recommendations.length > 0 ? (
+              <div className="space-y-4">
+                {recommendations.map((recGroup, groupIndex) => (
+                  <div key={groupIndex} className="space-y-3">
+                    {recGroup.map((rec, index) => (
+                          <div key={index} className="group bg-gray-50 rounded-xl p-4 hover:bg-violet-50 transition-all duration-200 border border-gray-100 hover:border-violet-200 hover:shadow-md">
+                            <div className="flex items-start space-x-3">
+                              <div className="w-8 h-8 bg-violet-100 rounded-xl flex items-center justify-center group-hover:bg-violet-200 transition-colors">
+                                <TrendingUp className="h-4 w-4 text-violet-600" />
                               </div>
                               <div className="flex-1">
-                                <h3 className="font-medium text-gray-900 mb-1 text-sm">{rec.title}</h3>
+                                <h3 className="font-bold text-gray-900 mb-2 text-sm">{rec.title}</h3>
                                 <p className="text-gray-600 text-xs leading-relaxed">{rec.reason}</p>
                               </div>
                             </div>
                           </div>
                         ))}
-                      </div>
-                    ))}
                   </div>
-                ) : (
-                  <div className="text-center py-6">
-                    <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                      <Lightbulb className="h-6 w-6 text-indigo-600" />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                    <div className="w-16 h-16 bg-violet-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <Lightbulb className="h-8 w-8 text-violet-600" />
                     </div>
-                    <h3 className="text-sm font-semibold text-gray-900 mb-2">Aucune recommandation</h3>
-                    <p className="text-gray-600 mb-3 text-xs">Générez des suggestions d'emploi personnalisées</p>
-                    <p className="text-xs text-gray-500">
+                    <h3 className="text-base font-bold text-gray-900 mb-2">Aucune recommandation</h3>
+                    <p className="text-gray-600 mb-4 text-sm">Générez des suggestions d'emploi personnalisées</p>
+                    <p className="text-xs text-gray-500 leading-relaxed">
                       Notre IA analysera le profil et proposera des opportunités adaptées
-                    </p>
-                  </div>
-                )}
+                </p>
+              </div>
+            )}
               </div>
             </div>
           </div>
