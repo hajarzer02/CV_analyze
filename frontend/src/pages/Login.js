@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
@@ -16,7 +16,23 @@ const Login = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
   
   const navigate = useNavigate();
-  const { login: authLogin } = useAuth();
+  const { login: authLogin, isAuthenticated } = useAuth();
+
+  // Redirect immediately when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Don't render the login form if already authenticated
+  if (isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
 
   const validateForm = () => {
     const newErrors = {};
@@ -69,17 +85,8 @@ const Login = () => {
       const data = await login(formData.email, formData.password, rememberMe);
       
       // Use the auth context to update authentication state
+      // The useEffect will handle the redirect when isAuthenticated becomes true
       authLogin(data.access_token, data.user);
-      
-      setMessage({ 
-        type: 'success', 
-        text: 'Login successful! Redirecting...' 
-      });
-      
-      // Redirect to dashboard after a short delay
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1500);
     } catch (error) {
       setMessage({ 
         type: 'error', 

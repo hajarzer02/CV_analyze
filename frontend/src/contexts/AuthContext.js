@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('user', JSON.stringify(userData));
     setIsAuthenticated(true);
     setUser(userData);
-    window.dispatchEvent(new Event('authChange'));
+    // Don't dispatch the event since we're already updating state directly
   };
 
   const logout = () => {
