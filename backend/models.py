@@ -29,6 +29,7 @@ class CandidateResponse(BaseModel):
 class CandidateSummary(BaseModel):
     id: int
     name: Optional[str]
+    email: Optional[str]
     skills: List[str]
     location: Optional[str]
     status: str = 'New'

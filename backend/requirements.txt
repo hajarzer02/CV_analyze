@@ -22,11 +22,10 @@ python-multipart
 # Document processing
 python-docx
 pymupdf
+numpy
 
 # AI / NLP
 torch
 transformers
 accelerate
-
-# HTTP requests
 requests

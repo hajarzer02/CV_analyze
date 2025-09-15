@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Eye, Calendar, MapPin, Code, Trash2, AlertTriangle, Search, X, ChevronDown } from 'lucide-react';
+import { Eye, Calendar, Code, Trash2, AlertTriangle, Search, X, ChevronDown } from 'lucide-react';
 import { getCandidates, deleteCandidate, updateCandidateStatus, matchJob } from '../services/api';
 
 const Dashboard = () => {
@@ -289,7 +289,7 @@ const Dashboard = () => {
                     Compétences
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Localisation
+                    Emails
                   </th>
                   <th 
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
@@ -357,8 +357,8 @@ const Dashboard = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center text-sm text-gray-600">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        {candidate.location || 'Non spécifié'}
+                        <span className="text-gray-500 mr-1">@</span>
+                        {candidate.email || 'Non spécifié'}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

@@ -229,6 +229,7 @@ async def get_candidates(db: Session = Depends(get_db)):
         result.append(CandidateSummary(
             id=candidate.id,
             name=candidate.name,
+            email=candidate.email,
             skills=skills,
             location=candidate.location,
             status=candidate.status or 'New',
