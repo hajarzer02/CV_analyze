@@ -1,0 +1,32 @@
+# --- Backend Frameworks ---
+fastapi
+flask
+
+# ASGI server for FastAPI
+uvicorn[standard]
+
+# Environment variables
+python-dotenv
+
+# Database
+sqlalchemy
+alembic
+psycopg2-binary
+
+# Validation
+pydantic
+
+# File uploads
+python-multipart
+
+# Document processing
+python-docx
+pymupdf
+
+# AI / NLP
+torch
+transformers
+accelerate
+
+# HTTP requests
+requests

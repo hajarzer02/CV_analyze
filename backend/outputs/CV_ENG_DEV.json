@@ -1,0 +1,98 @@
+{
+  "contact_info": {
+    "emails": [
+      "bouhalidoha0@gmail.com"
+    ],
+    "phones": [
+      "+21 26 50 11 31 97",
+      "21 26 50 11 31"
+    ],
+    "linkedin": "linkedin.com/in/doha-bouhali-48729623b",
+    "address": "Mers Sultan Casablanca 20250, Morocco"
+  },
+  "professional_summary": [
+    "Computer science student with a solid",
+    "foundation in app and web development,",
+    "dedicated to crafting robust and scalable",
+    "software solutions. Experienced in",
+    "developing dynamic applications and",
+    "tackling complex challenges, always",
+    "seeking to enhance expertise and stay",
+    "ahead in the tech field."
+  ],
+  "skills": [
+    "Programming Languages: C",
+    "C++",
+    "JAVA",
+    "JavaScript",
+    "PHP",
+    "Dart",
+    "Web Technologies: HTML",
+    "CSS",
+    "Laravel",
+    "Databases: SQL",
+    "Oracle",
+    "Microsoft Access",
+    "Systems and Networks: OSI Model",
+    "Cisco",
+    "Packet Tracer",
+    "Software and Tools: MATLAB",
+    "Arduino",
+    "System Commands: CMD in Linux and",
+    "Windows"
+  ],
+  "languages": [
+    {
+      "language": "English",
+      "level": "Fluent"
+    },
+    {
+      "language": "French",
+      "level": "Excellent"
+    }
+  ],
+  "experience": [
+    {
+      "date_range": "JUN 2024 - AUG 2024",
+      "details": [
+        "Mobile App Development Intern",
+        "Developed user interfaces using Flutter and",
+        "Dart.",
+        "Contributed to the front-end development of",
+        "the app by modifying features, updating color",
+        "schemes, and enhancing visual elements to"
+      ],
+      "company": "Progiciel System",
+      "role": "Casablanca"
+    },
+    {
+      "date_range": "JUN 2023 - AUG 2023",
+      "details": [
+        "Mobile App Development Intern",
+        "Developed user interfaces using Flutter and",
+        "Dart.",
+        "Contributed to the front-end development of",
+        "the app by modifying features, updating color",
+        "schemes, and enhancing visual elements to",
+        "Web Development Intern",
+        "Contributed to web development using HTML,",
+        "CSS, and JavaScript.",
+        "Collaborated with the team on design and",
+        "layout improvements for the website.",
+        "Implemented styling and interactivity to"
+      ],
+      "company": "Traco Engineering",
+      "role": "Casablanca"
+    }
+  ],
+  "projects": [
+    {
+      "title": "​",
+      "description": ""
+    },
+    {
+      "title": "​",
+      "description": ""
+    }
+  ]
+}
