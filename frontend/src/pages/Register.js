@@ -155,7 +155,6 @@ const Register = () => {
             
             {/* Decorative elements */}
             <div className="absolute top-0 left-0 w-full h-full">
-              <div className="absolute top-10 right-10 w-20 h-20 border-2 border-white border-opacity-20 rounded-full animate-float"></div>
               <div className="absolute bottom-20 left-10 w-16 h-16 border-2 border-white border-opacity-20 rounded-full animate-float-delayed"></div>
             </div>
             
@@ -163,14 +162,7 @@ const Register = () => {
               {/* Enhanced Logo with CV theme */}
               <div className="mb-8 relative">
                 <div className="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto animate-float backdrop-blur-sm">
-                  <img 
-                    src="/LOGapp.svg" 
-                    alt="CV Analyzer Logo" 
-                    className="w-12 h-12 object-contain filter drop-shadow-lg"
-                  />
-                </div>
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full animate-pulse flex items-center justify-center shadow-lg">
-                  <Brain className="w-4 h-4 text-white" />
+                  <FileText className="w-12 h-12 text-white filter drop-shadow-lg" />
                 </div>
               </div>
               
@@ -238,13 +230,13 @@ const Register = () => {
                 <h2 className="text-4xl font-bold text-gray-800 mb-4">
                   Créer votre compte
                   <span className="inline-block animate-bounce ml-2">🚀</span>
-                </h2>
+          </h2>
                 <div className="w-20 h-1 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full mb-6"></div>
                 <p className="text-gray-600 text-lg leading-relaxed">
                   Rejoignez notre plateforme et commencez à analyser des CV avec notre IA avancée.
-                </p>
-              </div>
-
+          </p>
+        </div>
+        
               {/* Registration Form */}
               <form 
                 className="space-y-6" 
@@ -254,21 +246,21 @@ const Register = () => {
                 aria-label="Registration form"
                 noValidate
               >
-                {/* Name Field */}
+            {/* Name Field */}
                 <div className="space-y-2">
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <User className={`h-5 w-5 transition-colors duration-200 ${
                         focusedField === 'name' ? 'text-indigo-500' : 'text-gray-400'
                       }`} />
-                    </div>
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      autoComplete="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
+                </div>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
                       onFocus={() => handleInputFocus('name')}
                       onBlur={handleInputBlur}
                       onKeyDown={handleKeyDown}
@@ -279,31 +271,31 @@ const Register = () => {
                       aria-describedby={errors.name ? 'name-error' : undefined}
                       aria-invalid={errors.name ? 'true' : 'false'}
                       required
-                    />
-                  </div>
-                  {errors.name && (
+                />
+              </div>
+              {errors.name && (
                     <div id="name-error" className="flex items-center space-x-2 animate-slide-in-right" role="alert">
                       <AlertCircle className="h-4 w-4 text-red-400" aria-hidden="true" />
                       <p className="text-sm text-red-400">{errors.name}</p>
                     </div>
-                  )}
-                </div>
+              )}
+            </div>
 
-                {/* Email Field */}
+            {/* Email Field */}
                 <div className="space-y-2">
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Mail className={`h-5 w-5 transition-colors duration-200 ${
                         focusedField === 'email' ? 'text-indigo-500' : 'text-gray-400'
                       }`} />
-                    </div>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
+                </div>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
                       onFocus={() => handleInputFocus('email')}
                       onBlur={handleInputBlur}
                       onKeyDown={handleKeyDown}
@@ -314,31 +306,31 @@ const Register = () => {
                       aria-describedby={errors.email ? 'email-error' : undefined}
                       aria-invalid={errors.email ? 'true' : 'false'}
                       required
-                    />
-                  </div>
-                  {errors.email && (
+                />
+              </div>
+              {errors.email && (
                     <div id="email-error" className="flex items-center space-x-2 animate-slide-in-right" role="alert">
                       <AlertCircle className="h-4 w-4 text-red-400" aria-hidden="true" />
                       <p className="text-sm text-red-400">{errors.email}</p>
                     </div>
-                  )}
-                </div>
+              )}
+            </div>
 
-                {/* Password Field */}
+            {/* Password Field */}
                 <div className="space-y-2">
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Lock className={`h-5 w-5 transition-colors duration-200 ${
                         focusedField === 'password' ? 'text-indigo-500' : 'text-gray-400'
                       }`} />
-                    </div>
-                    <input
-                      id="password"
-                      name="password"
-                      type={showPassword ? 'text' : 'password'}
-                      autoComplete="new-password"
-                      value={formData.password}
-                      onChange={handleInputChange}
+                </div>
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  value={formData.password}
+                  onChange={handleInputChange}
                       onFocus={() => handleInputFocus('password')}
                       onBlur={handleInputBlur}
                       onKeyDown={handleKeyDown}
@@ -349,43 +341,43 @@ const Register = () => {
                       aria-describedby={errors.password ? 'password-error' : undefined}
                       aria-invalid={errors.password ? 'true' : 'false'}
                       required
-                    />
-                    <button
-                      type="button"
+                />
+                <button
+                  type="button"
                       className="absolute inset-y-0 right-0 pr-4 flex items-center group/eye"
-                      onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowPassword(!showPassword)}
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    >
-                      {showPassword ? (
+                >
+                  {showPassword ? (
                         <EyeOff className="h-5 w-5 text-gray-400 hover:text-indigo-500 transition-colors duration-200 group-hover/eye:scale-110" />
-                      ) : (
+                  ) : (
                         <Eye className="h-5 w-5 text-gray-400 hover:text-indigo-500 transition-colors duration-200 group-hover/eye:scale-110" />
-                      )}
-                    </button>
-                  </div>
-                  {errors.password && (
+                  )}
+                </button>
+              </div>
+              {errors.password && (
                     <div id="password-error" className="flex items-center space-x-2 animate-slide-in-right" role="alert">
                       <AlertCircle className="h-4 w-4 text-red-400" aria-hidden="true" />
                       <p className="text-sm text-red-400">{errors.password}</p>
                     </div>
-                  )}
-                </div>
+              )}
+            </div>
 
-                {/* Confirm Password Field */}
+            {/* Confirm Password Field */}
                 <div className="space-y-2">
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Lock className={`h-5 w-5 transition-colors duration-200 ${
                         focusedField === 'confirmPassword' ? 'text-indigo-500' : 'text-gray-400'
                       }`} />
-                    </div>
-                    <input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      autoComplete="new-password"
-                      value={formData.confirmPassword}
-                      onChange={handleInputChange}
+                </div>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
                       onFocus={() => handleInputFocus('confirmPassword')}
                       onBlur={handleInputBlur}
                       onKeyDown={handleKeyDown}
@@ -396,33 +388,33 @@ const Register = () => {
                       aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
                       aria-invalid={errors.confirmPassword ? 'true' : 'false'}
                       required
-                    />
-                    <button
-                      type="button"
+                />
+                <button
+                  type="button"
                       className="absolute inset-y-0 right-0 pr-4 flex items-center group/eye"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
-                    >
-                      {showConfirmPassword ? (
+                >
+                  {showConfirmPassword ? (
                         <EyeOff className="h-5 w-5 text-gray-400 hover:text-indigo-500 transition-colors duration-200 group-hover/eye:scale-110" />
-                      ) : (
+                  ) : (
                         <Eye className="h-5 w-5 text-gray-400 hover:text-indigo-500 transition-colors duration-200 group-hover/eye:scale-110" />
-                      )}
-                    </button>
-                  </div>
-                  {errors.confirmPassword && (
+                  )}
+                </button>
+              </div>
+              {errors.confirmPassword && (
                     <div id="confirmPassword-error" className="flex items-center space-x-2 animate-slide-in-right" role="alert">
                       <AlertCircle className="h-4 w-4 text-red-400" aria-hidden="true" />
                       <p className="text-sm text-red-400">{errors.confirmPassword}</p>
                     </div>
-                  )}
-                </div>
+              )}
+            </div>
 
-                {/* Message Display */}
-                {message.text && (
+            {/* Message Display */}
+            {message.text && (
                   <div 
                     className={`rounded-xl p-4 border animate-slide-in-down ${
-                      message.type === 'success' 
+                message.type === 'success' 
                         ? 'bg-emerald-50 border-emerald-200' 
                         : 'bg-red-50 border-red-200'
                     }`}
@@ -430,41 +422,41 @@ const Register = () => {
                     aria-live="polite"
                   >
                     <div className="flex items-center space-x-3">
-                      <div className="flex-shrink-0">
-                        {message.type === 'success' ? (
+                  <div className="flex-shrink-0">
+                    {message.type === 'success' ? (
                           <CheckCircle className="h-5 w-5 text-emerald-500 animate-bounce" aria-hidden="true" />
-                        ) : (
+                    ) : (
                           <AlertCircle className="h-5 w-5 text-red-500 animate-pulse" aria-hidden="true" />
-                        )}
-                      </div>
-                      <p className={`text-sm font-medium ${
-                        message.type === 'success' ? 'text-emerald-700' : 'text-red-700'
-                      }`}>
-                        {message.text}
-                      </p>
-                    </div>
+                    )}
                   </div>
-                )}
+                    <p className={`text-sm font-medium ${
+                        message.type === 'success' ? 'text-emerald-700' : 'text-red-700'
+                    }`}>
+                      {message.text}
+                    </p>
+                </div>
+              </div>
+            )}
 
-                {/* Submit Button */}
+            {/* Submit Button */}
                 <div className="space-y-4">
-                  <button
-                    type="submit"
-                    disabled={isLoading}
+              <button
+                type="submit"
+                disabled={isLoading}
                     className="group w-full px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isLoading ? (
+              >
+                {isLoading ? (
                       <div className="flex items-center space-x-2">
                         <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white"></div>
                         <span>Création du compte...</span>
-                      </div>
-                    ) : (
+                  </div>
+                ) : (
                       <div className="flex items-center space-x-2">
                         <Users className="w-5 h-5 group-hover:scale-110 transition-transform" />
                         <span>Créer le compte</span>
                       </div>
-                    )}
-                  </button>
+                )}
+              </button>
 
                   {/* Login Link */}
                   <div className="text-center">

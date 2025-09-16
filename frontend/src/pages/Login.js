@@ -186,24 +186,16 @@ const Login = () => {
             
             {/* Decorative elements */}
             <div className="absolute top-0 left-0 w-full h-full">
-              <div className="absolute top-10 right-10 w-20 h-20 border-2 border-white border-opacity-20 rounded-full animate-float"></div>
               <div className="absolute bottom-20 left-10 w-16 h-16 border-2 border-white border-opacity-20 rounded-full animate-float-delayed"></div>
-        </div>
+            </div>
             
             <div className="relative z-10 text-center">
               {/* Enhanced Logo with CV theme */}
               <div className="mb-8 relative">
                 <div className="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto animate-float backdrop-blur-sm">
-                  <img 
-                    src="/LOGapp.svg" 
-                    alt="CV Analyzer Logo" 
-                    className="w-12 h-12 object-contain filter drop-shadow-lg"
-                  />
-        </div>
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full animate-pulse flex items-center justify-center shadow-lg">
-                  <Brain className="w-4 h-4 text-white" />
-        </div>
-        </div>
+                  <FileText className="w-12 h-12 text-white filter drop-shadow-lg" />
+                </div>
+              </div>
         
               <h1 className="text-5xl font-extrabold mb-4">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-purple-200 drop-shadow-2xl">
