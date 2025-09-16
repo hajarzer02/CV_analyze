@@ -168,7 +168,7 @@ const Register = () => {
               
               <h1 className="text-5xl font-extrabold mb-4">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-purple-200 drop-shadow-2xl">
-                  CV Analyzer Pro
+                  CV Analyzer 
                 </span>
               </h1>
 
@@ -495,7 +495,7 @@ const Register = () => {
               {/* Footer */}
               <div className="mt-8 text-center">
                 <p className="text-xs text-gray-400">
-                  © 2025 CV Analyzer Pro. Tous droits réservés.
+                  © 2025 CV Analyzer. Tous droits réservés.
                 </p>
               </div>
             </div>

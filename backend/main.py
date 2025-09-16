@@ -50,6 +50,15 @@ app = FastAPI(title="CV Analysis & Job Recommendation API", version="1.0.0")
 # Mount static files (CSS, JS, images, etc.)
 app.mount("/static", StaticFiles(directory=os.path.join(REACT_BUILD_PATH, "static")), name="static")
 
+# Serve favicon specifically
+@app.get("/favicon.ico")
+async def favicon():
+    favicon_path = os.path.join(REACT_BUILD_PATH, "favicon.ico")
+    if os.path.exists(favicon_path):
+        return FileResponse(favicon_path, media_type="image/x-icon")
+    else:
+        raise HTTPException(status_code=404, detail="Favicon not found")
+
 # Add CORS middleware - MUST be before any routes
 # Allow all origins for development (including ngrok)
 app.add_middleware(

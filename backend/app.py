@@ -29,6 +29,15 @@ CORS(app,
 
 extractor = CVExtractor()
 
+# Serve favicon specifically
+@app.route('/favicon.ico')
+def favicon():
+    favicon_path = os.path.join(REACT_BUILD_PATH, 'favicon.ico')
+    if os.path.exists(favicon_path):
+        return send_file(favicon_path, mimetype='image/x-icon')
+    else:
+        return jsonify({"error": "Favicon not found"}), 404
+
 # API Routes
 @app.route('/health', methods=['GET'])
 def health_check():
