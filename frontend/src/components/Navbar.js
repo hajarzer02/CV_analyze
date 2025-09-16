@@ -76,7 +76,7 @@ const Navbar = () => {
                     className="flex items-center space-x-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                   >
                     <LogOut className="h-4 w-4" />
-                    <span>Sign out</span>
+                    <span>Se déconnecter</span>
                   </button>
                 </div>
               )}

@@ -52,16 +52,16 @@ const Login = () => {
     
     // Email validation
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = 'L\'email est requis';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = 'Veuillez entrer une adresse email valide';
     }
     
     // Password validation
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = 'Le mot de passe est requis';
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères';
     }
     
     setErrors(newErrors);
@@ -73,17 +73,17 @@ const Login = () => {
     
     if (name === 'email') {
       if (!value) {
-        newErrors.email = 'Email is required';
+        newErrors.email = 'L\'email est requis';
       } else if (!/\S+@\S+\.\S+/.test(value)) {
-        newErrors.email = 'Please enter a valid email address';
+        newErrors.email = 'Veuillez entrer une adresse email valide';
       } else {
         delete newErrors.email;
       }
     } else if (name === 'password') {
       if (!value) {
-        newErrors.password = 'Password is required';
+        newErrors.password = 'Le mot de passe est requis';
       } else if (value.length < 6) {
-        newErrors.password = 'Password must be at least 6 characters';
+        newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères';
       } else {
         delete newErrors.password;
       }
@@ -144,7 +144,7 @@ const Login = () => {
       // Add success animation with recruitment theme
       setMessage({ 
         type: 'success', 
-        text: 'Connecting to talent dashboard...' 
+        text: 'Connexion au tableau de bord des talents...' 
       });
       setTimeout(() => {
         authLogin(data.access_token, data.user);
@@ -153,7 +153,7 @@ const Login = () => {
       setIsAnimating(false);
       setMessage({ 
         type: 'error', 
-        text: error.response?.data?.detail || 'Login failed. Please check your credentials.' 
+        text: error.response?.data?.detail || 'Échec de la connexion. Veuillez vérifier vos identifiants.' 
       });
     } finally {
       setIsLoading(false);
@@ -274,7 +274,7 @@ const Login = () => {
                 onSubmit={handleSubmit} 
                 ref={formRef}
                 role="form"
-                aria-label="Login form"
+                aria-label="Formulaire de connexion"
                 noValidate
               >
               {/* Email Field */}
@@ -342,7 +342,7 @@ const Login = () => {
                     type="button"
                       className="absolute inset-y-0 right-0 pr-4 flex items-center group/eye"
                     onClick={() => setShowPassword(!showPassword)}
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
                   >
                     {showPassword ? (
                         <EyeOff className="h-5 w-5 text-gray-400 hover:text-indigo-500 transition-colors duration-200 group-hover/eye:scale-110" />

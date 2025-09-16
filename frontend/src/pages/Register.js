@@ -25,32 +25,32 @@ const Register = () => {
     
     // Name validation
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = 'Le nom est requis';
     } else if (formData.name.trim().length < 2) {
-      newErrors.name = 'Name must be at least 2 characters';
+      newErrors.name = 'Le nom doit contenir au moins 2 caractères';
     }
     
     // Email validation
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = 'L\'email est requis';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = 'Veuillez entrer une adresse email valide';
     }
     
     // Password validation
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = 'Le mot de passe est requis';
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères';
     } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-      newErrors.password = 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
+      newErrors.password = 'Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre';
     }
     
     // Confirm password validation
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password';
+      newErrors.confirmPassword = 'Veuillez confirmer votre mot de passe';
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
     }
     
     setErrors(newErrors);
@@ -112,7 +112,7 @@ const Register = () => {
       
       setMessage({ 
         type: 'success', 
-        text: 'Registration successful! Please sign in.' 
+        text: 'Inscription réussie ! Veuillez vous connecter.' 
       });
       
       // Redirect to login after a short delay
@@ -122,7 +122,7 @@ const Register = () => {
     } catch (error) {
       setMessage({ 
         type: 'error', 
-        text: error.response?.data?.detail || 'Registration failed. Please try again.' 
+        text: error.response?.data?.detail || 'Échec de l\'inscription. Veuillez réessayer.' 
       });
     } finally {
       setIsLoading(false);
@@ -243,7 +243,7 @@ const Register = () => {
                 onSubmit={handleSubmit} 
                 ref={formRef}
                 role="form"
-                aria-label="Registration form"
+                aria-label="Formulaire d'inscription"
                 noValidate
               >
             {/* Name Field */}
@@ -346,7 +346,7 @@ const Register = () => {
                   type="button"
                       className="absolute inset-y-0 right-0 pr-4 flex items-center group/eye"
                   onClick={() => setShowPassword(!showPassword)}
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
                 >
                   {showPassword ? (
                         <EyeOff className="h-5 w-5 text-gray-400 hover:text-indigo-500 transition-colors duration-200 group-hover/eye:scale-110" />
@@ -393,7 +393,7 @@ const Register = () => {
                   type="button"
                       className="absolute inset-y-0 right-0 pr-4 flex items-center group/eye"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+                      aria-label={showConfirmPassword ? 'Masquer la confirmation du mot de passe' : 'Afficher la confirmation du mot de passe'}
                 >
                   {showConfirmPassword ? (
                         <EyeOff className="h-5 w-5 text-gray-400 hover:text-indigo-500 transition-colors duration-200 group-hover/eye:scale-110" />
