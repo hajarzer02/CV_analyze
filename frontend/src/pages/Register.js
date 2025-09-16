@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Mail, Lock, User, AlertCircle, CheckCircle } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, AlertCircle, CheckCircle, FileText, Users, BarChart3, Shield, Target, Zap, Brain, Award } from 'lucide-react';
 import { register } from '../services/api';
 
 const Register = () => {
@@ -15,8 +15,10 @@ const Register = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [focusedField, setFocusedField] = useState(null);
   
   const navigate = useNavigate();
+  const formRef = useRef(null);
 
   const validateForm = () => {
     const newErrors = {};
@@ -71,6 +73,30 @@ const Register = () => {
     }
   };
 
+  const handleInputFocus = (fieldName) => {
+    setFocusedField(fieldName);
+  };
+
+  const handleInputBlur = () => {
+    setFocusedField(null);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && e.target.type !== 'submit') {
+      e.preventDefault();
+      const form = e.target.form;
+      const formElements = Array.from(form.elements);
+      const currentIndex = formElements.indexOf(e.target);
+      const nextElement = formElements[currentIndex + 1];
+      
+      if (nextElement) {
+        nextElement.focus();
+      } else {
+        form.querySelector('button[type="submit"]')?.focus();
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -104,216 +130,460 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 bg-indigo-600 rounded-full flex items-center justify-center">
-            <User className="h-6 w-6 text-white" />
-          </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Or{' '}
-            <Link 
-              to="/login" 
-              className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
-            >
-              sign in to your existing account
-            </Link>
-          </p>
-        </div>
-        
-        <div className="bg-white py-8 px-6 shadow-xl rounded-lg">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* Name Field */}
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                Full Name
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  autoComplete="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className={`block w-full pl-10 pr-3 py-3 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
-                    errors.name ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                  placeholder="Enter your full name"
-                />
-              </div>
-              {errors.name && (
-                <p className="mt-2 text-sm text-red-600 flex items-center">
-                  <AlertCircle className="h-4 w-4 mr-1" />
-                  {errors.name}
-                </p>
-              )}
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-20 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div className="absolute top-40 right-20 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-700"></div>
+        <div className="absolute bottom-20 left-40 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-1000"></div>
+      </div>
+      
+      {/* Floating particles */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full opacity-60 animate-float"></div>
+        <div className="absolute top-3/4 right-1/4 w-3 h-3 bg-purple-300 rounded-full opacity-40 animate-float-delayed"></div>
+        <div className="absolute top-1/2 left-3/4 w-2 h-2 bg-blue-300 rounded-full opacity-50 animate-float-slow"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-1 h-1 bg-indigo-300 rounded-full opacity-70 animate-float"></div>
+      </div>
 
-            {/* Email Field */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className={`block w-full pl-10 pr-3 py-3 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
-                    errors.email ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                  placeholder="Enter your email"
-                />
-              </div>
-              {errors.email && (
-                <p className="mt-2 text-sm text-red-600 flex items-center">
-                  <AlertCircle className="h-4 w-4 mr-1" />
-                  {errors.email}
-                </p>
-              )}
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-6 py-12">
+        <div className="glass-effect rounded-3xl overflow-hidden flex flex-col lg:flex-row max-w-7xl w-full shadow-2xl animate-pulse-glow">
+          
+          {/* Left Panel - Branding & Features */}
+          <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-800 text-white p-12 flex flex-col justify-center items-center lg:w-1/2 relative animate-slide-in-left">
+            
+            {/* Decorative elements */}
+            <div className="absolute top-0 left-0 w-full h-full">
+              <div className="absolute top-10 right-10 w-20 h-20 border-2 border-white border-opacity-20 rounded-full animate-float"></div>
+              <div className="absolute bottom-20 left-10 w-16 h-16 border-2 border-white border-opacity-20 rounded-full animate-float-delayed"></div>
             </div>
-
-            {/* Password Field */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+            
+            <div className="relative z-10 text-center">
+              {/* Enhanced Logo with CV theme */}
+              <div className="mb-8 relative">
+                <div className="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto animate-float backdrop-blur-sm">
+                  <img 
+                    src="/LOGapp.svg" 
+                    alt="CV Analyzer Logo" 
+                    className="w-12 h-12 object-contain filter drop-shadow-lg"
+                  />
                 </div>
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className={`block w-full pl-10 pr-10 py-3 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
-                    errors.password ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                  placeholder="Create a password"
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                  )}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="mt-2 text-sm text-red-600 flex items-center">
-                  <AlertCircle className="h-4 w-4 mr-1" />
-                  {errors.password}
-                </p>
-              )}
-            </div>
-
-            {/* Confirm Password Field */}
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full animate-pulse flex items-center justify-center shadow-lg">
+                  <Brain className="w-4 h-4 text-white" />
                 </div>
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  className={`block w-full pl-10 pr-10 py-3 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
-                    errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                  placeholder="Confirm your password"
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                  )}
-                </button>
               </div>
-              {errors.confirmPassword && (
-                <p className="mt-2 text-sm text-red-600 flex items-center">
-                  <AlertCircle className="h-4 w-4 mr-1" />
-                  {errors.confirmPassword}
-                </p>
-              )}
-            </div>
+              
+              <h1 className="text-5xl font-extrabold mb-4">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-purple-200 drop-shadow-2xl">
+                  CV Analyzer Pro
+                </span>
+              </h1>
 
-            {/* Message Display */}
-            {message.text && (
-              <div className={`rounded-md p-4 ${
-                message.type === 'success' 
-                  ? 'bg-green-50 border border-green-200' 
-                  : 'bg-red-50 border border-red-200'
-              }`}>
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    {message.type === 'success' ? (
-                      <CheckCircle className="h-5 w-5 text-green-400" />
-                    ) : (
-                      <AlertCircle className="h-5 w-5 text-red-400" />
-                    )}
+              <p className="text-xl text-indigo-100 mb-8">Intelligence artificielle pour le recrutement moderne</p>
+              
+              {/* Feature highlights with CV analysis theme */}
+              <div className="space-y-4 text-left max-w-sm">
+                <div className="flex items-center space-x-3 feature-card p-3 rounded-lg glass-effect transition-all duration-300 hover:scale-105">
+                  <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-white" />
                   </div>
-                  <div className="ml-3">
-                    <p className={`text-sm font-medium ${
-                      message.type === 'success' ? 'text-green-800' : 'text-red-800'
-                    }`}>
-                      {message.text}
+                  <span className="text-sm">Analyse automatique des CV</span>
+                </div>
+                
+                <div className="flex items-center space-x-3 feature-card p-3 rounded-lg glass-effect transition-all duration-300 hover:scale-105">
+                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                    <Target className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-sm">Matching intelligent des profils</span>
+                </div>
+                
+                <div className="flex items-center space-x-3 feature-card p-3 rounded-lg glass-effect transition-all duration-300 hover:scale-105">
+                  <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                    <BarChart3 className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-sm">Tableaux de bord RH</span>
+                </div>
+                
+                <div className="flex items-center space-x-3 feature-card p-3 rounded-lg glass-effect transition-all duration-300 hover:scale-105">
+                  <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                    <Zap className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-sm">Traitement en temps réel</span>
+                </div>
+              </div>
+
+              {/* Stats Section */}
+              <div className="mt-8 grid grid-cols-2 gap-4 text-center">
+                <div className="glass-effect p-4 rounded-lg">
+                  <div className="text-2xl font-bold text-white">99.2%</div>
+                  <div className="text-xs text-indigo-200">Précision</div>
+                </div>
+                <div className="glass-effect p-4 rounded-lg">
+                  <div className="text-2xl font-bold text-white">3s</div>
+                  <div className="text-xs text-indigo-200">Analyse</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Panel - Registration Form */}
+          <div className="bg-white bg-opacity-95 p-12 flex flex-col justify-center lg:w-1/2 relative animate-slide-in-right">
+            
+            {/* Decorative gradient */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400 to-indigo-600 rounded-full opacity-10 -translate-y-16 translate-x-16"></div>
+            
+            <div className="relative z-10">
+              <div className="mb-8">
+                <h2 className="text-4xl font-bold text-gray-800 mb-4">
+                  Créer votre compte
+                  <span className="inline-block animate-bounce ml-2">🚀</span>
+                </h2>
+                <div className="w-20 h-1 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full mb-6"></div>
+                <p className="text-gray-600 text-lg leading-relaxed">
+                  Rejoignez notre plateforme et commencez à analyser des CV avec notre IA avancée.
+                </p>
+              </div>
+
+              {/* Registration Form */}
+              <form 
+                className="space-y-6" 
+                onSubmit={handleSubmit} 
+                ref={formRef}
+                role="form"
+                aria-label="Registration form"
+                noValidate
+              >
+                {/* Name Field */}
+                <div className="space-y-2">
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <User className={`h-5 w-5 transition-colors duration-200 ${
+                        focusedField === 'name' ? 'text-indigo-500' : 'text-gray-400'
+                      }`} />
+                    </div>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      autoComplete="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      onFocus={() => handleInputFocus('name')}
+                      onBlur={handleInputBlur}
+                      onKeyDown={handleKeyDown}
+                      className={`block w-full pl-12 pr-4 py-4 bg-gray-50 border rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 text-base transition-all duration-200 group-hover:bg-gray-100 ${
+                        errors.name ? 'border-red-400 ring-2 ring-red-400/20' : 'border-gray-200'
+                      }`}
+                      placeholder="Nom complet"
+                      aria-describedby={errors.name ? 'name-error' : undefined}
+                      aria-invalid={errors.name ? 'true' : 'false'}
+                      required
+                    />
+                  </div>
+                  {errors.name && (
+                    <div id="name-error" className="flex items-center space-x-2 animate-slide-in-right" role="alert">
+                      <AlertCircle className="h-4 w-4 text-red-400" aria-hidden="true" />
+                      <p className="text-sm text-red-400">{errors.name}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Email Field */}
+                <div className="space-y-2">
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Mail className={`h-5 w-5 transition-colors duration-200 ${
+                        focusedField === 'email' ? 'text-indigo-500' : 'text-gray-400'
+                      }`} />
+                    </div>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      onFocus={() => handleInputFocus('email')}
+                      onBlur={handleInputBlur}
+                      onKeyDown={handleKeyDown}
+                      className={`block w-full pl-12 pr-4 py-4 bg-gray-50 border rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 text-base transition-all duration-200 group-hover:bg-gray-100 ${
+                        errors.email ? 'border-red-400 ring-2 ring-red-400/20' : 'border-gray-200'
+                      }`}
+                      placeholder="Adresse email professionnelle"
+                      aria-describedby={errors.email ? 'email-error' : undefined}
+                      aria-invalid={errors.email ? 'true' : 'false'}
+                      required
+                    />
+                  </div>
+                  {errors.email && (
+                    <div id="email-error" className="flex items-center space-x-2 animate-slide-in-right" role="alert">
+                      <AlertCircle className="h-4 w-4 text-red-400" aria-hidden="true" />
+                      <p className="text-sm text-red-400">{errors.email}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Password Field */}
+                <div className="space-y-2">
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Lock className={`h-5 w-5 transition-colors duration-200 ${
+                        focusedField === 'password' ? 'text-indigo-500' : 'text-gray-400'
+                      }`} />
+                    </div>
+                    <input
+                      id="password"
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      autoComplete="new-password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      onFocus={() => handleInputFocus('password')}
+                      onBlur={handleInputBlur}
+                      onKeyDown={handleKeyDown}
+                      className={`block w-full pl-12 pr-12 py-4 bg-gray-50 border rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 text-base transition-all duration-200 group-hover:bg-gray-100 ${
+                        errors.password ? 'border-red-400 ring-2 ring-red-400/20' : 'border-gray-200'
+                      }`}
+                      placeholder="Mot de passe"
+                      aria-describedby={errors.password ? 'password-error' : undefined}
+                      aria-invalid={errors.password ? 'true' : 'false'}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center group/eye"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5 text-gray-400 hover:text-indigo-500 transition-colors duration-200 group-hover/eye:scale-110" />
+                      ) : (
+                        <Eye className="h-5 w-5 text-gray-400 hover:text-indigo-500 transition-colors duration-200 group-hover/eye:scale-110" />
+                      )}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <div id="password-error" className="flex items-center space-x-2 animate-slide-in-right" role="alert">
+                      <AlertCircle className="h-4 w-4 text-red-400" aria-hidden="true" />
+                      <p className="text-sm text-red-400">{errors.password}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Confirm Password Field */}
+                <div className="space-y-2">
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Lock className={`h-5 w-5 transition-colors duration-200 ${
+                        focusedField === 'confirmPassword' ? 'text-indigo-500' : 'text-gray-400'
+                      }`} />
+                    </div>
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      autoComplete="new-password"
+                      value={formData.confirmPassword}
+                      onChange={handleInputChange}
+                      onFocus={() => handleInputFocus('confirmPassword')}
+                      onBlur={handleInputBlur}
+                      onKeyDown={handleKeyDown}
+                      className={`block w-full pl-12 pr-12 py-4 bg-gray-50 border rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 text-base transition-all duration-200 group-hover:bg-gray-100 ${
+                        errors.confirmPassword ? 'border-red-400 ring-2 ring-red-400/20' : 'border-gray-200'
+                      }`}
+                      placeholder="Confirmer le mot de passe"
+                      aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
+                      aria-invalid={errors.confirmPassword ? 'true' : 'false'}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center group/eye"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-5 w-5 text-gray-400 hover:text-indigo-500 transition-colors duration-200 group-hover/eye:scale-110" />
+                      ) : (
+                        <Eye className="h-5 w-5 text-gray-400 hover:text-indigo-500 transition-colors duration-200 group-hover/eye:scale-110" />
+                      )}
+                    </button>
+                  </div>
+                  {errors.confirmPassword && (
+                    <div id="confirmPassword-error" className="flex items-center space-x-2 animate-slide-in-right" role="alert">
+                      <AlertCircle className="h-4 w-4 text-red-400" aria-hidden="true" />
+                      <p className="text-sm text-red-400">{errors.confirmPassword}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Message Display */}
+                {message.text && (
+                  <div 
+                    className={`rounded-xl p-4 border animate-slide-in-down ${
+                      message.type === 'success' 
+                        ? 'bg-emerald-50 border-emerald-200' 
+                        : 'bg-red-50 border-red-200'
+                    }`}
+                    role="alert"
+                    aria-live="polite"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="flex-shrink-0">
+                        {message.type === 'success' ? (
+                          <CheckCircle className="h-5 w-5 text-emerald-500 animate-bounce" aria-hidden="true" />
+                        ) : (
+                          <AlertCircle className="h-5 w-5 text-red-500 animate-pulse" aria-hidden="true" />
+                        )}
+                      </div>
+                      <p className={`text-sm font-medium ${
+                        message.type === 'success' ? 'text-emerald-700' : 'text-red-700'
+                      }`}>
+                        {message.text}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Submit Button */}
+                <div className="space-y-4">
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="group w-full px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isLoading ? (
+                      <div className="flex items-center space-x-2">
+                        <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white"></div>
+                        <span>Création du compte...</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center space-x-2">
+                        <Users className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        <span>Créer le compte</span>
+                      </div>
+                    )}
+                  </button>
+
+                  {/* Login Link */}
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600">
+                      Déjà un compte ?{' '}
+                      <Link 
+                        to="/login" 
+                        className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors duration-200 hover:underline"
+                      >
+                        Se connecter
+                      </Link>
                     </p>
                   </div>
                 </div>
-              </div>
-            )}
+              </form>
 
-            {/* Submit Button */}
-            <div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {isLoading ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Creating account...
+              {/* Trust indicators */}
+              <div className="mt-8 text-center">
+                <p className="text-sm text-gray-500 mb-4">Approuvé par 500+ entreprises</p>
+                <div className="flex justify-center items-center space-x-6 text-xs text-gray-400">
+                  <div className="flex items-center space-x-1">
+                    <Shield className="w-3 h-3" />
+                    <span>SOC 2 Type II</span>
                   </div>
-                ) : (
-                  'Create account'
-                )}
-              </button>
+                  <div className="flex items-center space-x-1">
+                    <Shield className="w-3 h-3" />
+                    <span>GDPR Conforme</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Award className="w-3 h-3" />
+                    <span>ISO 27001</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="mt-8 text-center">
+                <p className="text-xs text-gray-400">
+                  © 2025 CV Analyzer Pro. Tous droits réservés.
+                </p>
+              </div>
             </div>
-          </form>
+          </div>
         </div>
       </div>
+
+      {/* Custom Styles */}
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes float-delayed {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-8px); }
+        }
+        
+        @keyframes float-slow {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-6px); }
+        }
+        
+        @keyframes pulse-glow {
+          0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+          50% { box-shadow: 0 0 30px rgba(99, 102, 241, 0.6); }
+        }
+        
+        @keyframes slideInLeft {
+          0% { transform: translateX(-100%); opacity: 0; }
+          100% { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideInRight {
+          0% { transform: translateX(100%); opacity: 0; }
+          100% { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slide-in-right {
+          from { opacity: 0; transform: translateX(30px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes slide-in-down {
+          from { opacity: 0; transform: translateY(-30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-float-delayed { animation: float-delayed 4s ease-in-out infinite; }
+        .animate-float-slow { animation: float-slow 5s ease-in-out infinite; }
+        .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+        .animate-slide-in-left { animation: slideInLeft 0.8s ease-out; }
+        .animate-slide-in-right { animation: slideInRight 0.8s ease-out; }
+        .animate-slide-in-right { animation: slide-in-right 0.4s ease-out; }
+        .animate-slide-in-down { animation: slide-in-down 0.4s ease-out; }
+        
+        .glass-effect {
+          backdrop-filter: blur(10px);
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .feature-card {
+          transform: scale(1);
+          transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+          transform: scale(1.05);
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+          .animate-float, .animate-float-delayed, .animate-float-slow, 
+          .animate-pulse, .animate-pulse-glow, .animate-bounce {
+            animation: none;
+          }
+        }
+      `}</style>
     </div>
   );
 };
