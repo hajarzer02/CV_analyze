@@ -379,3 +379,304 @@ Example format:
     def _get_dummy_skills(self) -> List[str]:
         """Return dummy skills for testing when API key is not available."""
         return ["Python", "JavaScript", "React", "Node.js", "PostgreSQL", "Docker", "AWS"]
+    
+    def structure_cv_text(self, raw_text: str) -> Dict[str, Any]:
+        """
+        Structure raw CV text into JSON format using LLaMA.
+        This replaces the old section parsing logic with AI-powered structuring.
+        """
+        if self.provider == "dummy":
+            return self._get_dummy_cv_structure()
+        
+        try:
+            # Create prompt for CV structuring
+            prompt = self._create_cv_structuring_prompt(raw_text)
+            
+            # Call the appropriate LLaMA provider
+            response = self.generate_llama_content(prompt)
+            
+            # Parse the response
+            structured_data = self._parse_cv_structure_response(response)
+            
+            # Verify content preservation
+            preservation_report = self.verify_content_preservation(raw_text, structured_data)
+            print(f"Content preservation score: {preservation_report['content_preservation_score']:.2f}")
+            
+            if preservation_report['missing_content_warning']:
+                print("⚠️  Warning: Significant content might be missing from structured data")
+            
+            return structured_data
+            
+        except Exception as e:
+            print(f"Error structuring CV with LLaMA ({self.provider}): {e}")
+            return self._get_dummy_cv_structure()
+    
+    def _create_cv_structuring_prompt(self, raw_text: str) -> str:
+        """Create a prompt for LLaMA to structure CV text into JSON."""
+        prompt = f"""You are an expert CV parser. Your task is to extract and structure EVERY SINGLE piece of information from the CV text below into a JSON format. NOTHING should be omitted, summarized, or discarded.
+
+CRITICAL REQUIREMENTS:
+- Extract 100% of the content - every word, every detail, every piece of information
+- If content doesn't fit perfectly into a category, still include it in the most appropriate section
+- Preserve exact wording, dates, names, and all details
+- Include all bullet points, descriptions, and additional information
+- Extract the candidate's name and include it in contact_info or professional_summary
+
+STRUCTURE THE CONTENT INTO THESE SECTIONS:
+
+1. contact_info: 
+   - emails: [array of all email addresses found]
+   - phones: [array of all phone numbers found] 
+   - linkedin: [LinkedIn URL if present]
+   - address: [full address if present]
+   - name: [candidate's full name - extract from anywhere in the text]
+
+2. professional_summary: [array of all summary/profile text - include everything that describes the candidate]
+
+3. skills: [array of ALL skills, technologies, tools, competencies mentioned - extract every single one]
+
+4. languages: [array of objects with "language" and "level" - include all languages mentioned]
+
+5. education: [array of education entries with ALL details including:
+   - date_range: [exact dates as written]
+   - degree: [full degree name]
+   - institution: [full institution name]
+   - details: [array of ALL additional details, coursework, achievements, descriptions]
+   - location: [if mentioned]]
+
+6. experience: [array of work experience with ALL details including:
+   - date_range: [exact dates as written]
+   - company: [full company name]
+   - role: [full job title/role]
+   - details: [array of ALL job descriptions, responsibilities, achievements]
+   - location: [if mentioned]]
+
+7. projects: [array of ALL projects, activities, achievements with:
+   - title: [project/activity name]
+   - description: [full description including all details]]
+
+8. additional_info: [array of any other information that doesn't fit above categories - include everything else]
+
+FORMAT REQUIREMENTS:
+- For contact_info: {{"emails": ["email1", "email2"], "phones": ["phone1", "phone2"], "linkedin": "url", "address": "address", "name": "Full Name"}}
+- For languages: [{{"language": "Language Name", "level": "Proficiency Level"}}]
+- For education/experience: Include ALL details in the "details" array - don't summarize
+- For projects: Include full descriptions, don't abbreviate
+- Return ONLY valid JSON, no explanations
+
+CV Text to parse:
+{raw_text}
+
+Extract and structure ALL content into JSON:"""
+        return prompt
+    
+    def _parse_cv_structure_response(self, response: str) -> Dict[str, Any]:
+        """Parse the LLaMA response into structured CV data."""
+        try:
+            # Try to extract JSON from the response
+            import re
+            json_match = re.search(r'\{.*\}', response, re.DOTALL)
+            if json_match:
+                json_str = json_match.group(0)
+                structured_data = json.loads(json_str)
+                
+                # Validate and clean the structure
+                return self._validate_cv_structure(structured_data)
+        except Exception as e:
+            print(f"Error parsing CV structure response: {e}")
+        
+        # Fallback to dummy data if parsing fails
+        return self._get_dummy_cv_structure()
+    
+    def _validate_cv_structure(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Validate and clean the CV structure to match expected format while preserving all content."""
+        # Ensure all required fields exist with proper defaults
+        validated_data = {
+            "contact_info": data.get("contact_info", {
+                "emails": [],
+                "phones": [],
+                "linkedin": "",
+                "address": "",
+                "name": ""
+            }),
+            "professional_summary": data.get("professional_summary", []),
+            "skills": data.get("skills", []),
+            "languages": data.get("languages", []),
+            "education": data.get("education", []),
+            "experience": data.get("experience", []),
+            "projects": data.get("projects", []),
+            "additional_info": data.get("additional_info", [])
+        }
+        
+        # Ensure lists are actually lists
+        for key in ["professional_summary", "skills", "languages", "education", "experience", "projects", "additional_info"]:
+            if not isinstance(validated_data[key], list):
+                validated_data[key] = []
+        
+        # Ensure contact_info has required fields
+        if not isinstance(validated_data["contact_info"], dict):
+            validated_data["contact_info"] = {"emails": [], "phones": [], "linkedin": "", "address": "", "name": ""}
+        
+        # Handle both old format (emails/phones arrays) and new format (email/phone strings)
+        contact_info = validated_data["contact_info"]
+        
+        # Convert single email/phone to arrays if needed
+        if "email" in contact_info and contact_info["email"]:
+            if "emails" not in contact_info or not isinstance(contact_info["emails"], list):
+                contact_info["emails"] = []
+            if contact_info["email"] not in contact_info["emails"]:
+                contact_info["emails"].append(contact_info["email"])
+        
+        if "phone" in contact_info and contact_info["phone"]:
+            if "phones" not in contact_info or not isinstance(contact_info["phones"], list):
+                contact_info["phones"] = []
+            if contact_info["phone"] not in contact_info["phones"]:
+                contact_info["phones"].append(contact_info["phone"])
+        
+        # Ensure required fields exist with proper types
+        for field in ["emails", "phones"]:
+            if field not in contact_info or not isinstance(contact_info[field], list):
+                contact_info[field] = []
+        
+        for field in ["linkedin", "address", "name"]:
+            if field not in contact_info or not isinstance(contact_info[field], str):
+                contact_info[field] = ""
+        
+        # Validate education entries to ensure details are preserved
+        for edu in validated_data["education"]:
+            if isinstance(edu, dict):
+                if "details" not in edu or not isinstance(edu["details"], list):
+                    edu["details"] = []
+                # Ensure all fields are strings if they exist
+                for field in ["date_range", "degree", "institution", "location"]:
+                    if field in edu and not isinstance(edu[field], str):
+                        edu[field] = str(edu[field]) if edu[field] else ""
+        
+        # Validate experience entries to ensure details are preserved
+        for exp in validated_data["experience"]:
+            if isinstance(exp, dict):
+                if "details" not in exp or not isinstance(exp["details"], list):
+                    exp["details"] = []
+                # Ensure all fields are strings if they exist
+                for field in ["date_range", "company", "role", "location"]:
+                    if field in exp and not isinstance(exp[field], str):
+                        exp[field] = str(exp[field]) if exp[field] else ""
+        
+        # Validate project entries
+        for project in validated_data["projects"]:
+            if isinstance(project, dict):
+                for field in ["title", "description"]:
+                    if field in project and not isinstance(project[field], str):
+                        project[field] = str(project[field]) if project[field] else ""
+        
+        # Validate language entries
+        for lang in validated_data["languages"]:
+            if isinstance(lang, dict):
+                for field in ["language", "level"]:
+                    if field in lang and not isinstance(lang[field], str):
+                        lang[field] = str(lang[field]) if lang[field] else ""
+        
+        return validated_data
+    
+    def verify_content_preservation(self, raw_text: str, structured_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Verify that content has been preserved during structuring.
+        Returns a report on content preservation.
+        """
+        report = {
+            "original_text_length": len(raw_text),
+            "structured_content_length": 0,
+            "sections_found": {},
+            "content_preservation_score": 0.0,
+            "missing_content_warning": False
+        }
+        
+        # Calculate total structured content length
+        total_structured_length = 0
+        
+        # Count content in each section
+        for section_name, section_data in structured_data.items():
+            if section_name == "contact_info" and isinstance(section_data, dict):
+                # Count contact info fields
+                for field, value in section_data.items():
+                    if isinstance(value, str):
+                        total_structured_length += len(value)
+                    elif isinstance(value, list):
+                        total_structured_length += sum(len(str(item)) for item in value)
+            elif isinstance(section_data, list):
+                # Count list items
+                for item in section_data:
+                    if isinstance(item, str):
+                        total_structured_length += len(item)
+                    elif isinstance(item, dict):
+                        for field, value in item.items():
+                            if isinstance(value, str):
+                                total_structured_length += len(value)
+                            elif isinstance(value, list):
+                                total_structured_length += sum(len(str(subitem)) for subitem in value)
+            
+            # Count items in section
+            if isinstance(section_data, list):
+                report["sections_found"][section_name] = len(section_data)
+            elif isinstance(section_data, dict):
+                report["sections_found"][section_name] = len(section_data)
+        
+        report["structured_content_length"] = total_structured_length
+        
+        # Calculate preservation score (rough estimate)
+        if report["original_text_length"] > 0:
+            report["content_preservation_score"] = min(1.0, total_structured_length / report["original_text_length"])
+        
+        # Flag if significant content might be missing
+        if report["content_preservation_score"] < 0.3:
+            report["missing_content_warning"] = True
+        
+        return report
+    
+    def _get_dummy_cv_structure(self) -> Dict[str, Any]:
+        """Return dummy CV structure for testing when API key is not available."""
+        return {
+            "contact_info": {
+                "emails": ["example@email.com"],
+                "phones": ["+1234567890"],
+                "linkedin": "",
+                "address": "Sample Address",
+                "name": "John Doe"
+            },
+            "professional_summary": [
+                "Experienced software developer with strong technical skills",
+                "Passionate about creating innovative solutions"
+            ],
+            "skills": ["Python", "JavaScript", "React", "Node.js", "PostgreSQL"],
+            "languages": [
+                {"language": "English", "level": "Fluent"},
+                {"language": "French", "level": "Intermediate"}
+            ],
+            "education": [
+                {
+                    "date_range": "2020-2024",
+                    "degree": "Bachelor of Computer Science",
+                    "institution": "University Name",
+                    "location": "City, Country",
+                    "details": ["Relevant coursework and achievements", "Additional details"]
+                }
+            ],
+            "experience": [
+                {
+                    "date_range": "2022-2024",
+                    "company": "Tech Company",
+                    "role": "Software Developer",
+                    "location": "City, Country",
+                    "details": ["Developed web applications", "Collaborated with team members", "Additional responsibilities"]
+                }
+            ],
+            "projects": [
+                {
+                    "title": "Sample Project",
+                    "description": "A detailed sample project description with all relevant information"
+                }
+            ],
+            "additional_info": [
+                "Any additional information that doesn't fit other categories"
+            ]
+        }

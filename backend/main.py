@@ -192,9 +192,13 @@ async def upload_cv(file: UploadFile = File(...), db: Session = Depends(get_db),
         print(f"DEBUG: File exists after save: {os.path.exists(file_path)}")
         print(f"DEBUG: File size: {os.path.getsize(file_path) if os.path.exists(file_path) else 'N/A'}")
         
-        # Extract CV data using existing extractor
-        print(f"DEBUG: About to extract data from: {file_path}")
-        extracted_data = cv_extractor.extract_cv_data(file_path)
+        # Extract raw text and save to data.txt
+        print(f"DEBUG: About to extract raw text from: {file_path}")
+        raw_text = cv_extractor.extract_raw_text(file_path)
+        
+        # Use LLaMA to structure the raw text into JSON
+        print(f"DEBUG: About to structure text with LLaMA")
+        extracted_data = llama_service.structure_cv_text(raw_text)
         
         # Extract basic info for database
         contact_info = extracted_data.get("contact_info", {})

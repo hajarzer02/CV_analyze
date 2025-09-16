@@ -176,12 +176,13 @@ const CandidateProfile = () => {
 
   const { extracted_data, recommendations } = candidate;
   const contactInfo = extracted_data?.contact_info || {};
-  const skills = extracted_data?.skills || [];
-  const languages = extracted_data?.languages || [];
-  const education = extracted_data?.education || [];
-  const experience = extracted_data?.experience || [];
-  const projects = extracted_data?.projects || [];
-  const summary = extracted_data?.professional_summary || [];
+  const skills = Array.isArray(extracted_data?.skills) ? extracted_data.skills : [];
+  const languages = Array.isArray(extracted_data?.languages) ? extracted_data.languages : [];
+  const education = Array.isArray(extracted_data?.education) ? extracted_data.education : [];
+  const experience = Array.isArray(extracted_data?.experience) ? extracted_data.experience : [];
+  const projects = Array.isArray(extracted_data?.projects) ? extracted_data.projects : [];
+  const summary = Array.isArray(extracted_data?.professional_summary) ? extracted_data.professional_summary : [];
+  const additionalInfo = Array.isArray(extracted_data?.additional_info) ? extracted_data.additional_info : [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -202,7 +203,7 @@ const CandidateProfile = () => {
                 </div>
           <div>
                   <h1 className="text-2xl font-bold text-gray-900">
-              {candidate.name || 'Candidat Inconnu'}
+              {candidate.name || contactInfo.name || 'Candidat Inconnu'}
             </h1>
                   <div className="flex items-center space-x-2 mt-0.5">
                     <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
@@ -439,7 +440,7 @@ const CandidateProfile = () => {
                                 </div>
                       )}
                     </div>
-                    {edu.details.length > 0 && (
+                    {edu.details && Array.isArray(edu.details) && edu.details.length > 0 && (
                               <ul className="mt-3 space-y-2">
                         {edu.details.map((detail, detailIndex) => (
                                   <li key={detailIndex} className="flex items-start space-x-3 text-sm text-gray-600">
@@ -493,7 +494,7 @@ const CandidateProfile = () => {
                                 </div>
                       )}
                     </div>
-                    {exp.details.length > 0 && (
+                    {exp.details && Array.isArray(exp.details) && exp.details.length > 0 && (
                               <ul className="mt-3 space-y-2">
                         {exp.details.map((detail, detailIndex) => (
                                   <li key={detailIndex} className="flex items-start space-x-3 text-sm text-gray-600">
@@ -545,6 +546,28 @@ const CandidateProfile = () => {
                 </div>
             </div>
           )}
+
+          {/* Additional Information */}
+          {additionalInfo.length > 0 && (
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                <div className="bg-gradient-to-r from-amber-600 to-amber-700 p-5">
+                  <h2 className="text-lg font-bold text-white flex items-center">
+                    <Lightbulb className="h-5 w-5 mr-3" />
+                    Informations Supplémentaires
+                  </h2>
+                </div>
+                <div className="p-5">
+                  <div className="space-y-4">
+                {additionalInfo.map((info, index) => (
+                      <div key={index} className="flex items-start space-x-3">
+                        <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
+                        <p className="text-sm text-gray-700 leading-relaxed font-medium">{info}</p>
+                      </div>
+                ))}
+                  </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right Column - Job Recommendations */}
@@ -578,11 +601,11 @@ const CandidateProfile = () => {
                 )}
               </button>
 
-            {recommendations && recommendations.length > 0 ? (
+            {recommendations && Array.isArray(recommendations) && recommendations.length > 0 ? (
               <div className="space-y-4">
                 {recommendations.map((recGroup, groupIndex) => (
                   <div key={groupIndex} className="space-y-3">
-                    {recGroup.map((rec, index) => (
+                    {Array.isArray(recGroup) && recGroup.map((rec, index) => (
                           <div key={index} className="group bg-gray-50 rounded-xl p-4 hover:bg-violet-50 transition-all duration-200 border border-gray-100 hover:border-violet-200 hover:shadow-md">
                             <div className="flex items-start space-x-3">
                               <div className="w-8 h-8 bg-violet-100 rounded-xl flex items-center justify-center group-hover:bg-violet-200 transition-colors">

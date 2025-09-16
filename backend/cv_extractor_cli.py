@@ -643,6 +643,20 @@ def extract_summary(text: str) -> List[str]:
 class CVExtractor:
     """Improved CV extractor with better parsing accuracy."""
     
+    def extract_raw_text(self, file_path: str) -> str:
+        """Extract raw text from CV file and save to data.txt."""
+        text = load_text(file_path)
+        
+        # Save raw text to data.txt in the same directory as the CV file
+        cv_dir = os.path.dirname(file_path)
+        data_txt_path = os.path.join(cv_dir, "data.txt")
+        
+        with open(data_txt_path, "w", encoding="utf-8") as f:
+            f.write(text)
+        
+        print(f"DEBUG: Raw text saved to: {data_txt_path}")
+        return text
+    
     def extract_cv_data(self, file_path: str) -> Dict[str, Any]:
         """Extract structured CV data with improved parsing."""
         text = load_text(file_path)
