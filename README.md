@@ -190,6 +190,39 @@ npm test
 - Modify `frontend/tailwind.config.js` for styling
 - Edit `frontend/src/` components for UI changes
 
+### External Access via ngrok
+
+To allow external devices to access your application:
+
+1. **Install ngrok** (if not already installed):
+   ```bash
+   # Download from https://ngrok.com/download
+   # Or via package manager
+   npm install -g ngrok
+   ```
+
+2. **Start your backend** (make sure it's running on localhost:8000)
+
+3. **Expose your backend via ngrok**:
+   ```bash
+   ngrok http 8000
+   ```
+
+4. **Update frontend for external access**:
+   - Copy the ngrok URL (e.g., `https://abcd1234.ngrok-free.app`)
+   - Create a `.env` file in the `frontend` directory:
+   ```env
+   REACT_APP_API_URL=https://your-ngrok-url.ngrok-free.app
+   ```
+   - Restart the frontend: `npm start`
+
+5. **Access from any device**:
+   - Share the ngrok URL with others
+   - They can access your React app from any device
+   - All API calls will be routed through ngrok to your local backend
+
+**Note**: ngrok URLs change each time you restart ngrok (unless you have a paid account). Update the `.env` file accordingly.
+
 ## 🤝 Contributing
 
 1. Fork the repository

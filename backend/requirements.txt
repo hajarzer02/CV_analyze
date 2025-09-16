@@ -1,6 +1,7 @@
 # --- Backend Frameworks ---
 fastapi
 flask
+flask-cors
 
 # ASGI server for FastAPI
 uvicorn[standard]

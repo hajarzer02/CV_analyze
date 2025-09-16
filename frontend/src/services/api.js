@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+// Use relative URLs by default for both local and ngrok access
+// Only use absolute URL if explicitly set via environment variable
+const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -42,7 +44,7 @@ export const uploadCV = async (file) => {
   const formData = new FormData();
   formData.append('file', file);
   
-  const response = await api.post('/upload-cv', formData, {
+  const response = await api.post('/api/upload-cv', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -52,37 +54,37 @@ export const uploadCV = async (file) => {
 
 // Get candidate by ID
 export const getCandidate = async (id) => {
-  const response = await api.get(`/candidate/${id}`);
+  const response = await api.get(`/api/candidate/${id}`);
   return response.data;
 };
 
 // Get all candidates
 export const getCandidates = async () => {
-  const response = await api.get('/candidates');
+  const response = await api.get('/api/candidates');
   return response.data;
 };
 
 // Generate recommendations for candidate
 export const generateRecommendations = async (id) => {
-  const response = await api.post(`/recommend/${id}`);
+  const response = await api.post(`/api/recommend/${id}`);
   return response.data;
 };
 
 // Delete candidate
 export const deleteCandidate = async (id) => {
-  const response = await api.delete(`/candidates/${id}`);
+  const response = await api.delete(`/api/candidates/${id}`);
   return response.data;
 };
 
 // Update candidate status
 export const updateCandidateStatus = async (id, status) => {
-  const response = await api.patch(`/candidate/${id}/status`, { status });
+  const response = await api.patch(`/api/candidate/${id}/status`, { status });
   return response.data;
 };
 
 // Match job against candidates
 export const matchJob = async (jobDescription) => {
-  const response = await api.post('/match-job', { job_description: jobDescription });
+  const response = await api.post('/api/match-job', { job_description: jobDescription });
   return response.data;
 };
 

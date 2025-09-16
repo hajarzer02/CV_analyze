@@ -1,7 +1,8 @@
 import os
 import sys
 import json
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory, send_file
+from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 
@@ -9,13 +10,26 @@ from cv_extractor_cli import CVExtractor
 
 load_dotenv()
 
-app = Flask(__name__)
+# Get the path to the React build folder
+REACT_BUILD_PATH = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'build')
+
+app = Flask(__name__, static_folder=REACT_BUILD_PATH, static_url_path='')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'uploads')
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+# Enable CORS for all routes with proper OPTIONS handling
+# Allow all origins for development (including ngrok)
+CORS(app, 
+     origins=["*"],  # Allow all origins for development
+     methods=["*"],
+     allow_headers=["*"],
+     supports_credentials=True
+)
+
 extractor = CVExtractor()
 
+# API Routes
 @app.route('/health', methods=['GET'])
 def health_check():
     return jsonify({"status": "healthy"})
@@ -58,10 +72,28 @@ def analyze_cv_text():
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'pdf', 'docx', 'txt'}
 
+# Serve React App
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_react_app(path):
+    # If the path is an API route, let Flask handle it
+    if path.startswith('api/') or path.startswith('auth/') or path in ['health', 'analyze', 'analyze-text']:
+        return jsonify({"error": "API route not found"}), 404
+    
+    # If the path is a static file, serve it
+    if path and os.path.exists(os.path.join(REACT_BUILD_PATH, path)):
+        return send_from_directory(REACT_BUILD_PATH, path)
+    
+    # For all other routes (React routing), serve index.html
+    return send_file(os.path.join(REACT_BUILD_PATH, 'index.html'))
+
 @app.errorhandler(413)
 def too_large(e):
     return jsonify({"error": "File too large. Maximum size is 16MB"}), 413
 
 if __name__ == '__main__':
-    print("Starting Simple CV Extraction API...")
+    print("Starting Flask server with React frontend...")
+    print(f"React build path: {REACT_BUILD_PATH}")
+    print("API routes available at /api/...")
+    print("Frontend available at /")
     app.run(debug=True, host='0.0.0.0', port=5000)

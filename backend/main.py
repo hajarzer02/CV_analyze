@@ -1,4 +1,6 @@
-from fastapi import FastAPI, File, UploadFile, Depends, HTTPException, status
+from fastapi import FastAPI, File, UploadFile, Depends, HTTPException, status, Request
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from datetime import timedelta
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -39,13 +41,20 @@ from auth import (
 from cv_extractor_cli import CVExtractor
 from llama_service import LlamaService  # Now uses LLaMA models
 
+# Get the path to the React build folder
+REACT_BUILD_PATH = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'build')
+
 # Create FastAPI app
 app = FastAPI(title="CV Analysis & Job Recommendation API", version="1.0.0")
 
-# Add CORS middleware
+# Mount static files (CSS, JS, images, etc.)
+app.mount("/static", StaticFiles(directory=os.path.join(REACT_BUILD_PATH, "static")), name="static")
+
+# Add CORS middleware - MUST be before any routes
+# Allow all origins for development (including ngrok)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # React app URL
+    allow_origins=["*"],  # Allow all origins for development
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -150,7 +159,7 @@ async def logout_user(current_user: User = Depends(get_current_active_user)):
     """Logout user (client should remove token)."""
     return {"message": "Successfully logged out"}
 
-@app.post("/upload-cv", response_model=UploadResponse)
+@app.post("/api/upload-cv", response_model=UploadResponse)
 async def upload_cv(file: UploadFile = File(...), db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
     """
     Upload a CV file, extract data, and store in database.
@@ -218,7 +227,7 @@ async def upload_cv(file: UploadFile = File(...), db: Session = Depends(get_db),
             os.remove(file_path)
         raise HTTPException(status_code=500, detail=f"Error processing CV: {str(e)}")
 
-@app.get("/candidate/{candidate_id}", response_model=CandidateResponse)
+@app.get("/api/candidate/{candidate_id}", response_model=CandidateResponse)
 async def get_candidate(candidate_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
     """
     Get candidate profile with extracted data and recommendations.
@@ -249,7 +258,7 @@ async def get_candidate(candidate_id: int, db: Session = Depends(get_db), curren
         recommendations=recommendations
     )
 
-@app.post("/recommend/{candidate_id}", response_model=JobRecommendationResponse)
+@app.post("/api/recommend/{candidate_id}", response_model=JobRecommendationResponse)
 async def generate_recommendations(candidate_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
     """
     Generate job recommendations for a candidate using LLaMA models.
@@ -281,7 +290,7 @@ async def generate_recommendations(candidate_id: int, db: Session = Depends(get_
         created_at=job_recommendation.created_at
     )
 
-@app.delete("/candidates/{candidate_id}")
+@app.delete("/api/candidates/{candidate_id}")
 async def delete_candidate(candidate_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
     """
     Delete a candidate and all associated data.
@@ -312,7 +321,7 @@ async def delete_candidate(candidate_id: int, db: Session = Depends(get_db), cur
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error deleting candidate: {str(e)}")
 
-@app.get("/candidates", response_model=List[CandidateSummary])
+@app.get("/api/candidates", response_model=List[CandidateSummary])
 async def get_candidates(db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
     """
     Get list of all candidates with summary information.
@@ -336,7 +345,7 @@ async def get_candidates(db: Session = Depends(get_db), current_user: User = Dep
     
     return result
 
-@app.patch("/candidate/{candidate_id}/status")
+@app.patch("/api/candidate/{candidate_id}/status")
 async def update_candidate_status(
     candidate_id: int, 
     status_update: StatusUpdateRequest, 
@@ -363,7 +372,7 @@ async def update_candidate_status(
     
     return {"message": f"Candidate status updated to {status_update.status}"}
 
-@app.post("/match-job", response_model=List[JobMatchResponse])
+@app.post("/api/match-job", response_model=List[JobMatchResponse])
 async def match_job(job_request: JobMatchRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
     """
     Match candidates against a job description.
@@ -431,29 +440,43 @@ def calculate_skill_match(candidate_skills: List[str], required_skills: List[str
     
     return match_percentage, missing_skills
 
-@app.get("/health")
+@app.get("/api/health")
 def health_check():
     return {"status": "healthy", "message": "CV Analysis API is running"}
 
 @app.get("/")
 async def root():
-    """
-    Root endpoint with API information.
-    """
-    return {
-        "message": "CV Analysis & Job Recommendation API",
-        "version": "1.0.0",
-        "endpoints": {
-            "upload_cv": "POST /upload-cv",
-            "get_candidate": "GET /candidate/{id}",
-            "generate_recommendations": "POST /recommend/{id}",
-            "get_candidates": "GET /candidates",
-            "delete_candidate": "DELETE /candidates/{id}",
-            "update_candidate_status": "PATCH /candidate/{id}/status",
-            "match_job": "POST /match-job"
-        }
-    }
+    """Serve the React app index.html"""
+    index_path = os.path.join(REACT_BUILD_PATH, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    else:
+        return {"message": "React app not found. Please build the frontend first."}
+
+# Serve React App - Catch all routes that don't match API endpoints
+@app.get("/{full_path:path}")
+async def serve_react_app(full_path: str, request: Request):
+    # If it's an API route, let FastAPI handle it (this shouldn't be reached)
+    if full_path.startswith("api/") or full_path.startswith("auth/"):
+        raise HTTPException(status_code=404, detail="API route not found")
+    
+    # If it's a static file, serve it
+    static_file_path = os.path.join(REACT_BUILD_PATH, full_path)
+    if os.path.exists(static_file_path) and os.path.isfile(static_file_path):
+        return FileResponse(static_file_path)
+    
+    # For all other routes (React routing), serve index.html
+    index_path = os.path.join(REACT_BUILD_PATH, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    
+    # Fallback
+    raise HTTPException(status_code=404, detail="File not found")
 
 if __name__ == "__main__":
     import uvicorn
+    print("Starting FastAPI server with React frontend...")
+    print(f"React build path: {REACT_BUILD_PATH}")
+    print("API routes available at /api/...")
+    print("Frontend available at /")
     uvicorn.run(app, host="0.0.0.0", port=8000)
