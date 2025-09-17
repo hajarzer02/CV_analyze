@@ -1,96 +1,93 @@
-CONTACT 
-+21 27 11 41 41 
-chadifra53@gmail.com 
-La Gironde Casablanca 20250, Maroc 
-https://www.linkedin.com/in/chadi-hamraoui-
-39aa7b24b/ 
+Sofia Amrani 
+
+Sofia El Amrani 
+Full-Stack Developer 
+Marrakech, Maroc 
+📧 sofia.elamrani@example.com | ☎ 
++212 6 98 76 54 32 | GitHub: 
+github.com/sofia-dev | LinkedIn: 
+linkedin.com/in/sofia-elamrani 
+
+----------------------------- 
+PROFIL 
+----------------------------- 
+Développeuse full-stack passionnée avec 
+4 ans d’expérience dans la création 
+d’applications web performantes et 
+responsives. 
+Expertise en JavaScript, frameworks 
+modernes (Angular, React, Spring Boot) 
+et bases de données relationnelles et 
+NoSQL. 
+Capable de travailler en équipe agile et 
+d’assurer la qualité du code via CI/CD et 
+tests automatisés. 
+
+----------------------------- 
 COMPÉTENCES TECHNIQUES 
+----------------------------- 
+- Langages : JavaScript (ES6+), 
+TypeScript, Java, Python 
+- Front-end : Angular, React, HTML5, 
+CSS3, TailwindCSS 
+- Back-end : Spring Boot, Node.js, 
+Express 
+- Bases de données : MySQL, PostgreSQL, 
+MongoDB 
+- DevOps : Git, Docker, Jenkins, GitHub 
+Actions 
+- Tests : Jest, JUnit, Cypress 
 
-●​
-Langages de programmation : C, C++, 
-C#,Java, PHP 
-●​
-Technologies et frameworks : HTML, 
-CSS, JavaScript, Apache,Laravel 
-●​
-Bases de données : MySQL, Oracle 
-●​
-Systèmes et réseaux : Cisco, Packet 
-Tracer 
-●​
-Outils et environnements : MATLAB, IDE 
-Arduino, CMD sous Linux et Windows 
-PROJETS ACADÉMIQUES 
+----------------------------- 
+EXPÉRIENCE PROFESSIONNELLE 
+----------------------------- 
+Full-Stack Developer | TechWave | 
+Marrakech | 2021 – Présent 
+- Développement d’une plateforme 
+e-commerce en Angular + Spring Boot. 
+- Mise en place d’une authentification 
+sécurisée (JWT, OAuth2). 
+- Optimisation des requêtes SQL, temps 
+de réponse réduit de 40%. 
+- Participation aux revues de code et mise 
+en place de tests automatisés (coverage
 
-Site E-commerce (produits 
-cosmétiques) : 
-●​
-Développement front-end avec HTML5, 
-CSS3 et JavaScript (framework jQuery) 
-●​
-Développement back-end avec PHP 
-●​
-Gestion de base de données avec 
-MySQL 
-●​
-Hébergement du site avec Apache 
-Activités 
-●​
-Participation à la compétition 
-SmartElec (2024) 
-●​
-Participation à une caravane 
-humanitaire (2025) 
+85%). 
 
+Frontend Developer | WebSolutions | 
+Casablanca | 2019 – 2021 
+- Création de dashboards interactifs en 
+React et D3.js pour l’analyse de données. 
+- Intégration d’API REST et GraphQL. 
+- Amélioration du SEO et de l’accessibilité 
+des sites clients. 
+
+Stage | Startup InnovApp | Rabat | 2018 
+– 2019 
+- Développement d’une application mobile 
+hybride avec Ionic. 
+- Participation à l’intégration d’un système 
+de paiement en ligne. 
+
+----------------------------- 
+FORMATION 
+----------------------------- 
+Master en Génie Logiciel | Université Cadi 
+Ayyad – Marrakech | 2017 – 2019 
+Licence Informatique | Université 
+Mohammed V – Rabat | 2014 – 2017 
+
+----------------------------- 
+CERTIFICATIONS 
+----------------------------- 
+- Oracle Certified Professional: Java SE 11 
+Developer (2022) 
+- Scrum Master Certified (2021) 
+
+----------------------------- 
 LANGUES 
-●​
-Anglais: Courant 
-●​
-Français: Excellent 
-●​
-Arabe: Langue natale 
-
-Chadi Hamraoui 
-RÉSUMÉ 
-Étudiant en licence Génie Informatique à l’IGA 
-Casablanca, passionné par le développement logiciel et 
-les technologies web. Compétent en programmation, 
-bases de données et réseaux, avec une maîtrise de 
-divers langages et frameworks. 
-ÉDUCATION 
-
-SEPT 2022- PRÉSENT : IGA (Institut Supérieur du 
-Génie Appliqué), Casablanca :Licence Génie 
-informatique 
-●​
-Programmation Web, Modélisation UML, 
-Programmation SGBD, Systèmes et réseaux 
-informatiques, Administration réseaux et systèmes 
-
-SEPT 2019 - JUIN 2022 :ENAC (Ecole Nationale de 
-l’Aviation Civile) , Montréal ,Canada : DEC 
-●​ Techniques Avioniques 
-
-Expérience Professionnelle 
-●​
-JANV 2022 - JUIN 2022 : Air Canada, Montréal 
-Spécialiste - Soutien de navigation 
-○​
-Effectuer des contrôles de qualité sur les 
-données de planification des vols génériques 
-(LIDO) et sur les modifications demandées 
-par Air Canada 
-○​
-Interagir avec les autres divisions de la 
-Société, notamment la Performance des 
-appareils, la Régulation Des vols,les Normes 
-de vol, les groupes responsables des Manuels 
-de routes et de la production de systèmes de 
-gestion des vols, les Finances, le Contrôle de 
-l’exploitation réseau, la Technologie de 
-l’information, l’Affectation et Air Canada Jetz. 
-○​
-Garder contact avec les organismes 
-gouvernementaux, dont le Contrôle de la 
-circulation aérienne, le bureau NOTAM de 
-NAV CANADA
+----------------------------- 
+- Arabe : Langue maternelle 
+- Français : Courant 
+- Anglais : Courant 
+- Espagnol : Intermédiaire

@@ -319,23 +319,28 @@ class LlamaService:
     
     def _create_prompt(self, candidate_data: Dict[str, Any]) -> str:
         """Create a prompt for LLaMA based on candidate data."""
-        prompt = f"""Based on the following candidate profile, recommend 3-5 suitable job roles with explanations.
+        prompt = f"""Réponds uniquement en français, donne-moi 5 intitulés de postes adaptés au profil du candidat.
 
-Candidate Profile:
+Profil du candidat:
 {json.dumps(candidate_data, indent=2)}
 
-Please return your response as a JSON array of objects with "title" and "reason" fields.
+Retourne ta réponse sous forme d'un tableau JSON d'objets avec les champs "title" et "reason".
 
-Example format:
+Format d'exemple:
 [
-  {{"title": "Software Engineer", "reason": "Strong programming skills in Python and experience with web development."}},
-  {{"title": "Data Analyst", "reason": "Experience with data analysis and statistical tools."}}
-]"""
+  {{"title": "Développeur Logiciel", "reason": "Compétences solides en programmation Python et expérience en développement web."}},
+  {{"title": "Analyste de Données", "reason": "Expérience en analyse de données et outils statistiques."}},
+  {{"title": "Chef de Projet", "reason": "Compétences en gestion et leadership d'équipe."}},
+  {{"title": "Consultant Technique", "reason": "Expertise technique diversifiée et capacité de résolution de problèmes."}},
+  {{"title": "Responsable Produit", "reason": "Contexte technique combiné à des compétences en communication."}}
+]
+
+IMPORTANT: Tous les intitulés de postes et explications doivent être en français uniquement."""
         return prompt
     
     
     def _parse_response(self, response: str) -> List[Dict[str, str]]:
-        """Parse the LLaMA response into structured recommendations with JSON repair."""
+        """Parse the LLaMA response into structured recommendations with JSON repair and French validation."""
         try:
             # Try to extract JSON from the response
             json_match = re.search(r'\[.*\]', response, re.DOTALL)
@@ -346,14 +351,24 @@ Example format:
                     recommendations = json.loads(repaired_json)
                     if isinstance(recommendations, list):
                         print("✓ LLaMA recommendations JSON parsing successful")
-                        return [
-                            {
-                                "title": rec.get("title", "Unknown Position"),
-                                "reason": rec.get("reason", "No reason provided")
-                            }
-                            for rec in recommendations
-                            if isinstance(rec, dict)
-                        ]
+                        
+                        # Process recommendations and ensure they are in French
+                        processed_recommendations = []
+                        for rec in recommendations:
+                            if isinstance(rec, dict):
+                                title = rec.get("title", "Poste Inconnu")
+                                reason = rec.get("reason", "Aucune raison fournie")
+                                
+                                # Check if title/reason are in French, if not translate them
+                                title = self._ensure_french_text(title)
+                                reason = self._ensure_french_text(reason)
+                                
+                                processed_recommendations.append({
+                                    "title": title,
+                                    "reason": reason
+                                })
+                        
+                        return processed_recommendations
                 except json.JSONDecodeError as e:
                     print(f"⚠️  JSON parsing failed even after repair: {e}")
         except Exception as e:
@@ -362,6 +377,94 @@ Example format:
         print("⚠️  LLaMA response parsing failed, using CLI parser-based recommendations")
         return self._generate_cli_based_recommendations({})
     
+    def _ensure_french_text(self, text: str) -> str:
+        """
+        Ensure text is in French. If not, attempt to translate it.
+        """
+        try:
+            # Simple check for common English words in job titles/reasons
+            english_indicators = [
+                'software engineer', 'data analyst', 'project manager', 'consultant',
+                'developer', 'manager', 'analyst', 'engineer', 'specialist',
+                'strong', 'experience', 'skills', 'background', 'suitable',
+                'programming', 'development', 'management', 'analysis'
+            ]
+            
+            text_lower = text.lower()
+            is_english = any(indicator in text_lower for indicator in english_indicators)
+            
+            if is_english:
+                print(f"🔄 Detected English text, translating to French: {text[:50]}...")
+                return self._translate_to_french(text)
+            else:
+                return text
+                
+        except Exception as e:
+            print(f"Error in French text validation: {e}")
+            return text
+    
+    def _translate_to_french(self, text: str) -> str:
+        """
+        Translate English text to French using LLaMA.
+        """
+        try:
+            if self.provider == "cli":
+                # Use fallback French translations for common terms
+                return self._get_french_fallback(text)
+            
+            # Create translation prompt
+            translation_prompt = f"""Traduis ce texte en français. Réponds uniquement avec la traduction française, sans explications.
+
+Texte à traduire: {text}
+
+Traduction française:"""
+            
+            # Call LLaMA for translation
+            translated = self.generate_llama_content(translation_prompt)
+            
+            # Clean up the response (remove any extra text)
+            translated = translated.strip()
+            if '\n' in translated:
+                translated = translated.split('\n')[0]
+            
+            print(f"✓ Translated to French: {translated[:50]}...")
+            return translated
+            
+        except Exception as e:
+            print(f"Error translating to French: {e}")
+            return self._get_french_fallback(text)
+    
+    def _get_french_fallback(self, text: str) -> str:
+        """
+        Fallback French translations for common English job terms.
+        """
+        translations = {
+            'software engineer': 'Développeur Logiciel',
+            'data analyst': 'Analyste de Données',
+            'project manager': 'Chef de Projet',
+            'consultant': 'Consultant',
+            'developer': 'Développeur',
+            'manager': 'Responsable',
+            'analyst': 'Analyste',
+            'engineer': 'Ingénieur',
+            'specialist': 'Spécialiste',
+            'strong': 'solides',
+            'experience': 'expérience',
+            'skills': 'compétences',
+            'background': 'contexte',
+            'suitable': 'adapté',
+            'programming': 'programmation',
+            'development': 'développement',
+            'management': 'gestion',
+            'analysis': 'analyse'
+        }
+        
+        # Try to find and replace common terms
+        result = text
+        for english, french in translations.items():
+            result = re.sub(r'\b' + re.escape(english) + r'\b', french, result, flags=re.IGNORECASE)
+        
+        return result
     
     def extract_skills_from_job_description(self, job_description: str) -> List[str]:
         """
@@ -748,49 +851,49 @@ Extract and structure ALL content into JSON:"""
             return self._create_fallback_structure_with_raw_text(raw_text)
     
     def _generate_cli_based_recommendations(self, candidate_data: Dict[str, Any]) -> List[Dict[str, str]]:
-        """Generate recommendations based on CLI parser data."""
+        """Generate French recommendations based on CLI parser data."""
         try:
             # Extract skills from candidate data
             skills = candidate_data.get("skills", [])
             experience = candidate_data.get("experience", [])
             
-            # Generate basic recommendations based on skills
+            # Generate basic French recommendations based on skills
             recommendations = []
             
             if any("python" in skill.lower() for skill in skills):
                 recommendations.append({
-                    "title": "Python Developer",
-                    "reason": "Strong Python programming skills detected in candidate profile."
+                    "title": "Développeur Python",
+                    "reason": "Compétences solides en programmation Python détectées dans le profil du candidat."
                 })
             
             if any("javascript" in skill.lower() or "react" in skill.lower() for skill in skills):
                 recommendations.append({
-                    "title": "Frontend Developer",
-                    "reason": "JavaScript and React skills indicate frontend development potential."
+                    "title": "Développeur Frontend",
+                    "reason": "Compétences en JavaScript et React indiquent un potentiel en développement frontend."
                 })
             
             if any("data" in skill.lower() or "analytics" in skill.lower() for skill in skills):
                 recommendations.append({
-                    "title": "Data Analyst",
-                    "reason": "Data analysis skills suggest suitability for analytical roles."
+                    "title": "Analyste de Données",
+                    "reason": "Compétences en analyse de données suggèrent une aptitude aux rôles analytiques."
                 })
             
             if experience:
                 recommendations.append({
-                    "title": "Senior Developer",
-                    "reason": "Previous work experience indicates readiness for senior positions."
+                    "title": "Développeur Senior",
+                    "reason": "L'expérience professionnelle antérieure indique une préparation aux postes seniors."
                 })
             
-            # Add generic recommendations if none specific
+            # Add generic French recommendations if none specific
             if not recommendations:
                 recommendations = [
                     {
-                        "title": "Software Developer",
-                        "reason": "Technical background suggests suitability for software development roles."
+                        "title": "Développeur Logiciel",
+                        "reason": "Le contexte technique suggère une aptitude aux rôles de développement logiciel."
                     },
                     {
-                        "title": "Technical Consultant",
-                        "reason": "Diverse skills indicate potential for consulting positions."
+                        "title": "Consultant Technique",
+                        "reason": "Des compétences diversifiées indiquent un potentiel pour les postes de conseil."
                     }
                 ]
             
@@ -800,8 +903,8 @@ Extract and structure ALL content into JSON:"""
             print(f"Error generating CLI-based recommendations: {e}")
             return [
                 {
-                    "title": "Software Developer",
-                    "reason": "Technical background suggests suitability for software development roles."
+                    "title": "Développeur Logiciel",
+                    "reason": "Le contexte technique suggère une aptitude aux rôles de développement logiciel."
                 }
             ]
     
