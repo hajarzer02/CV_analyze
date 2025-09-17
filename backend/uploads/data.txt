@@ -1,70 +1,92 @@
-CONTACT
-COMPETENCES 
-LANGUAGES
-SOFT SKILLS 
-EXPERIENCES PROFESSIONNELLES 
-FORMATIONS 
-PROFILE
-Ayant une formation technique solide et agile et passionnée par la
-programmation, je suis toujours sur le point d’acquérir et d’exploiter de
-nouvelles compétences. Membre d’équipe rigoureuse et méthodique avec
-un sens d’initiative. Je suis actuellement à la recherche d’un stage de fin
-d’étude (PFE).
-Ingénieur d’Etat en génie informatique spécialité 
-développement logiciel 
-HAJAR ZEROUAL 
-+212602003459
-hajar.zeroual@etud.iga.ac.ma
+Insaf 
+Benali 
+
+Data Engineer 
 Casablanca, Maroc 
-linkedin.com/hajar-zeroual
-C#
-C++
-Langage C/ JAVA/ PHP
-Connaissance bases de
-données SQL/ PLSQL
-Lecture et analyse des
-diagrammes
-Système LINUX et WINDOWS
-Réseaux IP
-HTML/ CSS et Javascript 
- 
- 
-ARABE : Langue maternelle
-FRANÇAIS : Courant
-ANGLAIS : Intermédiaire
-ESPAGNOL : Débutant 
-Travail d’équipe 
-Créativité et innovation 
-Communication
-Ponctualité et gestion de temps 
- 
- 
-Creative Keys, Maroc-Tétouan 28/06/2023 – 28/09/2023 
-Algorithmics School, Maroc-Tétouan 25/07/2024 – 25/09/2024 
- 
-Conception et Développementd'une Application deGestiondes
-inscriptions des étudiants technologie utilisé java spring et
-angular et Mysql 
-Création d’un site web de la Zone d’Activité Economique de Fnideq
-ZAEF. 
-Stage de fin d’année : PFA (4GI) 
-Stage de fin d’année : PFA (3ISI) 
- 
-Institut Supérieur du Génie Appliqué - IGA, Casablanca | 2023 – 2025 
-Cycled’ingénieurd’état - DéveloppementLogicieletTechnologies de 
-l'Information 
-Institut Supérieur du Génie Appliqué - IGA, Casablanca | 2020 – 2023 
-Licence 
-professionnelle 
-en 
-Ingénierie 
-des 
-Systèmes 
-Informatiques - ISI 
-Lycée Al Maarifa, Casablanca | 2019 – 2020 
-Baccalauréat SciencesExpérimentalesOption : PC 
-ATTESTATIONS ET CERTIFICATS 
-Data Analysis with Python provided by IBM
-Python 101 for data Science provided by IBM
-C Intermediate provided by Sololearn
-Tech for Everyone provided by Sololear
+📧 insaf.benali@example.com | ☎ +212 6 
+12 34 56 78 | LinkedIn: 
+linkedin.com/in/insaf-benali 
+
+----------------------------- 
+PROFIL 
+----------------------------- 
+Ingénieure Data spécialisée dans la 
+conception et l’optimisation de pipelines 
+de données. 
+Expérience solide en Big Data, ETL et 
+Cloud, avec un intérêt particulier pour la 
+mise en place de solutions 
+scalables et performantes au service de 
+l’analyse et du machine learning. 
+
+----------------------------- 
+COMPÉTENCES TECHNIQUES 
+----------------------------- 
+- Langages : Python, Java, SQL, Scala 
+- Big Data : Hadoop, Spark, Hive 
+- Bases de données : PostgreSQL, MySQL, 
+MongoDB 
+- Cloud : AWS (S3, Redshift, EMR), GCP, 
+Azure 
+- Outils ETL : Airflow, Talend, Informatica 
+- DevOps : Docker, Kubernetes, Git, 
+CI/CD 
+- Autres : Pandas, NumPy, Power BI 
+
+----------------------------- 
+EXPÉRIENCE PROFESSIONNELLE 
+----------------------------- 
+Data Engineer | Société XYZ | Casablanca 
+| 2022 – Présent 
+- Développement et maintenance de 
+pipelines de données avec Apache Spark 
+et Airflow. 
+- Intégration et nettoyage de données 
+provenant de multiples sources (API, SQL, 
+NoSQL). 
+- Optimisation des temps de traitement 
+(-30%) en améliorant la partition et la 
+persistance des données.
+
+- Collaboration avec l’équipe Data Science 
+pour l’entraînement de modèles prédictifs. 
+
+Junior Data Engineer | DataCorp | Rabat | 
+2020 – 2022 
+- Participation à la migration des données 
+vers AWS Redshift. 
+- Automatisation des flux ETL avec 
+Talend. 
+- Mise en place de dashboards pour 
+l’équipe métier (Power BI). 
+
+Stage de fin d’études | Banque ABC | 
+Casablanca | 2019 – 2020 
+- Développement d’un POC Big Data pour 
+la détection de fraudes bancaires. 
+- Utilisation de Hadoop et Hive pour 
+analyser de gros volumes de transactions. 
+
+----------------------------- 
+FORMATION 
+----------------------------- 
+Master Big Data & Cloud Computing | 
+Université Hassan II – Casablanca | 2018 
+– 2020 
+Licence Informatique | Université 
+Mohammed V – Rabat | 2015 – 2018 
+
+----------------------------- 
+CERTIFICATIONS 
+----------------------------- 
+- AWS Certified Data Analytics – Specialty 
+(2023) 
+- Google Cloud Professional Data Engineer 
+(2022) 
+
+----------------------------- 
+LANGUES 
+----------------------------- 
+- Arabe : Langue maternelle 
+- Français : Courant 
+- Anglais : Professionnel

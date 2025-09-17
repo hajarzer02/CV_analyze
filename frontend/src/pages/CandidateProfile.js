@@ -203,7 +203,7 @@ const CandidateProfile = () => {
                 </div>
           <div>
                   <h1 className="text-2xl font-bold text-gray-900">
-              {candidate.name || contactInfo.name || 'Candidat Inconnu'}
+              {candidate.name || contactInfo.name || 'Candidat'}
             </h1>
                   <div className="flex items-center space-x-2 mt-0.5">
                     <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
@@ -445,7 +445,7 @@ const CandidateProfile = () => {
                         {edu.details.map((detail, detailIndex) => (
                                   <li key={detailIndex} className="flex items-start space-x-3 text-sm text-gray-600">
                                     <div className="w-1.5 h-1.5 bg-slate-400 rounded-full mt-2 flex-shrink-0"></div>
-                                    <span>{detail}</span>
+                                    <span>{typeof detail === 'string' ? detail : (detail.title || detail.description || JSON.stringify(detail))}</span>
                           </li>
                         ))}
                       </ul>
@@ -499,7 +499,7 @@ const CandidateProfile = () => {
                         {exp.details.map((detail, detailIndex) => (
                                   <li key={detailIndex} className="flex items-start space-x-3 text-sm text-gray-600">
                                     <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full mt-2 flex-shrink-0"></div>
-                                    <span>{detail}</span>
+                                    <span>{typeof detail === 'string' ? detail : (detail.title || detail.description || JSON.stringify(detail))}</span>
                           </li>
                         ))}
                       </ul>

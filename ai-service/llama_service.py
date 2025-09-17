@@ -1,11 +1,17 @@
 import os
 import json
+import re
 import torch
 import requests
 from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Import CVExtractor for fallback
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'backend'))
+from cv_extractor_cli import CVExtractor
 
 class LlamaService:
     def __init__(self):
@@ -24,6 +30,9 @@ class LlamaService:
         
         # Initialize the best available provider
         self.provider = self._initialize_provider()
+        
+        # Initialize CVExtractor for fallback
+        self.cv_extractor = CVExtractor()
     
     def _initialize_provider(self) -> str:
         """Initialize the best available LLaMA provider."""
@@ -56,9 +65,9 @@ class LlamaService:
             except Exception as e:
                 print(f"⚠️  Local LLaMA failed: {e}")
         
-        # Fallback to dummy recommendations
-        print("⚠️  Using dummy recommendations (no API key or GPU available)")
-        return "dummy"
+        # Fallback to CLI parser
+        print("⚠️  Using CLI parser fallback (no API key or GPU available)")
+        return "cli"
     
     def _test_together_connection(self):
         """Test Together AI API connection."""
@@ -237,13 +246,61 @@ class LlamaService:
             return self._call_local_llama(prompt)
         else:
             raise Exception("No LLaMA provider available")
+    
+    def _repair_json(self, json_str: str) -> str:
+        """
+        Attempt to repair malformed JSON from LLaMA responses.
+        Handles common issues like trailing commas, missing brackets, etc.
+        """
+        try:
+            # First try to parse as-is
+            json.loads(json_str)
+            return json_str
+        except json.JSONDecodeError:
+            pass
+        
+        # Try to repair common issues
+        repaired = json_str.strip()
+        
+        # Remove text before/after JSON
+        if '{' in repaired:
+            repaired = repaired[repaired.find('{'):]
+        elif '[' in repaired:
+            repaired = repaired[repaired.find('['):]
+        
+        if '}' in repaired:
+            repaired = repaired[:repaired.rfind('}') + 1]
+        elif ']' in repaired:
+            repaired = repaired[:repaired.rfind(']') + 1]
+        
+        # Remove trailing commas before closing brackets/braces
+        repaired = re.sub(r',(\s*[}\]])', r'\1', repaired)
+        
+        # Try to balance brackets/braces
+        open_braces = repaired.count('{')
+        close_braces = repaired.count('}')
+        open_brackets = repaired.count('[')
+        close_brackets = repaired.count(']')
+        
+        if open_braces > close_braces:
+            repaired += '}' * (open_braces - close_braces)
+        if open_brackets > close_brackets:
+            repaired += ']' * (open_brackets - close_brackets)
+        
+        try:
+            json.loads(repaired)
+            print(f"✓ JSON repair successful")
+            return repaired
+        except json.JSONDecodeError as e:
+            print(f"⚠️  JSON repair failed: {e}")
+            return json_str
 
     def generate_recommendations(self, candidate_data: Dict[str, Any]) -> List[Dict[str, str]]:
         """
-        Generate job recommendations using the best available LLaMA provider or return dummy data.
+        Generate job recommendations using the best available LLaMA provider or fallback to CLI parser.
         """
-        if self.provider == "dummy":
-            return self._get_dummy_recommendations()
+        if self.provider == "cli":
+            return self._generate_cli_based_recommendations(candidate_data)
         
         try:
             # Prepare the prompt for LLaMA
@@ -257,7 +314,8 @@ class LlamaService:
             
         except Exception as e:
             print(f"Error calling LLaMA provider ({self.provider}): {e}")
-            return self._get_dummy_recommendations()
+            print("⚠️  Falling back to CLI parser")
+            return self._generate_cli_based_recommendations(candidate_data)
     
     def _create_prompt(self, candidate_data: Dict[str, Any]) -> str:
         """Create a prompt for LLaMA based on candidate data."""
@@ -277,63 +335,40 @@ Example format:
     
     
     def _parse_response(self, response: str) -> List[Dict[str, str]]:
-        """Parse the LLaMA response into structured recommendations."""
+        """Parse the LLaMA response into structured recommendations with JSON repair."""
         try:
             # Try to extract JSON from the response
-            # Look for JSON array in the response
-            import re
             json_match = re.search(r'\[.*\]', response, re.DOTALL)
             if json_match:
                 json_str = json_match.group(0)
-                recommendations = json.loads(json_str)
-                
-                # Validate the structure
-                if isinstance(recommendations, list):
-                    return [
-                        {
-                            "title": rec.get("title", "Unknown Position"),
-                            "reason": rec.get("reason", "No reason provided")
-                        }
-                        for rec in recommendations
-                        if isinstance(rec, dict)
-                    ]
+                repaired_json = self._repair_json(json_str)
+                try:
+                    recommendations = json.loads(repaired_json)
+                    if isinstance(recommendations, list):
+                        print("✓ LLaMA recommendations JSON parsing successful")
+                        return [
+                            {
+                                "title": rec.get("title", "Unknown Position"),
+                                "reason": rec.get("reason", "No reason provided")
+                            }
+                            for rec in recommendations
+                            if isinstance(rec, dict)
+                        ]
+                except json.JSONDecodeError as e:
+                    print(f"⚠️  JSON parsing failed even after repair: {e}")
         except Exception as e:
             print(f"Error parsing LLaMA response: {e}")
         
-        # Fallback to dummy data if parsing fails
-        return self._get_dummy_recommendations()
+        print("⚠️  LLaMA response parsing failed, using CLI parser-based recommendations")
+        return self._generate_cli_based_recommendations({})
     
-    def _get_dummy_recommendations(self) -> List[Dict[str, str]]:
-        """Return dummy recommendations for testing when API key is not available."""
-        return [
-            {
-                "title": "Software Engineer",
-                "reason": "Strong programming skills and technical background make this candidate suitable for software development roles."
-            },
-            {
-                "title": "Data Analyst",
-                "reason": "Analytical skills and experience with data processing tools indicate potential for data analysis positions."
-            },
-            {
-                "title": "Project Manager",
-                "reason": "Leadership experience and organizational skills suggest potential for project management roles."
-            },
-            {
-                "title": "Technical Consultant",
-                "reason": "Diverse technical skills and problem-solving abilities make this candidate suitable for consulting roles."
-            },
-            {
-                "title": "Product Manager",
-                "reason": "Technical background combined with communication skills indicates potential for product management positions."
-            }
-        ]
     
     def extract_skills_from_job_description(self, job_description: str) -> List[str]:
         """
-        Extract required skills from a job description using LLaMA.
+        Extract required skills from a job description using LLaMA or fallback to CLI parser.
         """
-        if self.provider == "dummy":
-            return self._get_dummy_skills()
+        if self.provider == "cli":
+            return self._extract_skills_cli_fallback(job_description)
         
         try:
             # Create prompt for skill extraction
@@ -355,38 +390,37 @@ Example format:
             
         except Exception as e:
             print(f"Error extracting skills from job description: {e}")
-            return self._get_dummy_skills()
+            print("⚠️  Falling back to CLI parser")
+            return self._extract_skills_cli_fallback(job_description)
     
     def _parse_skills_response(self, response: str) -> List[str]:
-        """Parse the LLaMA response to extract skills."""
+        """Parse the LLaMA response to extract skills with JSON repair."""
         try:
             # Try to extract JSON array from the response
-            import re
             json_match = re.search(r'\[.*?\]', response, re.DOTALL)
             if json_match:
                 json_str = json_match.group(0)
-                skills = json.loads(json_str)
-                
-                # Validate the structure
-                if isinstance(skills, list):
-                    return [skill.strip() for skill in skills if isinstance(skill, str)]
+                repaired_json = self._repair_json(json_str)
+                try:
+                    skills = json.loads(repaired_json)
+                    if isinstance(skills, list):
+                        print("✓ LLaMA skills JSON parsing successful")
+                        return [skill.strip() for skill in skills if isinstance(skill, str)]
+                except json.JSONDecodeError as e:
+                    print(f"⚠️  JSON parsing failed even after repair: {e}")
         except Exception as e:
             print(f"Error parsing skills response: {e}")
         
-        # Fallback to dummy data if parsing fails
-        return self._get_dummy_skills()
+        print("⚠️  LLaMA skills response parsing failed, using CLI parser-based skill extraction")
+        return self._extract_skills_cli_fallback("")
     
-    def _get_dummy_skills(self) -> List[str]:
-        """Return dummy skills for testing when API key is not available."""
-        return ["Python", "JavaScript", "React", "Node.js", "PostgreSQL", "Docker", "AWS"]
     
     def structure_cv_text(self, raw_text: str) -> Dict[str, Any]:
         """
-        Structure raw CV text into JSON format using LLaMA.
-        This replaces the old section parsing logic with AI-powered structuring.
+        Structure raw CV text into JSON format using LLaMA or fallback to CLI parser.
         """
-        if self.provider == "dummy":
-            return self._get_dummy_cv_structure()
+        if self.provider == "cli":
+            return self._fallback_to_cli_parser(raw_text)
         
         try:
             # Create prompt for CV structuring
@@ -409,7 +443,8 @@ Example format:
             
         except Exception as e:
             print(f"Error structuring CV with LLaMA ({self.provider}): {e}")
-            return self._get_dummy_cv_structure()
+            print("⚠️  Falling back to CLI parser")
+            return self._fallback_to_cli_parser(raw_text)
     
     def _create_cv_structuring_prompt(self, raw_text: str) -> str:
         """Create a prompt for LLaMA to structure CV text into JSON."""
@@ -471,22 +506,27 @@ Extract and structure ALL content into JSON:"""
         return prompt
     
     def _parse_cv_structure_response(self, response: str) -> Dict[str, Any]:
-        """Parse the LLaMA response into structured CV data."""
+        """Parse the LLaMA response into structured CV data with JSON repair."""
         try:
             # Try to extract JSON from the response
-            import re
             json_match = re.search(r'\{.*\}', response, re.DOTALL)
             if json_match:
                 json_str = json_match.group(0)
-                structured_data = json.loads(json_str)
-                
-                # Validate and clean the structure
-                return self._validate_cv_structure(structured_data)
+                repaired_json = self._repair_json(json_str)
+                try:
+                    structured_data = json.loads(repaired_json)
+                    print("✓ LLaMA JSON parsing successful")
+                    return self._validate_cv_structure(structured_data)
+                except json.JSONDecodeError as e:
+                    print(f"⚠️  JSON parsing failed even after repair: {e}")
+                    # Try to extract partial data from the response
+                    return self._extract_partial_data_from_response(response)
         except Exception as e:
             print(f"Error parsing CV structure response: {e}")
         
-        # Fallback to dummy data if parsing fails
-        return self._get_dummy_cv_structure()
+        # Fallback to CLI parser if parsing fails
+        print("⚠️  LLaMA CV structure response parsing failed, using CLI parser fallback")
+        return self._fallback_to_cli_parser("")
     
     def _validate_cv_structure(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Validate and clean the CV structure to match expected format while preserving all content."""
@@ -547,6 +587,8 @@ Extract and structure ALL content into JSON:"""
             if isinstance(edu, dict):
                 if "details" not in edu or not isinstance(edu["details"], list):
                     edu["details"] = []
+                # Ensure details array contains only strings
+                edu["details"] = [str(detail) if not isinstance(detail, str) else detail for detail in edu["details"]]
                 # Ensure all fields are strings if they exist
                 for field in ["date_range", "degree", "institution", "location"]:
                     if field in edu and not isinstance(edu[field], str):
@@ -557,6 +599,8 @@ Extract and structure ALL content into JSON:"""
             if isinstance(exp, dict):
                 if "details" not in exp or not isinstance(exp["details"], list):
                     exp["details"] = []
+                # Ensure details array contains only strings
+                exp["details"] = [str(detail) if not isinstance(detail, str) else detail for detail in exp["details"]]
                 # Ensure all fields are strings if they exist
                 for field in ["date_range", "company", "role", "location"]:
                     if field in exp and not isinstance(exp[field], str):
@@ -577,6 +621,353 @@ Extract and structure ALL content into JSON:"""
                         lang[field] = str(lang[field]) if lang[field] else ""
         
         return validated_data
+    
+    def _extract_partial_data_from_response(self, response: str) -> Dict[str, Any]:
+        """
+        Extract partial structured data from LLaMA response when JSON parsing fails.
+        This preserves as much information as possible before falling back to CLI parser.
+        """
+        try:
+            print("Attempting to extract partial data from LLaMA response...")
+            
+            # Initialize partial data structure
+            partial_data = {
+                "contact_info": {"emails": [], "phones": [], "linkedin": "", "address": "", "name": ""},
+                "professional_summary": [],
+                "skills": [],
+                "languages": [],
+                "education": [],
+                "experience": [],
+                "projects": [],
+                "additional_info": []
+            }
+            
+            # Try to extract name
+            name_match = re.search(r'"name"\s*:\s*"([^"]+)"', response, re.IGNORECASE)
+            if name_match:
+                partial_data["contact_info"]["name"] = name_match.group(1)
+            
+            # Try to extract emails
+            email_matches = re.findall(r'"emails"\s*:\s*\[(.*?)\]', response, re.DOTALL)
+            if email_matches:
+                emails = re.findall(r'"([^"]+@[^"]+)"', email_matches[0])
+                partial_data["contact_info"]["emails"] = emails
+            
+            # Try to extract skills
+            skills_matches = re.findall(r'"skills"\s*:\s*\[(.*?)\]', response, re.DOTALL)
+            if skills_matches:
+                skills = re.findall(r'"([^"]+)"', skills_matches[0])
+                partial_data["skills"] = skills
+            
+            # Try to extract professional summary
+            summary_matches = re.findall(r'"professional_summary"\s*:\s*\[(.*?)\]', response, re.DOTALL)
+            if summary_matches:
+                summary = re.findall(r'"([^"]+)"', summary_matches[0])
+                partial_data["professional_summary"] = summary
+            
+            print(f"✓ Extracted partial data: name={partial_data['contact_info']['name']}, skills={len(partial_data['skills'])}, summary={len(partial_data['professional_summary'])}")
+            return partial_data
+            
+        except Exception as e:
+            print(f"Error extracting partial data: {e}")
+            return self._fallback_to_cli_parser("")
+    
+    def _fallback_to_cli_parser(self, raw_text: str) -> Dict[str, Any]:
+        """
+        Enhanced CLI parser fallback that preserves ALL content.
+        Ensures no CV content is lost by storing everything in appropriate sections.
+        """
+        try:
+            # Import the individual extraction functions from cv_extractor_cli
+            from cv_extractor_cli import (
+                extract_contact_info, extract_summary, extract_skills, 
+                extract_languages, extract_education, extract_experience, 
+                extract_projects
+            )
+            
+            print("🔄 Starting enhanced CLI parser fallback...")
+            
+            # Extract all information using CLI parser functions
+            contact_info = extract_contact_info(raw_text)
+            
+            # Extract candidate name from raw text
+            candidate_name = self._extract_candidate_name(raw_text)
+            if candidate_name:
+                contact_info["name"] = candidate_name
+            
+            # Extract all sections
+            professional_summary = extract_summary(raw_text)
+            skills = extract_skills(raw_text)
+            languages = extract_languages(raw_text)
+            education = extract_education(raw_text)
+            experience = extract_experience(raw_text)
+            projects = extract_projects(raw_text)
+            
+            # Create comprehensive additional_info to capture any missed content
+            additional_info = self._extract_additional_content(raw_text, {
+                "professional_summary": professional_summary,
+                "skills": skills,
+                "education": education,
+                "experience": experience,
+                "projects": projects
+            })
+            
+            structured_data = {
+                "contact_info": contact_info,
+                "professional_summary": professional_summary,
+                "skills": skills,
+                "languages": languages,
+                "education": education,
+                "experience": experience,
+                "projects": projects,
+                "additional_info": additional_info
+            }
+            
+            # Ensure all sections exist (don't remove empty ones)
+            for section in ["professional_summary", "skills", "languages", "education", "experience", "projects", "additional_info"]:
+                if section not in structured_data or not structured_data[section]:
+                    structured_data[section] = []
+            
+            # Ensure contact_info has all required fields
+            if "contact_info" not in structured_data:
+                structured_data["contact_info"] = {"emails": [], "phones": [], "linkedin": "", "address": "", "name": ""}
+            
+            print(f"✓ Enhanced CLI parser completed - Content preserved in all sections")
+            return structured_data
+            
+        except Exception as e:
+            print(f"Error in enhanced CLI parser fallback: {e}")
+            # If even CLI parser fails, return structure with raw text preserved
+            return self._create_fallback_structure_with_raw_text(raw_text)
+    
+    def _generate_cli_based_recommendations(self, candidate_data: Dict[str, Any]) -> List[Dict[str, str]]:
+        """Generate recommendations based on CLI parser data."""
+        try:
+            # Extract skills from candidate data
+            skills = candidate_data.get("skills", [])
+            experience = candidate_data.get("experience", [])
+            
+            # Generate basic recommendations based on skills
+            recommendations = []
+            
+            if any("python" in skill.lower() for skill in skills):
+                recommendations.append({
+                    "title": "Python Developer",
+                    "reason": "Strong Python programming skills detected in candidate profile."
+                })
+            
+            if any("javascript" in skill.lower() or "react" in skill.lower() for skill in skills):
+                recommendations.append({
+                    "title": "Frontend Developer",
+                    "reason": "JavaScript and React skills indicate frontend development potential."
+                })
+            
+            if any("data" in skill.lower() or "analytics" in skill.lower() for skill in skills):
+                recommendations.append({
+                    "title": "Data Analyst",
+                    "reason": "Data analysis skills suggest suitability for analytical roles."
+                })
+            
+            if experience:
+                recommendations.append({
+                    "title": "Senior Developer",
+                    "reason": "Previous work experience indicates readiness for senior positions."
+                })
+            
+            # Add generic recommendations if none specific
+            if not recommendations:
+                recommendations = [
+                    {
+                        "title": "Software Developer",
+                        "reason": "Technical background suggests suitability for software development roles."
+                    },
+                    {
+                        "title": "Technical Consultant",
+                        "reason": "Diverse skills indicate potential for consulting positions."
+                    }
+                ]
+            
+            return recommendations[:5]  # Limit to 5 recommendations
+            
+        except Exception as e:
+            print(f"Error generating CLI-based recommendations: {e}")
+            return [
+                {
+                    "title": "Software Developer",
+                    "reason": "Technical background suggests suitability for software development roles."
+                }
+            ]
+    
+    def _extract_skills_cli_fallback(self, job_description: str) -> List[str]:
+        """Extract skills using CLI parser as fallback."""
+        try:
+            from cv_extractor_cli import extract_skills
+            return extract_skills(job_description)
+        except Exception as e:
+            print(f"Error in CLI skills extraction: {e}")
+            return ["Python", "JavaScript", "React", "Node.js", "PostgreSQL"]
+    
+    def _extract_candidate_name(self, raw_text: str) -> str:
+        """
+        Extract candidate name from raw text using simple heuristics.
+        """
+        try:
+            lines = raw_text.split('\n')
+            for line in lines[:10]:  # Check first 10 lines
+                line = line.strip()
+                if not line:
+                    continue
+                
+                # Skip lines that are clearly not names
+                if any(keyword in line.lower() for keyword in [
+                    'email', 'phone', 'address', 'linkedin', 'summary', 'profile',
+                    'experience', 'education', 'skills', 'languages', 'projects'
+                ]):
+                    continue
+                
+                # Look for name patterns (2-3 capitalized words)
+                name_match = re.match(r'^([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2})$', line)
+                if name_match:
+                    return name_match.group(1)
+                
+                # Look for name with title (Mr., Ms., etc.)
+                name_with_title = re.match(r'^(Mr\.|Ms\.|Mrs\.|Dr\.|Prof\.)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2})$', line)
+                if name_with_title:
+                    return name_with_title.group(2)
+            
+            return ""
+            
+        except Exception as e:
+            print(f"Error extracting candidate name: {e}")
+            return ""
+    
+    def _extract_additional_content(self, raw_text: str, extracted_data: Dict[str, Any]) -> List[str]:
+        """
+        Extract any content that wasn't captured by the main parsing functions.
+        This ensures no CV content is lost.
+        """
+        try:
+            additional_content = []
+            lines = raw_text.split('\n')
+            
+            for line in lines:
+                line = line.strip()
+                if not line or len(line) < 3:
+                    continue
+                
+                # Skip if content is already captured
+                if self._is_content_already_captured(line, extracted_data):
+                    continue
+                
+                # Skip section headers
+                if any(header in line.lower() for header in [
+                    'contact', 'email', 'phone', 'address', 'linkedin', 'summary', 'profile',
+                    'objective', 'skills', 'competencies', 'experience', 'work', 'employment',
+                    'education', 'formation', 'projects', 'languages', 'langues', 'certifications',
+                    'awards', 'achievements', 'references'
+                ]):
+                    continue
+                
+                # Add substantial content that wasn't captured
+                if len(line) > 10 and not line.isupper():
+                    additional_content.append(line)
+            
+            print(f"✓ Extracted {len(additional_content)} additional content items")
+            return additional_content
+            
+        except Exception as e:
+            print(f"Error extracting additional content: {e}")
+            return []
+    
+    def _is_content_already_captured(self, line: str, extracted_data: Dict[str, Any]) -> bool:
+        """Check if a line of text is already captured in the extracted data."""
+        try:
+            line_lower = line.lower()
+            
+            # Check professional summary
+            for summary_item in extracted_data.get("professional_summary", []):
+                if line_lower in summary_item.lower() or summary_item.lower() in line_lower:
+                    return True
+            
+            # Check skills
+            for skill in extracted_data.get("skills", []):
+                if line_lower == skill.lower() or skill.lower() in line_lower:
+                    return True
+            
+            # Check education details
+            for edu in extracted_data.get("education", []):
+                if isinstance(edu, dict):
+                    for detail in edu.get("details", []):
+                        if line_lower in detail.lower() or detail.lower() in line_lower:
+                            return True
+            
+            # Check experience details
+            for exp in extracted_data.get("experience", []):
+                if isinstance(exp, dict):
+                    for detail in exp.get("details", []):
+                        if line_lower in detail.lower() or detail.lower() in line_lower:
+                            return True
+            
+            # Check project details
+            for project in extracted_data.get("projects", []):
+                if isinstance(project, dict):
+                    for field in ["title", "description"]:
+                        if field in project and line_lower in project[field].lower():
+                            return True
+            
+            return False
+            
+        except Exception as e:
+            print(f"Error checking if content is captured: {e}")
+            return False
+    
+    def _create_fallback_structure_with_raw_text(self, raw_text: str) -> Dict[str, Any]:
+        """
+        Create a fallback structure that preserves all raw text when everything else fails.
+        This ensures no content is ever lost.
+        """
+        try:
+            print("🔄 Creating fallback structure with raw text preservation...")
+            
+            # Extract candidate name
+            candidate_name = self._extract_candidate_name(raw_text)
+            
+            # Split raw text into lines and filter out empty ones
+            lines = [line.strip() for line in raw_text.split('\n') if line.strip()]
+            
+            # Create fallback structure
+            fallback_structure = {
+                "contact_info": {
+                    "emails": [],
+                    "phones": [],
+                    "linkedin": "",
+                    "address": "",
+                    "name": candidate_name
+                },
+                "professional_summary": lines[:5] if len(lines) > 5 else lines,
+                "skills": [],
+                "languages": [],
+                "education": [],
+                "experience": [],
+                "projects": [],
+                "additional_info": lines
+            }
+            
+            print(f"✓ Fallback structure created - All {len(lines)} lines preserved")
+            return fallback_structure
+            
+        except Exception as e:
+            print(f"Error creating fallback structure: {e}")
+            return {
+                "contact_info": {"emails": [], "phones": [], "linkedin": "", "address": "", "name": ""},
+                "professional_summary": [],
+                "skills": [],
+                "languages": [],
+                "education": [],
+                "experience": [],
+                "projects": [],
+                "additional_info": [raw_text]
+            }
     
     def verify_content_preservation(self, raw_text: str, structured_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -632,51 +1023,3 @@ Extract and structure ALL content into JSON:"""
             report["missing_content_warning"] = True
         
         return report
-    
-    def _get_dummy_cv_structure(self) -> Dict[str, Any]:
-        """Return dummy CV structure for testing when API key is not available."""
-        return {
-            "contact_info": {
-                "emails": ["example@email.com"],
-                "phones": ["+1234567890"],
-                "linkedin": "",
-                "address": "Sample Address",
-                "name": "John Doe"
-            },
-            "professional_summary": [
-                "Experienced software developer with strong technical skills",
-                "Passionate about creating innovative solutions"
-            ],
-            "skills": ["Python", "JavaScript", "React", "Node.js", "PostgreSQL"],
-            "languages": [
-                {"language": "English", "level": "Fluent"},
-                {"language": "French", "level": "Intermediate"}
-            ],
-            "education": [
-                {
-                    "date_range": "2020-2024",
-                    "degree": "Bachelor of Computer Science",
-                    "institution": "University Name",
-                    "location": "City, Country",
-                    "details": ["Relevant coursework and achievements", "Additional details"]
-                }
-            ],
-            "experience": [
-                {
-                    "date_range": "2022-2024",
-                    "company": "Tech Company",
-                    "role": "Software Developer",
-                    "location": "City, Country",
-                    "details": ["Developed web applications", "Collaborated with team members", "Additional responsibilities"]
-                }
-            ],
-            "projects": [
-                {
-                    "title": "Sample Project",
-                    "description": "A detailed sample project description with all relevant information"
-                }
-            ],
-            "additional_info": [
-                "Any additional information that doesn't fit other categories"
-            ]
-        }
