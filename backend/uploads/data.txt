@@ -1,92 +1,96 @@
-Insaf 
-Benali 
-
-Data Engineer 
-Casablanca, Maroc 
-📧 insaf.benali@example.com | ☎ +212 6 
-12 34 56 78 | LinkedIn: 
-linkedin.com/in/insaf-benali 
-
------------------------------ 
-PROFIL 
------------------------------ 
-Ingénieure Data spécialisée dans la 
-conception et l’optimisation de pipelines 
-de données. 
-Expérience solide en Big Data, ETL et 
-Cloud, avec un intérêt particulier pour la 
-mise en place de solutions 
-scalables et performantes au service de 
-l’analyse et du machine learning. 
-
------------------------------ 
+CONTACT 
++21 27 11 41 41 
+chadifra53@gmail.com 
+La Gironde Casablanca 20250, Maroc 
+https://www.linkedin.com/in/chadi-hamraoui-
+39aa7b24b/ 
 COMPÉTENCES TECHNIQUES 
------------------------------ 
-- Langages : Python, Java, SQL, Scala 
-- Big Data : Hadoop, Spark, Hive 
-- Bases de données : PostgreSQL, MySQL, 
-MongoDB 
-- Cloud : AWS (S3, Redshift, EMR), GCP, 
-Azure 
-- Outils ETL : Airflow, Talend, Informatica 
-- DevOps : Docker, Kubernetes, Git, 
-CI/CD 
-- Autres : Pandas, NumPy, Power BI 
 
------------------------------ 
-EXPÉRIENCE PROFESSIONNELLE 
------------------------------ 
-Data Engineer | Société XYZ | Casablanca 
-| 2022 – Présent 
-- Développement et maintenance de 
-pipelines de données avec Apache Spark 
-et Airflow. 
-- Intégration et nettoyage de données 
-provenant de multiples sources (API, SQL, 
-NoSQL). 
-- Optimisation des temps de traitement 
-(-30%) en améliorant la partition et la 
-persistance des données.
+●​
+Langages de programmation : C, C++, 
+C#,Java, PHP 
+●​
+Technologies et frameworks : HTML, 
+CSS, JavaScript, Apache,Laravel 
+●​
+Bases de données : MySQL, Oracle 
+●​
+Systèmes et réseaux : Cisco, Packet 
+Tracer 
+●​
+Outils et environnements : MATLAB, IDE 
+Arduino, CMD sous Linux et Windows 
+PROJETS ACADÉMIQUES 
 
-- Collaboration avec l’équipe Data Science 
-pour l’entraînement de modèles prédictifs. 
+Site E-commerce (produits 
+cosmétiques) : 
+●​
+Développement front-end avec HTML5, 
+CSS3 et JavaScript (framework jQuery) 
+●​
+Développement back-end avec PHP 
+●​
+Gestion de base de données avec 
+MySQL 
+●​
+Hébergement du site avec Apache 
+Activités 
+●​
+Participation à la compétition 
+SmartElec (2024) 
+●​
+Participation à une caravane 
+humanitaire (2025) 
 
-Junior Data Engineer | DataCorp | Rabat | 
-2020 – 2022 
-- Participation à la migration des données 
-vers AWS Redshift. 
-- Automatisation des flux ETL avec 
-Talend. 
-- Mise en place de dashboards pour 
-l’équipe métier (Power BI). 
-
-Stage de fin d’études | Banque ABC | 
-Casablanca | 2019 – 2020 
-- Développement d’un POC Big Data pour 
-la détection de fraudes bancaires. 
-- Utilisation de Hadoop et Hive pour 
-analyser de gros volumes de transactions. 
-
------------------------------ 
-FORMATION 
------------------------------ 
-Master Big Data & Cloud Computing | 
-Université Hassan II – Casablanca | 2018 
-– 2020 
-Licence Informatique | Université 
-Mohammed V – Rabat | 2015 – 2018 
-
------------------------------ 
-CERTIFICATIONS 
------------------------------ 
-- AWS Certified Data Analytics – Specialty 
-(2023) 
-- Google Cloud Professional Data Engineer 
-(2022) 
-
------------------------------ 
 LANGUES 
------------------------------ 
-- Arabe : Langue maternelle 
-- Français : Courant 
-- Anglais : Professionnel
+●​
+Anglais: Courant 
+●​
+Français: Excellent 
+●​
+Arabe: Langue natale 
+
+Chadi Hamraoui 
+RÉSUMÉ 
+Étudiant en licence Génie Informatique à l’IGA 
+Casablanca, passionné par le développement logiciel et 
+les technologies web. Compétent en programmation, 
+bases de données et réseaux, avec une maîtrise de 
+divers langages et frameworks. 
+ÉDUCATION 
+
+SEPT 2022- PRÉSENT : IGA (Institut Supérieur du 
+Génie Appliqué), Casablanca :Licence Génie 
+informatique 
+●​
+Programmation Web, Modélisation UML, 
+Programmation SGBD, Systèmes et réseaux 
+informatiques, Administration réseaux et systèmes 
+
+SEPT 2019 - JUIN 2022 :ENAC (Ecole Nationale de 
+l’Aviation Civile) , Montréal ,Canada : DEC 
+●​ Techniques Avioniques 
+
+Expérience Professionnelle 
+●​
+JANV 2022 - JUIN 2022 : Air Canada, Montréal 
+Spécialiste - Soutien de navigation 
+○​
+Effectuer des contrôles de qualité sur les 
+données de planification des vols génériques 
+(LIDO) et sur les modifications demandées 
+par Air Canada 
+○​
+Interagir avec les autres divisions de la 
+Société, notamment la Performance des 
+appareils, la Régulation Des vols,les Normes 
+de vol, les groupes responsables des Manuels 
+de routes et de la production de systèmes de 
+gestion des vols, les Finances, le Contrôle de 
+l’exploitation réseau, la Technologie de 
+l’information, l’Affectation et Air Canada Jetz. 
+○​
+Garder contact avec les organismes 
+gouvernementaux, dont le Contrôle de la 
+circulation aérienne, le bureau NOTAM de 
+NAV CANADA

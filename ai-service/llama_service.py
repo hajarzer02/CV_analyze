@@ -548,8 +548,15 @@ Extract and structure ALL content into JSON:"""
             "additional_info": data.get("additional_info", [])
         }
         
-        # Ensure lists are actually lists
-        for key in ["professional_summary", "skills", "languages", "education", "experience", "projects", "additional_info"]:
+        # Ensure lists are actually lists and contain only strings for simple arrays
+        for key in ["professional_summary", "skills", "additional_info"]:
+            if not isinstance(validated_data[key], list):
+                validated_data[key] = []
+            else:
+                # Ensure all items in these arrays are strings
+                validated_data[key] = [str(item) if not isinstance(item, str) else item for item in validated_data[key]]
+        
+        for key in ["languages", "education", "experience", "projects"]:
             if not isinstance(validated_data[key], list):
                 validated_data[key] = []
         

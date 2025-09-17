@@ -344,7 +344,7 @@ const CandidateProfile = () => {
                 {summary.map((line, index) => (
                       <div key={index} className="flex items-start space-x-3">
                         <div className="w-2 h-2 bg-emerald-500 rounded-full mt-2 flex-shrink-0"></div>
-                        <p className="text-sm text-gray-700 leading-relaxed font-medium">{line}</p>
+                        <p className="text-sm text-gray-700 leading-relaxed font-medium">{typeof line === 'string' ? line : (line.title || line.description || JSON.stringify(line))}</p>
                       </div>
                 ))}
                   </div>
@@ -369,7 +369,7 @@ const CandidateProfile = () => {
                         className="group inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-slate-100 text-slate-800 hover:bg-slate-200 hover:scale-105 transition-all duration-200 border border-slate-200 hover:border-slate-300"
                   >
                         <Star className="h-4 w-4 mr-2 group-hover:animate-pulse" />
-                    {skill}
+                    {typeof skill === 'string' ? skill : (skill.title || skill.description || JSON.stringify(skill))}
                   </span>
                 ))}
                   </div>
@@ -561,7 +561,7 @@ const CandidateProfile = () => {
                 {additionalInfo.map((info, index) => (
                       <div key={index} className="flex items-start space-x-3">
                         <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
-                        <p className="text-sm text-gray-700 leading-relaxed font-medium">{info}</p>
+                        <p className="text-sm text-gray-700 leading-relaxed font-medium">{typeof info === 'string' ? info : (info.title || info.description || JSON.stringify(info))}</p>
                       </div>
                 ))}
                   </div>
