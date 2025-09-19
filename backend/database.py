@@ -25,6 +25,7 @@ class User(Base):
     email = Column(Text, unique=True, index=True, nullable=False)
     hashed_password = Column(Text, nullable=False)
     is_active = Column(String, default='true')
+    role = Column(String, default='user')  # 'user' or 'admin'
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

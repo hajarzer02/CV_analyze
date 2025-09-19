@@ -3,9 +3,11 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
 import Dashboard from './pages/Dashboard';
 import UploadCV from './pages/UploadCV';
 import CandidateProfile from './pages/CandidateProfile';
+import AdminPage from './pages/AdminPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
@@ -45,6 +47,11 @@ function AppContent() {
               <ProtectedRoute>
                 <CandidateProfile />
               </ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+              <AdminRoute>
+                <AdminPage />
+              </AdminRoute>
             } />
             
             {/* Redirect root to dashboard if authenticated, otherwise to login */}

@@ -29,6 +29,8 @@ from models import (
     UserCreate,
     UserLogin,
     UserResponse,
+    UserUpdate,
+    UserListResponse,
     Token
 )
 from auth import (
@@ -36,6 +38,7 @@ from auth import (
     create_access_token, 
     get_password_hash, 
     get_current_active_user,
+    get_admin_user,
     ACCESS_TOKEN_EXPIRE_MINUTES
 )
 from cv_extractor_cli import CVExtractor
@@ -111,6 +114,7 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)):
         name=db_user.name,
         email=db_user.email,
         is_active=db_user.is_active == 'true',
+        role=db_user.role,
         created_at=db_user.created_at
     )
 
@@ -148,6 +152,7 @@ async def login_user(user_credentials: UserLogin, db: Session = Depends(get_db))
             name=user.name,
             email=user.email,
             is_active=user.is_active == 'true',
+            role=user.role,
             created_at=user.created_at
         )
     )
@@ -160,6 +165,7 @@ async def get_current_user_info(current_user: User = Depends(get_current_active_
         name=current_user.name,
         email=current_user.email,
         is_active=current_user.is_active == 'true',
+        role=current_user.role,
         created_at=current_user.created_at
     )
 
@@ -456,6 +462,112 @@ def calculate_skill_match(candidate_skills: List[str], required_skills: List[str
 @app.get("/api/health")
 def health_check():
     return {"status": "healthy", "message": "CV Analysis API is running"}
+
+# Admin endpoints
+@app.get("/api/admin/users", response_model=List[UserListResponse])
+async def get_all_users(db: Session = Depends(get_db), current_user: User = Depends(get_admin_user)):
+    """Get all users (admin only)."""
+    users = db.query(User).all()
+    return [
+        UserListResponse(
+            id=user.id,
+            name=user.name,
+            email=user.email,
+            is_active=user.is_active == 'true',
+            role=user.role,
+            created_at=user.created_at
+        )
+        for user in users
+    ]
+
+@app.get("/api/admin/users/{user_id}", response_model=UserListResponse)
+async def get_user_by_id(user_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_admin_user)):
+    """Get a specific user by ID (admin only)."""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return UserListResponse(
+        id=user.id,
+        name=user.name,
+        email=user.email,
+        is_active=user.is_active == 'true',
+        role=user.role,
+        created_at=user.created_at
+    )
+
+@app.put("/api/admin/users/{user_id}", response_model=UserListResponse)
+async def update_user(
+    user_id: int, 
+    user_update: UserUpdate, 
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_admin_user)
+):
+    """Update user information (admin only)."""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Prevent admin from modifying their own role
+    if current_user.id == user_id and user_update.role and user_update.role != user.role:
+        raise HTTPException(
+            status_code=400, 
+            detail="Cannot modify your own role"
+        )
+    
+    # Update fields if provided
+    if user_update.name is not None:
+        user.name = user_update.name
+    if user_update.email is not None:
+        # Check if email is already taken by another user
+        existing_user = db.query(User).filter(User.email == user_update.email, User.id != user_id).first()
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Email already taken")
+        user.email = user_update.email
+    if user_update.is_active is not None:
+        user.is_active = 'true' if user_update.is_active else 'false'
+    if user_update.role is not None:
+        if user_update.role not in ['user', 'admin']:
+            raise HTTPException(status_code=400, detail="Invalid role. Must be 'user' or 'admin'")
+        user.role = user_update.role
+    
+    user.updated_at = datetime.utcnow()
+    db.commit()
+    db.refresh(user)
+    
+    return UserListResponse(
+        id=user.id,
+        name=user.name,
+        email=user.email,
+        is_active=user.is_active == 'true',
+        role=user.role,
+        created_at=user.created_at
+    )
+
+@app.delete("/api/admin/users/{user_id}")
+async def delete_user(user_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_admin_user)):
+    """Delete a user (admin only)."""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Prevent admin from deleting themselves
+    if current_user.id == user_id:
+        raise HTTPException(
+            status_code=400, 
+            detail="Cannot delete your own account"
+        )
+    
+    # Delete associated candidates and recommendations first
+    candidates = db.query(Candidate).all()  # In a real app, you might want to associate candidates with users
+    for candidate in candidates:
+        db.query(JobRecommendation).filter(JobRecommendation.candidate_id == candidate.id).delete()
+        db.delete(candidate)
+    
+    db.delete(user)
+    db.commit()
+    
+    return {"message": f"User {user_id} deleted successfully"}
 
 @app.get("/")
 async def root():

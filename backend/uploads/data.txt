@@ -1,93 +1,90 @@
-Sofia Amrani 
-
-Sofia El Amrani 
-Full-Stack Developer 
-Marrakech, Maroc 
-📧 sofia.elamrani@example.com | ☎ 
-+212 6 98 76 54 32 | GitHub: 
-github.com/sofia-dev | LinkedIn: 
-linkedin.com/in/sofia-elamrani 
-
------------------------------ 
-PROFIL 
------------------------------ 
-Développeuse full-stack passionnée avec 
-4 ans d’expérience dans la création 
-d’applications web performantes et 
-responsives. 
-Expertise en JavaScript, frameworks 
-modernes (Angular, React, Spring Boot) 
-et bases de données relationnelles et 
-NoSQL. 
-Capable de travailler en équipe agile et 
-d’assurer la qualité du code via CI/CD et 
-tests automatisés. 
-
------------------------------ 
-COMPÉTENCES TECHNIQUES 
------------------------------ 
-- Langages : JavaScript (ES6+), 
-TypeScript, Java, Python 
-- Front-end : Angular, React, HTML5, 
-CSS3, TailwindCSS 
-- Back-end : Spring Boot, Node.js, 
-Express 
-- Bases de données : MySQL, PostgreSQL, 
-MongoDB 
-- DevOps : Git, Docker, Jenkins, GitHub 
-Actions 
-- Tests : Jest, JUnit, Cypress 
-
------------------------------ 
-EXPÉRIENCE PROFESSIONNELLE 
------------------------------ 
-Full-Stack Developer | TechWave | 
-Marrakech | 2021 – Présent 
-- Développement d’une plateforme 
-e-commerce en Angular + Spring Boot. 
-- Mise en place d’une authentification 
-sécurisée (JWT, OAuth2). 
-- Optimisation des requêtes SQL, temps 
-de réponse réduit de 40%. 
-- Participation aux revues de code et mise 
-en place de tests automatisés (coverage
-
-85%). 
-
-Frontend Developer | WebSolutions | 
-Casablanca | 2019 – 2021 
-- Création de dashboards interactifs en 
-React et D3.js pour l’analyse de données. 
-- Intégration d’API REST et GraphQL. 
-- Amélioration du SEO et de l’accessibilité 
-des sites clients. 
-
-Stage | Startup InnovApp | Rabat | 2018 
-– 2019 
-- Développement d’une application mobile 
-hybride avec Ionic. 
-- Participation à l’intégration d’un système 
-de paiement en ligne. 
-
------------------------------ 
-FORMATION 
------------------------------ 
-Master en Génie Logiciel | Université Cadi 
-Ayyad – Marrakech | 2017 – 2019 
-Licence Informatique | Université 
-Mohammed V – Rabat | 2014 – 2017 
-
------------------------------ 
-CERTIFICATIONS 
------------------------------ 
-- Oracle Certified Professional: Java SE 11 
-Developer (2022) 
-- Scrum Master Certified (2021) 
-
------------------------------ 
-LANGUES 
------------------------------ 
-- Arabe : Langue maternelle 
-- Français : Courant 
-- Anglais : Courant 
-- Espagnol : Intermédiaire
+ELKHALFI MHAMMED
+RÉSUMÉ PROFESSIONNEL
+Ingénieur en développement full-stack spécialisé en Java, Angular et DevOps, passionné par l’optimisation logicielle et les nouvelles
+technologies. J’interviens dans des environnements Agile/Scrum pour concevoir des architectures robustes et évolutives. Mes
+compétences couvrent le développement back-end/front-end, le déploiement CI/CD, la conteneurisation (Docker/Kubernetes) et
+l'intégration cloud. Autonome, curieux et engagé, je suis prêt à contribuer au succès d’une équipe dynamique.
+EXPÉRIENCE PROFESSIONNELLE
+Sujet : Conception et développement d'une solution complète de gestion des ressources humaines conforme à la législation
+marocaine.
+L’applicationbasé sur une architecture monolithique avec Spring Boot pour le backend et Angular pour le frontend.
+L’application comprend plusieurs modules fonctionnels : gestion des employés, des contrats, des absences, des congés, du
+pointage, et du recrutement.
+Projet Connexe - Assistante Juridique SaaS (Angular + IA) :développement de la partie front-end avec Angular, dans un
+second projet dédié à une assistante juridique personnalisée intégrant de l’intelligence artificielle, conçue comme une solution
+SaaS (Software as a Service).
+Technologies utilisées :Angular, TypeScript, HTML, SCSS, Java, Spring Boot, RESTful Web Services, MySQL, Keycloak,
+OAuth2, OpenID Connect, Git, GitLab CI/CD, Docker, Jenkins, Gradle, JUnit, Agile (Scrum), Jira, Figma
+Stagiaire Ingénieur Logiciel Java , Gwenod | Casablanca - Maroc
+01/2025 - Présent | Hybride
+mhammedelkhalfi@gmail.com
++212 6 15 46 05 39
+Disponibilité : Immédiatement disponible – grande mobilité
+géographique
+linkedin.com/in/mhammed-elkhalfi
+github.com/mhammedelkhalfi
+Ingénieur Développement Full-Stack
+Java / Angular | DevOps | Cloud &
+Microservices 
+Recherche de nouvelles opportunités
+CERTIFICATIONS
+Oracle Certified Professional : Java SE 17 Developer – Oracle
+Agile Project Management – Google
+Git et GitHub : Les fondamentaux – Coursera – IBM
+Développement d'applications front-end avec React – Coursera –
+IBM
+Développement d'applications avec microservices et Serverless –
+Coursera – IBM
+ÉDUCATION
+Diplôme d'Ingénieur d'État en Génie Informatique spécialité développement
+logiciel | IGA Casablanca | 2022 - 2025 
+Diplôme technicien spécialisé de fabrication électronique
+ | ISTA AL Massira El Jadida | 2017-2019 
+Baccalauréat Sciences Expérimentales filière Physique
+ | Lycée ABOU CHOUAIB DOUKKALI El Jadida | 2016 
+Sujet : Développement d’une application centralisée pour la gestion des applications internes
+Conception et développement d’une plateforme centralisant la gestion des applications internes. Intégration de Liferay 7.4
+DXP pour la gestion des contenus et des utilisateurs, et mise en place d’un module d’audit sécurisé avec Spring Boot, Angular
+et Keycloak. Implémentation de l’authentification et des autorisations via OAuth2/OpenID Connect.
+Technologies utilisées :Angular, Angular Material, TypeScript, HTML, SCSS, Java, Spring Boot, Liferay 7.4, RESTful Web
+Services, MySQL, Keycloak, OAuth2, OpenID Connect, Git, GitLab CI/CD, Docker, Jenkins, Gradle, JUnit, Agile (Scrum), Jira,
+Figma
+Stagiaire Ingénieur Logiciel Java , Gwenod | Casablanca - Maroc
+03/2024 au 08/2024 - Hybrid
+Sujet : Développement d’une plateforme de gestion de projets
+développement d’une application web de gestion de projets en full stack avec Angular pour l’interface utilisateur et Spring
+Boot côté serveur. Mise en place de services REST sécurisés avec Spring Security, gestion des données avec MySQL, et
+intégration dans un environnement Agile (Scrum).
+Technologies utilisées : Angular, Java, Spring Boot, Spring Security, RESTful Web Services, MySQL, Git, Maven, JUnit, Agile
+(Scrum)
+Stagiaire Développeur full stack Java , OCP SA | Casablanca - Maroc
+07/2023 - 09/2023 | Sur Site
+PROJETS ACADÉMIQUES
+Plateforme bancaire en ligne Conçue pour simuler des services bancaires (consultation de compte, virement, historique). 
+Mise en place d’une API REST sécurisée avec Spring Security, front développé avec Angular.
+ https://github.com/mhammedelkhalfi/E-Banking.git
+Conception et développement d’une application e-commerce complète reposant sur une architecture microservices, avec Spring Boot, Angular et PostgreSQL. 
+Mise en place d’un pipeline CI/CD complet avec Jenkins, Docker, Kubernetes pour assurer un déploiement automatisé et scalable de l’application.
+ https://github.com/mhammedelkhalfi/MicroServiceEcommerceApp.git
+COMPÉTENCES
+techniques : 
+Langages et frameworks :Java, JEE, Spring Boot, Spring Security, Angular, React JS, Python, .NET, ASP.NET Core, Blazor, PHP, Laravel,
+Node.js
+Bases de données : Oracle, MySQL, PostgreSQL, SQL Server,MongoDB
+Architecture : Microservices, Monolithique, Modèle MVC
+Web Services : RESTful, GraphQL, SOAP, gRPC
+Outils de gestion de projet : Jira, Trello,ServiceNow, Agile (Scrum), Git
+Conception logicielle : Merise, UML, Design Patterns
+Tests : JUnit, Selenium, Postman, TestNG
+ Devops: Git, GitLab, CI/CD (Jenkins, Docker, Kubernetes), Terraform, Grafana, Apache Maven,Liquibase, Kafka, RabbitMQ
+personnelles:
+Esprit d'équipe
+Gestion du temps
+Adaptabilité
+Résolution de problèmes
+Gestion du stress
+Rigueur
+Organisation
+Capacité d’intégration
+LANGUAGES
+Anglais : Courant | Français : Courant | Arabe : Langue maternelle

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FileText, Upload, Users, LogOut, User, ChevronDown } from 'lucide-react';
+import { FileText, Upload, Users, LogOut, User, ChevronDown, Shield } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { logout } from '../services/api';
 
@@ -14,6 +14,11 @@ const Navbar = () => {
     { path: '/dashboard', label: 'Tableau de Bord', icon: Users },
     { path: '/upload', label: 'Télécharger CV', icon: Upload },
   ];
+
+  // Add admin link if user is admin
+  if (user?.role === 'admin') {
+    navItems.push({ path: '/admin', label: 'Administration', icon: Shield });
+  }
 
   const handleLogout = async () => {
     await logout();
@@ -70,6 +75,7 @@ const Navbar = () => {
                   <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
                     <p className="font-medium">{user.name || 'User'}</p>
                     <p className="text-gray-500">{user.email || ''}</p>
+                    <p className="text-xs text-indigo-600 font-medium capitalize">{user.role || 'user'}</p>
                   </div>
                   <button
                     onClick={handleLogout}

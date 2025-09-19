@@ -18,6 +18,7 @@ class UserResponse(BaseModel):
     name: str
     email: str
     is_active: bool
+    role: str
     created_at: datetime
 
     class Config:
@@ -30,6 +31,23 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     user_id: Optional[int] = None
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    is_active: Optional[bool] = None
+    role: Optional[str] = None
+
+class UserListResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+    is_active: bool
+    role: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
 
 # Request/Response Models
 class CandidateCreate(BaseModel):

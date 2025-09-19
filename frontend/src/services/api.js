@@ -124,4 +124,31 @@ export const getCurrentUser = async () => {
   return response.data;
 };
 
+// Admin API functions
+export const adminApi = {
+  // Get all users
+  getUsers: async () => {
+    const response = await api.get('/api/admin/users');
+    return response;
+  },
+
+  // Get user by ID
+  getUser: async (id) => {
+    const response = await api.get(`/api/admin/users/${id}`);
+    return response;
+  },
+
+  // Update user
+  updateUser: async (id, userData) => {
+    const response = await api.put(`/api/admin/users/${id}`, userData);
+    return response;
+  },
+
+  // Delete user
+  deleteUser: async (id) => {
+    const response = await api.delete(`/api/admin/users/${id}`);
+    return response;
+  }
+};
+
 export default api;
