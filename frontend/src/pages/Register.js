@@ -473,25 +473,7 @@ const Register = () => {
                 </div>
               </form>
 
-              {/* Trust indicators */}
-              <div className="mt-8 text-center">
-                <p className="text-sm text-gray-500 mb-4">Approuvé par 500+ entreprises</p>
-                <div className="flex justify-center items-center space-x-6 text-xs text-gray-400">
-                  <div className="flex items-center space-x-1">
-                    <Shield className="w-3 h-3" />
-                    <span>SOC 2 Type II</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Shield className="w-3 h-3" />
-                    <span>GDPR Conforme</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Award className="w-3 h-3" />
-                    <span>ISO 27001</span>
-                  </div>
-                </div>
-              </div>
-
+            
               {/* Footer */}
               <div className="mt-8 text-center">
                 <p className="text-xs text-gray-400">

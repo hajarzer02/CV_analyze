@@ -73,16 +73,54 @@ def extract_text_from_pdf(pdf_path: str) -> str:
 
 
 def extract_text_from_docx(docx_path: str) -> str:
-    """Extract text from DOCX with better formatting."""
-    doc = Document(docx_path)
-    lines: List[str] = []
-    
-    for p in doc.paragraphs:
-        t = (p.text or "").strip()
-        if t:
-            lines.append(t)
-    
-    return "\n".join(lines)
+    """Extract text from DOCX with better formatting and error handling."""
+    try:
+        doc = Document(docx_path)
+        lines: List[str] = []
+        
+        for p in doc.paragraphs:
+            t = (p.text or "").strip()
+            if t:
+                lines.append(t)
+        
+        # If no text was extracted, try alternative methods
+        if not lines:
+            print(f"⚠️  No text extracted from DOCX, trying alternative methods...")
+            
+            # Try extracting from tables
+            for table in doc.tables:
+                for row in table.rows:
+                    for cell in row.cells:
+                        cell_text = (cell.text or "").strip()
+                        if cell_text:
+                            lines.append(cell_text)
+            
+            # Try extracting from text boxes and other elements
+            for element in doc.element.body:
+                if hasattr(element, 'text'):
+                    element_text = (element.text or "").strip()
+                    if element_text:
+                        lines.append(element_text)
+        
+        result = "\n".join(lines)
+        
+        # If still no text, log detailed information
+        if not result.strip():
+            print(f"❌ ERROR: No text could be extracted from DOCX file: {docx_path}")
+            print(f"   File size: {os.path.getsize(docx_path)} bytes")
+            print(f"   Paragraphs found: {len(doc.paragraphs)}")
+            print(f"   Tables found: {len(doc.tables)}")
+            
+            # Log first few paragraphs for debugging
+            for i, p in enumerate(doc.paragraphs[:5]):
+                print(f"   Paragraph {i}: '{p.text}' (len: {len(p.text)})")
+        
+        return result
+        
+    except Exception as e:
+        print(f"❌ ERROR extracting text from DOCX {docx_path}: {e}")
+        # Return empty string instead of raising exception
+        return ""
 
 
 def extract_text_from_txt(txt_path: str) -> str:

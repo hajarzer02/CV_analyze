@@ -522,6 +522,25 @@ Traduction française:"""
         """
         Structure raw CV text into JSON format using LLaMA or fallback to CLI parser.
         """
+        # Check if raw text is empty or too short
+        if not raw_text or len(raw_text.strip()) < 10:
+            print(f"⚠️  WARNING: Raw text is empty or too short ({len(raw_text)} characters)")
+            print("   This will result in poor extraction quality")
+            print("   Raw text content:", repr(raw_text[:100]))
+            
+            # Return a structure indicating the issue
+            return {
+                "contact_info": {"emails": [], "phones": [], "linkedin": "", "address": "", "name": ""},
+                "professional_summary": [],
+                "skills": [],
+                "languages": [],
+                "education": [],
+                "experience": [],
+                "projects": [],
+                "additional_info": [f"ERROR: No content extracted from file. Raw text length: {len(raw_text)} characters"],
+                "extraction_error": "No content could be extracted from the uploaded file"
+            }
+        
         if self.provider == "cli":
             return self._fallback_to_cli_parser(raw_text)
         
@@ -541,6 +560,7 @@ Traduction française:"""
             
             if preservation_report['missing_content_warning']:
                 print("⚠️  Warning: Significant content might be missing from structured data")
+                print("   This might indicate an issue with the source file or extraction process")
             
             return structured_data
             

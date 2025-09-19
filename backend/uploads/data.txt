@@ -25,7 +25,7 @@ linkedin.com/in/mhammed-elkhalfi
 github.com/mhammedelkhalfi
 Ingénieur Développement Full-Stack
 Java / Angular | DevOps | Cloud &
-Microservices 
+Microservices
 Recherche de nouvelles opportunités
 CERTIFICATIONS
 Oracle Certified Professional : Java SE 17 Developer – Oracle
@@ -37,11 +37,11 @@ Développement d'applications avec microservices et Serverless –
 Coursera – IBM
 ÉDUCATION
 Diplôme d'Ingénieur d'État en Génie Informatique spécialité développement
-logiciel | IGA Casablanca | 2022 - 2025 
+logiciel | IGA Casablanca | 2022 - 2025
 Diplôme technicien spécialisé de fabrication électronique
- | ISTA AL Massira El Jadida | 2017-2019 
+| ISTA AL Massira El Jadida | 2017-2019
 Baccalauréat Sciences Expérimentales filière Physique
- | Lycée ABOU CHOUAIB DOUKKALI El Jadida | 2016 
+| Lycée ABOU CHOUAIB DOUKKALI El Jadida | 2016
 Sujet : Développement d’une application centralisée pour la gestion des applications internes
 Conception et développement d’une plateforme centralisant la gestion des applications internes. Intégration de Liferay 7.4
 DXP pour la gestion des contenus et des utilisateurs, et mise en place d’un module d’audit sécurisé avec Spring Boot, Angular
@@ -60,14 +60,14 @@ Technologies utilisées : Angular, Java, Spring Boot, Spring Security, RESTful W
 Stagiaire Développeur full stack Java , OCP SA | Casablanca - Maroc
 07/2023 - 09/2023 | Sur Site
 PROJETS ACADÉMIQUES
-Plateforme bancaire en ligne Conçue pour simuler des services bancaires (consultation de compte, virement, historique). 
+Plateforme bancaire en ligne Conçue pour simuler des services bancaires (consultation de compte, virement, historique).
 Mise en place d’une API REST sécurisée avec Spring Security, front développé avec Angular.
- https://github.com/mhammedelkhalfi/E-Banking.git
-Conception et développement d’une application e-commerce complète reposant sur une architecture microservices, avec Spring Boot, Angular et PostgreSQL. 
+https://github.com/mhammedelkhalfi/E-Banking.git
+Conception et développement d’une application e-commerce complète reposant sur une architecture microservices, avec Spring Boot, Angular et PostgreSQL.
 Mise en place d’un pipeline CI/CD complet avec Jenkins, Docker, Kubernetes pour assurer un déploiement automatisé et scalable de l’application.
- https://github.com/mhammedelkhalfi/MicroServiceEcommerceApp.git
+https://github.com/mhammedelkhalfi/MicroServiceEcommerceApp.git
 COMPÉTENCES
-techniques : 
+techniques :
 Langages et frameworks :Java, JEE, Spring Boot, Spring Security, Angular, React JS, Python, .NET, ASP.NET Core, Blazor, PHP, Laravel,
 Node.js
 Bases de données : Oracle, MySQL, PostgreSQL, SQL Server,MongoDB
@@ -76,7 +76,7 @@ Web Services : RESTful, GraphQL, SOAP, gRPC
 Outils de gestion de projet : Jira, Trello,ServiceNow, Agile (Scrum), Git
 Conception logicielle : Merise, UML, Design Patterns
 Tests : JUnit, Selenium, Postman, TestNG
- Devops: Git, GitLab, CI/CD (Jenkins, Docker, Kubernetes), Terraform, Grafana, Apache Maven,Liquibase, Kafka, RabbitMQ
+Devops: Git, GitLab, CI/CD (Jenkins, Docker, Kubernetes), Terraform, Grafana, Apache Maven,Liquibase, Kafka, RabbitMQ
 personnelles:
 Esprit d'équipe
 Gestion du temps

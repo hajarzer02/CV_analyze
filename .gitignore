@@ -4,3 +4,5 @@ frontend/node_modules/
 
 # Cache et pack temporaire
 frontend/node_modules/.cache/
+
+.env
