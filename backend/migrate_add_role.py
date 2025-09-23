@@ -66,3 +66,5 @@ if __name__ == "__main__":
     print("🔄 Database Migration: Adding 'role' column")
     print("=" * 50)
     migrate_add_role()
+
+

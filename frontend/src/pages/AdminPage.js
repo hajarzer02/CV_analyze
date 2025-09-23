@@ -107,7 +107,7 @@ const AdminPage = () => {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-3 mb-2">
-            <Users className="h-8 w-8 text-indigo-600" />
+            <Users className="h-8 w-8 text-emerald-600" />
             <h1 className="text-3xl font-bold text-gray-900">Gestion des utilisateurs</h1>
           </div>
           <p className="text-gray-600">Gérer les utilisateurs et leurs rôles dans le système.</p>
@@ -163,8 +163,8 @@ const AdminPage = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="h-10 w-10 flex-shrink-0">
-                          <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                            <Users className="h-5 w-5 text-indigo-600" />
+                          <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center">
+                            <Users className="h-5 w-5 text-emerald-600" />
                           </div>
                         </div>
                         <div className="ml-4">
@@ -181,8 +181,8 @@ const AdminPage = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         userItem.role === 'admin' 
-                          ? 'bg-purple-100 text-purple-800' 
-                          : 'bg-blue-100 text-blue-800'
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-teal-100 text-teal-800'
                       }`}>
                         {userItem.role === 'admin' ? 'Admin' : 'User'}
                       </span>
@@ -216,7 +216,7 @@ const AdminPage = () => {
                       <div className="flex justify-end space-x-2">
                         <button
                           onClick={() => handleEditUser(userItem)}
-                          className="text-indigo-600 hover:text-indigo-900 p-1"
+                          className="text-emerald-600 hover:text-indigo-900 p-1"
                           title="Edit user"
                         >
                           <Edit className="h-4 w-4" />
@@ -298,7 +298,7 @@ const AdminPage = () => {
                       id="is_active"
                       checked={editForm.is_active}
                       onChange={(e) => setEditForm({ ...editForm, is_active: e.target.checked })}
-                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                      className="h-4 w-4 text-emerald-600 focus:ring-indigo-500 border-gray-300 rounded"
                     />
                     <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
                       Utilisateur actif
@@ -331,3 +331,5 @@ const AdminPage = () => {
 };
 
 export default AdminPage;
+
+

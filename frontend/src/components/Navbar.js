@@ -31,7 +31,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <Link to="/dashboard" className="flex items-center space-x-2">
-            <FileText className="h-8 w-8 text-indigo-600" />
+            <FileText className="h-8 w-8 text-emerald-600" />
             <span className="text-xl font-bold text-gray-900">Analyse de CV</span>
           </Link>
           
@@ -46,7 +46,7 @@ const Navbar = () => {
                     to={path}
                     className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                       isActive
-                        ? 'bg-indigo-100 text-indigo-700'
+                        ? 'bg-emerald-100 text-emerald-700'
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                     }`}
                   >
@@ -63,8 +63,8 @@ const Navbar = () => {
                 onClick={() => setShowUserMenu(!showUserMenu)}
                 className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
               >
-                <div className="h-8 w-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                  <User className="h-4 w-4 text-indigo-600" />
+                <div className="h-8 w-8 bg-emerald-100 rounded-full flex items-center justify-center">
+                  <User className="h-4 w-4 text-emerald-600" />
                 </div>
                 <span>{user.name || 'User'}</span>
                 <ChevronDown className="h-4 w-4" />
@@ -75,7 +75,7 @@ const Navbar = () => {
                   <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
                     <p className="font-medium">{user.name || 'User'}</p>
                     <p className="text-gray-500">{user.email || ''}</p>
-                    <p className="text-xs text-indigo-600 font-medium capitalize">{user.role || 'user'}</p>
+                    <p className="text-xs text-emerald-600 font-medium capitalize">{user.role || 'user'}</p>
                   </div>
                   <button
                     onClick={handleLogout}

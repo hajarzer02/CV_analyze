@@ -156,3 +156,5 @@ IGA Casablanca (2019-2022)
 
 if __name__ == "__main__":
     debug_docx_extraction()
+
+

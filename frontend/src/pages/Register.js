@@ -130,28 +130,28 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-emerald-900 to-slate-900 relative overflow-hidden">
       
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-700"></div>
-        <div className="absolute bottom-20 left-40 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-1000"></div>
+        <div className="absolute top-20 left-20 w-72 h-72 bg-emerald-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div className="absolute top-40 right-20 w-96 h-96 bg-teal-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-700"></div>
+        <div className="absolute bottom-20 left-40 w-80 h-80 bg-green-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-1000"></div>
       </div>
       
       {/* Floating particles */}
       <div className="absolute inset-0">
         <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full opacity-60 animate-float"></div>
-        <div className="absolute top-3/4 right-1/4 w-3 h-3 bg-purple-300 rounded-full opacity-40 animate-float-delayed"></div>
-        <div className="absolute top-1/2 left-3/4 w-2 h-2 bg-blue-300 rounded-full opacity-50 animate-float-slow"></div>
-        <div className="absolute bottom-1/4 right-1/3 w-1 h-1 bg-indigo-300 rounded-full opacity-70 animate-float"></div>
+        <div className="absolute top-3/4 right-1/4 w-3 h-3 bg-emerald-300 rounded-full opacity-40 animate-float-delayed"></div>
+        <div className="absolute top-1/2 left-3/4 w-2 h-2 bg-teal-300 rounded-full opacity-50 animate-float-slow"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-1 h-1 bg-green-300 rounded-full opacity-70 animate-float"></div>
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-6 py-12">
         <div className="glass-effect rounded-3xl overflow-hidden flex flex-col lg:flex-row max-w-7xl w-full shadow-2xl animate-pulse-glow">
           
           {/* Left Panel - Branding & Features */}
-          <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-800 text-white p-12 flex flex-col justify-center items-center lg:w-1/2 relative animate-slide-in-left">
+          <div className="bg-gradient-to-br from-emerald-600 via-green-600 to-emerald-800 text-white p-12 flex flex-col justify-center items-center lg:w-1/2 relative animate-slide-in-left">
             
             {/* Decorative elements */}
             <div className="absolute top-0 left-0 w-full h-full">
@@ -167,12 +167,12 @@ const Register = () => {
               </div>
               
               <h1 className="text-5xl font-extrabold mb-4">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-purple-200 drop-shadow-2xl">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-emerald-200 to-green-200 drop-shadow-2xl">
                   CV Analyzer 
                 </span>
               </h1>
 
-              <p className="text-xl text-indigo-100 mb-8">Intelligence artificielle pour le recrutement moderne</p>
+              <p className="text-xl text-emerald-100 mb-8">Intelligence artificielle pour le recrutement moderne</p>
               
               {/* Feature highlights with CV analysis theme */}
               <div className="space-y-4 text-left max-w-sm">
@@ -184,14 +184,14 @@ const Register = () => {
                 </div>
                 
                 <div className="flex items-center space-x-3 feature-card p-3 rounded-lg glass-effect transition-all duration-300 hover:scale-105">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center">
                     <Target className="w-4 h-4 text-white" />
                   </div>
                   <span className="text-sm">Matching intelligent des profils</span>
                 </div>
                 
                 <div className="flex items-center space-x-3 feature-card p-3 rounded-lg glass-effect transition-all duration-300 hover:scale-105">
-                  <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                     <BarChart3 className="w-4 h-4 text-white" />
                   </div>
                   <span className="text-sm">Tableaux de bord RH</span>
@@ -209,11 +209,11 @@ const Register = () => {
               <div className="mt-8 grid grid-cols-2 gap-4 text-center">
                 <div className="glass-effect p-4 rounded-lg">
                   <div className="text-2xl font-bold text-white">99.2%</div>
-                  <div className="text-xs text-indigo-200">Précision</div>
+                  <div className="text-xs text-emerald-200">Précision</div>
                 </div>
                 <div className="glass-effect p-4 rounded-lg">
                   <div className="text-2xl font-bold text-white">3s</div>
-                  <div className="text-xs text-indigo-200">Analyse</div>
+                  <div className="text-xs text-emerald-200">Analyse</div>
                 </div>
               </div>
             </div>
@@ -223,7 +223,7 @@ const Register = () => {
           <div className="bg-white bg-opacity-95 p-12 flex flex-col justify-center lg:w-1/2 relative animate-slide-in-right">
             
             {/* Decorative gradient */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400 to-indigo-600 rounded-full opacity-10 -translate-y-16 translate-x-16"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-400 to-green-600 rounded-full opacity-10 -translate-y-16 translate-x-16"></div>
             
             <div className="relative z-10">
               <div className="mb-8">
@@ -231,7 +231,7 @@ const Register = () => {
                   Créer votre compte
                   <span className="inline-block animate-bounce ml-2">🚀</span>
           </h2>
-                <div className="w-20 h-1 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full mb-6"></div>
+                <div className="w-20 h-1 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full mb-6"></div>
                 <p className="text-gray-600 text-lg leading-relaxed">
                   Rejoignez notre plateforme et commencez à analyser des CV avec notre IA avancée.
           </p>
@@ -251,7 +251,7 @@ const Register = () => {
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <User className={`h-5 w-5 transition-colors duration-200 ${
-                        focusedField === 'name' ? 'text-indigo-500' : 'text-gray-400'
+                        focusedField === 'name' ? 'text-emerald-500' : 'text-gray-400'
                       }`} />
                 </div>
                 <input
@@ -264,7 +264,7 @@ const Register = () => {
                       onFocus={() => handleInputFocus('name')}
                       onBlur={handleInputBlur}
                       onKeyDown={handleKeyDown}
-                      className={`block w-full pl-12 pr-4 py-4 bg-gray-50 border rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 text-base transition-all duration-200 group-hover:bg-gray-100 ${
+                      className={`block w-full pl-12 pr-4 py-4 bg-gray-50 border rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-base transition-all duration-200 group-hover:bg-gray-100 ${
                         errors.name ? 'border-red-400 ring-2 ring-red-400/20' : 'border-gray-200'
                       }`}
                       placeholder="Nom complet"
@@ -286,7 +286,7 @@ const Register = () => {
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Mail className={`h-5 w-5 transition-colors duration-200 ${
-                        focusedField === 'email' ? 'text-indigo-500' : 'text-gray-400'
+                        focusedField === 'email' ? 'text-emerald-500' : 'text-gray-400'
                       }`} />
                 </div>
                 <input
@@ -299,7 +299,7 @@ const Register = () => {
                       onFocus={() => handleInputFocus('email')}
                       onBlur={handleInputBlur}
                       onKeyDown={handleKeyDown}
-                      className={`block w-full pl-12 pr-4 py-4 bg-gray-50 border rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 text-base transition-all duration-200 group-hover:bg-gray-100 ${
+                      className={`block w-full pl-12 pr-4 py-4 bg-gray-50 border rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-base transition-all duration-200 group-hover:bg-gray-100 ${
                         errors.email ? 'border-red-400 ring-2 ring-red-400/20' : 'border-gray-200'
                       }`}
                       placeholder="Adresse email professionnelle"
@@ -321,7 +321,7 @@ const Register = () => {
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Lock className={`h-5 w-5 transition-colors duration-200 ${
-                        focusedField === 'password' ? 'text-indigo-500' : 'text-gray-400'
+                        focusedField === 'password' ? 'text-emerald-500' : 'text-gray-400'
                       }`} />
                 </div>
                 <input
@@ -334,7 +334,7 @@ const Register = () => {
                       onFocus={() => handleInputFocus('password')}
                       onBlur={handleInputBlur}
                       onKeyDown={handleKeyDown}
-                      className={`block w-full pl-12 pr-12 py-4 bg-gray-50 border rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 text-base transition-all duration-200 group-hover:bg-gray-100 ${
+                      className={`block w-full pl-12 pr-12 py-4 bg-gray-50 border rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-base transition-all duration-200 group-hover:bg-gray-100 ${
                         errors.password ? 'border-red-400 ring-2 ring-red-400/20' : 'border-gray-200'
                       }`}
                       placeholder="Mot de passe"
@@ -349,9 +349,9 @@ const Register = () => {
                       aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
                 >
                   {showPassword ? (
-                        <EyeOff className="h-5 w-5 text-gray-400 hover:text-indigo-500 transition-colors duration-200 group-hover/eye:scale-110" />
+                        <EyeOff className="h-5 w-5 text-gray-400 hover:text-emerald-500 transition-colors duration-200 group-hover/eye:scale-110" />
                   ) : (
-                        <Eye className="h-5 w-5 text-gray-400 hover:text-indigo-500 transition-colors duration-200 group-hover/eye:scale-110" />
+                        <Eye className="h-5 w-5 text-gray-400 hover:text-emerald-500 transition-colors duration-200 group-hover/eye:scale-110" />
                   )}
                 </button>
               </div>
@@ -368,7 +368,7 @@ const Register = () => {
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Lock className={`h-5 w-5 transition-colors duration-200 ${
-                        focusedField === 'confirmPassword' ? 'text-indigo-500' : 'text-gray-400'
+                        focusedField === 'confirmPassword' ? 'text-emerald-500' : 'text-gray-400'
                       }`} />
                 </div>
                 <input
@@ -381,7 +381,7 @@ const Register = () => {
                       onFocus={() => handleInputFocus('confirmPassword')}
                       onBlur={handleInputBlur}
                       onKeyDown={handleKeyDown}
-                      className={`block w-full pl-12 pr-12 py-4 bg-gray-50 border rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 text-base transition-all duration-200 group-hover:bg-gray-100 ${
+                      className={`block w-full pl-12 pr-12 py-4 bg-gray-50 border rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-base transition-all duration-200 group-hover:bg-gray-100 ${
                         errors.confirmPassword ? 'border-red-400 ring-2 ring-red-400/20' : 'border-gray-200'
                       }`}
                       placeholder="Confirmer le mot de passe"
@@ -396,9 +396,9 @@ const Register = () => {
                       aria-label={showConfirmPassword ? 'Masquer la confirmation du mot de passe' : 'Afficher la confirmation du mot de passe'}
                 >
                   {showConfirmPassword ? (
-                        <EyeOff className="h-5 w-5 text-gray-400 hover:text-indigo-500 transition-colors duration-200 group-hover/eye:scale-110" />
+                        <EyeOff className="h-5 w-5 text-gray-400 hover:text-emerald-500 transition-colors duration-200 group-hover/eye:scale-110" />
                   ) : (
-                        <Eye className="h-5 w-5 text-gray-400 hover:text-indigo-500 transition-colors duration-200 group-hover/eye:scale-110" />
+                        <Eye className="h-5 w-5 text-gray-400 hover:text-emerald-500 transition-colors duration-200 group-hover/eye:scale-110" />
                   )}
                 </button>
               </div>
@@ -443,7 +443,7 @@ const Register = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                    className="group w-full px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="group w-full px-8 py-4 bg-gradient-to-r from-emerald-600 to-green-600 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                       <div className="flex items-center space-x-2">
@@ -464,7 +464,7 @@ const Register = () => {
                       Déjà un compte ?{' '}
                       <Link 
                         to="/login" 
-                        className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors duration-200 hover:underline"
+                        className="font-medium text-emerald-600 hover:text-emerald-500 transition-colors duration-200 hover:underline"
                       >
                         Se connecter
                       </Link>
@@ -503,8 +503,8 @@ const Register = () => {
         }
         
         @keyframes pulse-glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
-          50% { box-shadow: 0 0 30px rgba(99, 102, 241, 0.6); }
+          0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+          50% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.6); }
         }
         
         @keyframes slideInLeft {

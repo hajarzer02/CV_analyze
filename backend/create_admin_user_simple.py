@@ -71,3 +71,5 @@ def create_admin_user_simple():
 
 if __name__ == "__main__":
     create_admin_user_simple()
+
+
