@@ -1,45 +1,110 @@
-YASSINE
-AMNAY
-2024 – 2025
-Institut Supérieur de Génie Appliqué (IGA)
-3rd year in Engineering of Computer Systems
-2023 – 2024
-Institut Supérieur de Génie Appliqué (IGA)
-2nd year in Engineering of Computer Systems and
-Electronics
-2022 – 2023
-Institut Supérieur de Génie Appliqué (IGA)
-1st year in Engineering of Computer Systems and
-Electronics
-2020 – 2022
-Hassan II University 2 - FSJES
-First year in Economic Sciences
-2019 – 2020
-Hassan II University 2: Faculty of Sciences Ain
-Chock
-First year in Biological Sciences
-2018 – 2019
-Jabri Institution
-Baccalaureate in Life and Earth Science
-Phone: 0633291364
-📧 Email: yassine.amn10000@gmail.com
-🏠 Address: Db Miter 2 rue E,
-Casablanca
-Sports
- Gaming
-Travels
-French
-Arabic
- English
-Academic Project:
-Creation of a store management website (in progress)
-Technologies: HTML, CSS, JavaScript
-EDUCATION
-CONTACT INFORMATION
-INTERESTS
-LANGUAGES
-SKILLS
-EXPERIENCE
-Dynamic
-Creativity
-Serious
+CONTACT 
++21 26 50 11 31 97 
+bouhalidoha0@gmail.com 
+Mers Sultan Casablanca 20250, Maroc 
+linkedin.com/in/doha-bouhali-48729623b 
+
+COMPÉTENCES TECHNIQUES 
+
+●​
+Langages de programmation : C, C++, 
+C#,Java, PHP,Python, Dart 
+●​
+Technologies et frameworks : HTML, 
+Tailwind CSS, JavaScript, Apache, 
+Flutter,Laravel 
+●​
+Bases de données : MySQL, Oracle 
+●​
+Systèmes et réseaux : Cisco, Packet 
+Tracer 
+●​
+Outils et environnements : MATLAB, 
+CMD sous Linux et Windows 
+PROJETS ACADÉMIQUES 
+Site E-commerce (produits 
+cosmétiques) : 
+●​
+Développement front-end avec HTML5, 
+CSS3 et JavaScript (framework jQuery) 
+●​
+Développement back-end avec PHP 
+●​
+Gestion de base de données avec 
+MySQL 
+●​
+Hébergement du site avec Apache 
+Activités 
+●​
+Participation au forum 
+universitaire des sports(2023 et 
+2024) 
+●​
+Participation à la compétition 
+SmartElec (2024) 
+●​
+Participation à une caravane 
+humanitaire (2021) 
+
+CERTIFICATIONS 
+●​ AI Career Essentials – ALX Africa, 
+Maroc (Avril 2024 - mai 2024) 
+LANGUES 
+●​
+Anglais: Courant 
+●​
+Français: Excellent 
+●​
+Arabe: Langue natale 
+
+Doha Bouhali 
+RÉSUMÉ 
+Étudiante en licence d’informatique, passionnée par le 
+développement d'applications et de sites web, je 
+recherche à repousser les limites de la technologie tout 
+en affinant continuellement mes compétences. 
+ÉDUCATION 
+
+SEPT 2022- PRÉSENT : IGA (Institut Supérieur du 
+Génie Appliqué), Casablanca Licence Génie 
+informatique 
+●​
+Programmation Web, Modélisation UML, 
+Programmation SGBD, Systèmes et réseaux 
+informatiques, Administration réseaux et systèmes 
+
+SEPT 2020 - JUIN 2022 :FST (Faculté des sciences et 
+Techniques) ,Settat Maths Info Physique, 
+●​ Algorithmique, Algèbre, Statistiques 
+
+Expérience Professionnelle 
+●​
+JUIN 2024 - AOÛT 2024 : Progiciel System, 
+Casablanca 
+Stagiaire en développement 
+d'applications mobiles 
+○​
+Utilisation de Flutter et Dart pour 
+développer l’interface utilisateur d’une 
+application de gestion de commandes. 
+○​
+Contribution au développement front-end en 
+modifiant les fonctionnalités, les schémas de 
+couleurs et en améliorant les éléments 
+visuels. 
+●​
+Juin 2023 - Août 2023 :Traco Engineering, 
+Casablanca 
+Stagiaire en Développement Web 
+○​
+Développement et intégration d’un site vitrine 
+pour la vente d’étiquettes et d’imprimantes 
+industrielles en HTML, CSS et JavaScript. 
+○​
+Personnalisation de l’affichage des produits 
+avec descriptions détaillées et visuels 
+adaptés. 
+○​
+Ajout d’interactions avec JavaScript : 
+animations sur le survol des produits, effets 
+de transition.
