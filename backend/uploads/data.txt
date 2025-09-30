@@ -1,43 +1,92 @@
-Doha Bouhali
-+21 26 50 11 31 97
-bouhalidoha@gmail.com
-Mers Sultan Casablanca 20250, Morocco
-linkedin.com/in/doha-bouhali-48729623b
+Insaf 
+Benali 
 
-SUMMARY
-Computer science student with a solid foundation in app and web development, dedicated to crafting robust and scalable software solutions. Experienced in developing dynamic applications and tackling complex challenges, always seeking to enhance expertise and stay ahead in the tech field.
-TECHNICAL SKILLS
+Data Engineer 
+Casablanca, Maroc 
+📧 insaf.benali@example.com | ☎ +212 6 
+12 34 56 78 | LinkedIn: 
+linkedin.com/in/insaf-benali 
 
-Programming Languages: C, C++, JAVA, JavaScript, PHP, Dart
-Web Technologies: HTML, CSS, Laravel
-Databases: SQL, Oracle, Microsoft Access
-Systems and Networks: OSI Model, Cisco, Packet Tracer
-Software and Tools: MATLAB, Arduino IDE
-System Commands: CMD in Linux and Windows
-LANGUAGES
-English: Fluent  
-French: Excellent
+----------------------------- 
+PROFIL 
+----------------------------- 
+Ingénieure Data spécialisée dans la 
+conception et l’optimisation de pipelines 
+de données. 
+Expérience solide en Big Data, ETL et 
+Cloud, avec un intérêt particulier pour la 
+mise en place de solutions 
+scalables et performantes au service de 
+l’analyse et du machine learning. 
 
+----------------------------- 
+COMPÉTENCES TECHNIQUES 
+----------------------------- 
+- Langages : Python, Java, SQL, Scala 
+- Big Data : Hadoop, Spark, Hive 
+- Bases de données : PostgreSQL, MySQL, 
+MongoDB 
+- Cloud : AWS (S3, Redshift, EMR), GCP, 
+Azure 
+- Outils ETL : Airflow, Talend, Informatica 
+- DevOps : Docker, Kubernetes, Git, 
+CI/CD 
+- Autres : Pandas, NumPy, Power BI 
 
-CERTIFICATIONS
-AI Career Essentials – ALX Africa Morocco (April 2024 - May 2024)
-Machine learning, Python, TensorFlow
-EDUCATION
-SEPT 2022- PRESENT :  IGA (Institut Supérieur du  Génie Appliqué), Casablanca Bachelor's Degree in Computer Science
--Specialization in Web/App Programming and Networks
-SEPT 2020 - JUN 2022 :FST (Faculté des sciences et Techniques) ,Settat         Maths Software Physics,
--  Algorithmics , Algebra, Statistics
+----------------------------- 
+EXPÉRIENCE PROFESSIONNELLE 
+----------------------------- 
+Data Engineer | Société XYZ | Casablanca 
+| 2022 – Présent 
+- Développement et maintenance de 
+pipelines de données avec Apache Spark 
+et Airflow. 
+- Intégration et nettoyage de données 
+provenant de multiples sources (API, SQL, 
+NoSQL). 
+- Optimisation des temps de traitement 
+(-30%) en améliorant la partition et la 
+persistance des données.
 
-Professional Experience
-JUN 2024 - AUG 2024: Progiciel System, Casablanca                        Mobile App Development Intern
-Developed user interfaces using Flutter and Dart.
-Contributed to the front-end development of the app by modifying features, updating color schemes, and enhancing visual elements to improve user experience.
+- Collaboration avec l’équipe Data Science 
+pour l’entraînement de modèles prédictifs. 
 
-JUN 2023 - AUG 2023 :Traco Engineering, Casablanca                           Web Development Intern
-Contributed to web development using HTML, CSS, and JavaScript.
-Collaborated with the team on design and layout improvements for the website.
-Implemented styling and interactivity to enhance user experience.
-PROJECTS
+Junior Data Engineer | DataCorp | Rabat | 
+2020 – 2022 
+- Participation à la migration des données 
+vers AWS Redshift. 
+- Automatisation des flux ETL avec 
+Talend. 
+- Mise en place de dashboards pour 
+l’équipe métier (Power BI). 
 
-E-commerce Website (cosmetic products): Built with Laravel, PHP, and SQL
-Local Network Management: Simulation using Packet Tracer
+Stage de fin d’études | Banque ABC | 
+Casablanca | 2019 – 2020 
+- Développement d’un POC Big Data pour 
+la détection de fraudes bancaires. 
+- Utilisation de Hadoop et Hive pour 
+analyser de gros volumes de transactions. 
+
+----------------------------- 
+FORMATION 
+----------------------------- 
+Master Big Data & Cloud Computing | 
+Université Hassan II – Casablanca | 2018 
+– 2020 
+Licence Informatique | Université 
+Mohammed V – Rabat | 2015 – 2018 
+
+----------------------------- 
+CERTIFICATIONS 
+----------------------------- 
+- AWS Certified Data Analytics – Specialty 
+(2023) 
+- Google Cloud Professional Data Engineer 
+(2022) 
+
+----------------------------- 
+LANGUES 
+----------------------------- 
+- Arabe : Langue maternelle 
+- Français : Courant 
+- Anglais : Professionnel

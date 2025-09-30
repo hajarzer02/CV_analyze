@@ -653,11 +653,9 @@ async def delete_user(user_id: int, db: Session = Depends(get_db), current_user:
             detail="Cannot delete your own account"
         )
     
-    # Delete associated candidates and recommendations first
-    candidates = db.query(Candidate).all()  # In a real app, you might want to associate candidates with users
-    for candidate in candidates:
-        db.query(JobRecommendation).filter(JobRecommendation.candidate_id == candidate.id).delete()
-        db.delete(candidate)
+    # Note: Candidates are not associated with users in the current schema
+    # If you want to associate candidates with users in the future, add a user_id foreign key
+    # to the candidates table and then delete only the candidates associated with this user
     
     db.delete(user)
     db.commit()
