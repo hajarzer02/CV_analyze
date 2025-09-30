@@ -33,5 +33,11 @@ requests
 
 # Authentication & Security
 python-jose[cryptography]
-passlib[bcrypt]
+# Pin to compatible versions to avoid bcrypt backend issues on Windows
+passlib==1.7.4
+bcrypt==4.0.1
 python-multipart
+
+# Cleanup accidental duplicate entries
+
+passlib==1.7.4

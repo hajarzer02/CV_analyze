@@ -31,7 +31,8 @@ from models import (
     UserResponse,
     UserUpdate,
     UserListResponse,
-    Token
+    Token,
+    AdminPasswordChange
 )
 from auth import (
     authenticate_user, 
@@ -76,6 +77,43 @@ app.add_middleware(
 @app.on_event("startup")
 def startup_event():
     create_tables()
+    # Ensure a default admin exists
+    try:
+        db = next(get_db())
+        # If no admin user exists, create one
+        existing_admin = db.query(User).filter(User.role == 'admin').first()
+        if not existing_admin:
+            admin_email = os.getenv("ADMIN_EMAIL", "admin@example.com")
+            admin_name = os.getenv("ADMIN_NAME", "Administrator")
+            admin_password = os.getenv("ADMIN_PASSWORD", "ChangeMeNow123!")
+            # Hash with bcrypt 72-byte guard
+            try:
+                hashed_pw = get_password_hash(admin_password)
+            except Exception as e:
+                if '72' in str(e):
+                    print('⚠️  ADMIN_PASSWORD exceeds bcrypt 72-byte limit; truncating to 72 bytes before hashing.')
+                    hashed_pw = get_password_hash(admin_password[:72])
+                else:
+                    raise
+            # If a user with the admin email exists, elevate role and reset password
+            user = db.query(User).filter(User.email == admin_email).first()
+            if user:
+                user.role = 'admin'
+                user.hashed_password = hashed_pw
+                user.is_active = 'true'
+            else:
+                user = User(
+                    name=admin_name,
+                    email=admin_email,
+                    hashed_password=hashed_pw,
+                    role='admin',
+                    is_active='true'
+                )
+                db.add(user)
+            db.commit()
+    except Exception as e:
+        # Avoid crashing on startup if DB not ready yet
+        print(f"Warning: could not ensure default admin user: {e}")
 
 # Initialize services
 cv_extractor = CVExtractor()
@@ -568,6 +606,26 @@ async def delete_user(user_id: int, db: Session = Depends(get_db), current_user:
     db.commit()
     
     return {"message": f"User {user_id} deleted successfully"}
+
+@app.post("/api/admin/users/{user_id}/password")
+async def admin_change_user_password(
+    user_id: int,
+    payload: AdminPasswordChange,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_admin_user)
+):
+    """Change any user's password (admin only)."""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not payload.new_password or len(payload.new_password) < 6:
+        raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
+
+    user.hashed_password = get_password_hash(payload.new_password)
+    user.updated_at = datetime.utcnow()
+    db.commit()
+    return {"message": "Password updated successfully"}
 
 @app.get("/")
 async def root():

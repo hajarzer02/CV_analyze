@@ -208,11 +208,11 @@ const Register = () => {
               {/* Stats Section */}
               <div className="mt-8 grid grid-cols-2 gap-4 text-center">
                 <div className="glass-effect p-4 rounded-lg">
-                  <div className="text-2xl font-bold text-white">99.2%</div>
+                  <div className="text-2xl font-bold text-white">85%</div>
                   <div className="text-xs text-emerald-200">Précision</div>
                 </div>
                 <div className="glass-effect p-4 rounded-lg">
-                  <div className="text-2xl font-bold text-white">3s</div>
+                  <div className="text-2xl font-bold text-white">6s</div>
                   <div className="text-xs text-emerald-200">Analyse</div>
                 </div>
               </div>
@@ -486,7 +486,7 @@ const Register = () => {
       </div>
 
       {/* Custom Styles */}
-      <style jsx>{`
+      <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-10px); }

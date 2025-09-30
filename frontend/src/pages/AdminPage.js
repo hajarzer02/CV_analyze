@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Edit, Trash2, Shield, UserCheck, UserX, Mail, Calendar } from 'lucide-react';
+import { Users, Edit, Trash2, Shield, UserCheck, UserX, Mail, Calendar, KeyRound } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { adminApi } from '../services/api';
 
@@ -15,6 +15,8 @@ const AdminPage = () => {
     role: 'user',
     is_active: true
   });
+  const [passwordUser, setPasswordUser] = useState(null);
+  const [passwordForm, setPasswordForm] = useState({ newPassword: '', confirmPassword: '' });
 
   useEffect(() => {
     if (user?.role === 'admin') {
@@ -68,6 +70,33 @@ const AdminPage = () => {
         setError('Failed to delete user');
         console.error('Error deleting user:', err);
       }
+    }
+  };
+
+  const openPasswordModal = (userItem) => {
+    setPasswordUser(userItem);
+    setPasswordForm({ newPassword: '', confirmPassword: '' });
+    setError(null);
+  };
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    try {
+      if (!passwordForm.newPassword || passwordForm.newPassword.length < 6) {
+        setError('Le mot de passe doit contenir au moins 6 caractères');
+        return;
+      }
+      if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+        setError('Les mots de passe ne correspondent pas');
+        return;
+      }
+      await adminApi.changeUserPassword(passwordUser.id, passwordForm.newPassword);
+      setPasswordUser(null);
+      setPasswordForm({ newPassword: '', confirmPassword: '' });
+      setError(null);
+    } catch (err) {
+      setError("Échec de la mise à jour du mot de passe");
+      console.error('Error changing password:', err);
     }
   };
 
@@ -221,6 +250,13 @@ const AdminPage = () => {
                         >
                           <Edit className="h-4 w-4" />
                         </button>
+                        <button
+                          onClick={() => openPasswordModal(userItem)}
+                          className="text-indigo-600 hover:text-indigo-900 p-1"
+                          title="Changer mot de passe"
+                        >
+                          <KeyRound className="h-4 w-4" />
+                        </button>
                         {userItem.id !== user.id && (
                           <button
                             onClick={() => handleDeleteUser(userItem.id)}
@@ -316,6 +352,66 @@ const AdminPage = () => {
                     <button
                       type="submit"
                       className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                    >
+                      Mettre à jour
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Change Password Modal */}
+        {passwordUser && (
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+            <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+              <div className="mt-3">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-medium text-gray-900">Changer le mot de passe</h3>
+                  <button
+                    onClick={() => setPasswordUser(null)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <span className="sr-only">Fermer</span>
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                <form onSubmit={handleChangePassword} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Nouveau mot de passe</label>
+                    <input
+                      type="password"
+                      value={passwordForm.newPassword}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Confirmer le mot de passe</label>
+                    <input
+                      type="password"
+                      value={passwordForm.confirmPassword}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      required
+                    />
+                  </div>
+                  <div className="flex justify-end space-x-3 pt-4">
+                    <button
+                      type="button"
+                      onClick={() => setPasswordUser(null)}
+                      className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700"
                     >
                       Mettre à jour
                     </button>

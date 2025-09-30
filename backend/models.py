@@ -1,15 +1,15 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 
 # Authentication Models
 class UserCreate(BaseModel):
     name: str
-    email: EmailStr
+    email: str
     password: str
 
 class UserLogin(BaseModel):
-    email: EmailStr
+    email: str
     password: str
     remember_me: bool = False
 
@@ -34,7 +34,7 @@ class TokenData(BaseModel):
 
 class UserUpdate(BaseModel):
     name: Optional[str] = None
-    email: Optional[EmailStr] = None
+    email: Optional[str] = None
     is_active: Optional[bool] = None
     role: Optional[str] = None
 
@@ -50,6 +50,9 @@ class UserListResponse(BaseModel):
         from_attributes = True
 
 # Request/Response Models
+class AdminPasswordChange(BaseModel):
+    new_password: str
+
 class CandidateCreate(BaseModel):
     name: Optional[str] = None
     email: Optional[str] = None

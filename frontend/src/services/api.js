@@ -148,6 +148,14 @@ export const adminApi = {
   deleteUser: async (id) => {
     const response = await api.delete(`/api/admin/users/${id}`);
     return response;
+  },
+
+  // Change any user's password (admin only)
+  changeUserPassword: async (id, newPassword) => {
+    const response = await api.post(`/api/admin/users/${id}/password`, {
+      new_password: newPassword,
+    });
+    return response;
   }
 };
 
