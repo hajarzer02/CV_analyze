@@ -50,6 +50,14 @@ class UserListResponse(BaseModel):
         from_attributes = True
 
 # Request/Response Models
+class ProfileUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str
+
 class AdminPasswordChange(BaseModel):
     new_password: str
 

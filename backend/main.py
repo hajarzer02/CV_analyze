@@ -32,7 +32,9 @@ from models import (
     UserUpdate,
     UserListResponse,
     Token,
-    AdminPasswordChange
+    AdminPasswordChange,
+    ProfileUpdate,
+    PasswordChange
 )
 from auth import (
     authenticate_user, 
@@ -211,6 +213,61 @@ async def get_current_user_info(current_user: User = Depends(get_current_active_
 async def logout_user(current_user: User = Depends(get_current_active_user)):
     """Logout user (client should remove token)."""
     return {"message": "Successfully logged out"}
+
+# Profile: view/update info, change password
+@app.get("/api/profile", response_model=UserResponse)
+async def get_profile(current_user: User = Depends(get_current_active_user)):
+    return UserResponse(
+        id=current_user.id,
+        name=current_user.name,
+        email=current_user.email,
+        is_active=current_user.is_active == 'true',
+        role=current_user.role,
+        created_at=current_user.created_at
+    )
+
+@app.put("/api/profile", response_model=UserResponse)
+async def update_profile(update: ProfileUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
+    # Update name/email if provided; ensure email uniqueness
+    if update.name is not None:
+        current_user.name = update.name
+    if update.email is not None:
+        existing = db.query(User).filter(User.email == update.email, User.id != current_user.id).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="Email already taken")
+        current_user.email = update.email
+    current_user.updated_at = datetime.utcnow()
+    db.commit()
+    db.refresh(current_user)
+    return UserResponse(
+        id=current_user.id,
+        name=current_user.name,
+        email=current_user.email,
+        is_active=current_user.is_active == 'true',
+        role=current_user.role,
+        created_at=current_user.created_at
+    )
+
+@app.post("/api/profile/password")
+async def change_password(payload: PasswordChange, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
+    # Verify current password
+    from auth import verify_password
+    if not verify_password(payload.current_password, current_user.hashed_password):
+        raise HTTPException(status_code=400, detail="Mot de passe actuel incorrect")
+    if not payload.new_password or len(payload.new_password) < 6:
+        raise HTTPException(status_code=400, detail="Le nouveau mot de passe doit contenir au moins 6 caractères")
+    # bcrypt 72-byte guard
+    try:
+        new_hash = get_password_hash(payload.new_password)
+    except Exception as e:
+        if '72' in str(e):
+            new_hash = get_password_hash(payload.new_password[:72])
+        else:
+            raise
+    current_user.hashed_password = new_hash
+    current_user.updated_at = datetime.utcnow()
+    db.commit()
+    return {"message": "Mot de passe mis à jour"}
 
 @app.post("/api/upload-cv", response_model=UploadResponse)
 async def upload_cv(file: UploadFile = File(...), db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):

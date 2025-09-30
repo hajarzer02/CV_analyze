@@ -10,6 +10,7 @@ import CandidateProfile from './pages/CandidateProfile';
 import AdminPage from './pages/AdminPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Profile from './pages/Profile';
 
 function AppContent() {
   const { isAuthenticated, loading } = useAuth();
@@ -52,6 +53,11 @@ function AppContent() {
               <AdminRoute>
                 <AdminPage />
               </AdminRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
             } />
             
             {/* Redirect root to dashboard if authenticated, otherwise to login */}

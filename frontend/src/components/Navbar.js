@@ -77,6 +77,14 @@ const Navbar = () => {
                     <p className="text-gray-500">{user.email || ''}</p>
                     <p className="text-xs text-emerald-600 font-medium capitalize">{user.role || 'user'}</p>
                   </div>
+                  <Link
+                    to="/profile"
+                    onClick={() => setShowUserMenu(false)}
+                    className="flex items-center space-x-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  >
+                    <User className="h-4 w-4" />
+                    <span>Mon profil</span>
+                  </Link>
                   <button
                     onClick={handleLogout}
                     className="flex items-center space-x-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"

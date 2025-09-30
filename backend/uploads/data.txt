@@ -1,50 +1,43 @@
-CONTACT
-+21 27 11 41 41 87
-chadihamraoui@gmail.com
-28 RUE 71 ETG 1APT 1 DERB EL MENJRA,Casablanca, Maroc
-linkedin.com/in/chadi-hamraoui-39aa7b24b
+Doha Bouhali
++21 26 50 11 31 97
+bouhalidoha@gmail.com
+Mers Sultan Casablanca 20250, Morocco
+linkedin.com/in/doha-bouhali-48729623b
 
-COMPÉTENCES TECHNIQUES
+SUMMARY
+Computer science student with a solid foundation in app and web development, dedicated to crafting robust and scalable software solutions. Experienced in developing dynamic applications and tackling complex challenges, always seeking to enhance expertise and stay ahead in the tech field.
+TECHNICAL SKILLS
 
-Langages de programmation : C, C++, C#,python,Java, PHP
-Technologies et frameworks : HTML, CSS, JavaScript,Laravel
-Bases de données : MySQL, Oracle
-Systèmes et réseaux : Cisco, Packet Tracer
-Outils et environnements : MATLAB, IDE Arduino, CMD sous Linux et Windows
-PROJETS ACADÉMIQUES
+Programming Languages: C, C++, JAVA, JavaScript, PHP, Dart
+Web Technologies: HTML, CSS, Laravel
+Databases: SQL, Oracle, Microsoft Access
+Systems and Networks: OSI Model, Cisco, Packet Tracer
+Software and Tools: MATLAB, Arduino IDE
+System Commands: CMD in Linux and Windows
+LANGUAGES
+English: Fluent  
+French: Excellent
 
-App Web gestion de Stock: 
-Développement de l’interface avec Tailwind CSS et JavaScript
-Implémentation de la logique back-end avec Laravel
-Gestion des données via MySQL et déploiement local de l’application
-ACTIVITÉS
 
-Participation à la compétition SmartElec (2024)
-Participation à une caravane humanitaire (2025) 
+CERTIFICATIONS
+AI Career Essentials – ALX Africa Morocco (April 2024 - May 2024)
+Machine learning, Python, TensorFlow
+EDUCATION
+SEPT 2022- PRESENT :  IGA (Institut Supérieur du  Génie Appliqué), Casablanca Bachelor's Degree in Computer Science
+-Specialization in Web/App Programming and Networks
+SEPT 2020 - JUN 2022 :FST (Faculté des sciences et Techniques) ,Settat         Maths Software Physics,
+-  Algorithmics , Algebra, Statistics
 
-LANGUES
+Professional Experience
+JUN 2024 - AUG 2024: Progiciel System, Casablanca                        Mobile App Development Intern
+Developed user interfaces using Flutter and Dart.
+Contributed to the front-end development of the app by modifying features, updating color schemes, and enhancing visual elements to improve user experience.
 
-Anglais: Excellent  
-Français: Excellent
-Arabe: Langue natale
-Chadi Hamraoui
-RÉSUMÉ
-Actuellement en Licence de Génie Informatique à l’IGA Casablanca, je développe une expertise polyvalente en développement logiciel, technologies web, systèmes de bases de données et réseaux. Curieux et rigoureux, je maîtrise plusieurs outils et frameworks modernes, et je m’investis pleinement dans la création de solutions numériques performantes.
-ÉDUCATION
+JUN 2023 - AUG 2023 :Traco Engineering, Casablanca                           Web Development Intern
+Contributed to web development using HTML, CSS, and JavaScript.
+Collaborated with the team on design and layout improvements for the website.
+Implemented styling and interactivity to enhance user experience.
+PROJECTS
 
-SEPT 2022- PRÉSENT :  IGA (Institut Supérieur du  Génie Appliqué), Casablanca :Licence Génie informatique
-Programmation Web/Mobile,SQL et gestion de SGBD
-SEPT 2019 - JUIN 2022 :ENAC (Ecole Nationale de l’Aviation Civile) , Montréal ,Canada :   ATPL
-  Formation avancée en opérations de vol, navigation aérienne et gestion des procédures normalisées 
-
-Expérience Professionnelle
-JANV 2022 - JUIN 2022 : Ecole Nationale de l’Aviation Civile, Montréal                                            Stagiaire en formation ATPL
-Participation à des séances de simulateur de vol pour l'acquisition des compétences pratiques de pilotage
-Étude approfondie des procédures opérationnelles et de la sécurité aérienne
-Apprentissage de la gestion des systèmes avioniques et des instruments de bord
-
-JUIN 2024 - AOÛT 2024 : Carrefour, Casablanca                                            Stagiaire en Développement Web
-Développement d’une application interne de gestion des stocks et commandes
-Création d’interfaces avec CSS et JavaScript
-Back-end avec Laravel et gestion de base MySQL
-Tests et corrections de bugs
+E-commerce Website (cosmetic products): Built with Laravel, PHP, and SQL
+Local Network Management: Simulation using Packet Tracer
